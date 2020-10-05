@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Posts on Adam Cook</title>
+    <link>https://new.cookadam.co.uk/post/</link>
+    <description>Recent content in Posts on Adam Cook</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 03 Oct 2020 18:20:05 +0100</lastBuildDate><atom:link href="https://new.cookadam.co.uk/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Post 3</title>
+      <link>https://new.cookadam.co.uk/post/post3/</link>
+      <pubDate>Sat, 03 Oct 2020 18:20:05 +0100</pubDate>
+      
+      <guid>https://new.cookadam.co.uk/post/post3/</guid>
+      <description>Hello world </description>
+    </item>
+    
+    <item>
+      <title>Post 2</title>
+      <link>https://new.cookadam.co.uk/post/post2/</link>
+      <pubDate>Fri, 02 Oct 2020 18:20:05 +0100</pubDate>
+      
+      <guid>https://new.cookadam.co.uk/post/post2/</guid>
+      <description>Hello world </description>
+    </item>
+    
+    <item>
+      <title>Post 1</title>
+      <link>https://new.cookadam.co.uk/post/post1/</link>
+      <pubDate>Thu, 01 Oct 2020 18:20:05 +0100</pubDate>
+      
+      <guid>https://new.cookadam.co.uk/post/post1/</guid>
+      <description>Hello world </description>
+    </item>
+    
+  </channel>
+</rss>
