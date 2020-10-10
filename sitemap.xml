@@ -3,40 +3,45 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://new.cookadam.co.uk/</loc>
+    <loc>https://adamcook.io/</loc>
+    <lastmod>2020-10-05T21:04:10+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/</loc>
+    <lastmod>2020-10-05T21:04:10+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://adamcook.io/post/</loc>
+    <lastmod>2020-10-05T21:04:10+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://adamcook.io/p/post-3/</loc>
     <lastmod>2020-10-03T18:20:05+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://new.cookadam.co.uk/p/post-3/</loc>
-    <lastmod>2020-10-03T18:20:05+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://new.cookadam.co.uk/post/</loc>
-    <lastmod>2020-10-03T18:20:05+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://new.cookadam.co.uk/p/post-2/</loc>
+    <loc>https://adamcook.io/p/post-2/</loc>
     <lastmod>2020-10-02T18:20:05+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://new.cookadam.co.uk/p/post-1/</loc>
+    <loc>https://adamcook.io/p/post-1/</loc>
     <lastmod>2020-10-01T18:20:05+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://new.cookadam.co.uk/archives/</loc>
+    <loc>https://adamcook.io/archives/</loc>
   </url>
   
   <url>
-    <loc>https://new.cookadam.co.uk/categories/</loc>
+    <loc>https://adamcook.io/categories/</loc>
   </url>
   
   <url>
-    <loc>https://new.cookadam.co.uk/tags/</loc>
+    <loc>https://adamcook.io/tags/</loc>
   </url>
   
 </urlset>

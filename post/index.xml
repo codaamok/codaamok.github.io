@@ -2,35 +2,45 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Adam Cook</title>
-    <link>https://new.cookadam.co.uk/post/</link>
+    <link>https://adamcook.io/post/</link>
     <description>Recent content in Posts on Adam Cook</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 03 Oct 2020 18:20:05 +0100</lastBuildDate><atom:link href="https://new.cookadam.co.uk/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 05 Oct 2020 21:04:10 +0100</lastBuildDate><atom:link href="https://adamcook.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Deploying Hugo websites in Azure for pennies or free on GitHub pages</title>
+      <link>https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/</link>
+      <pubDate>Mon, 05 Oct 2020 21:04:10 +0100</pubDate>
+      
+      <guid>https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/</guid>
+      <description>What is this Hugo thing? Prerequisites Azure Static Web Apps Azure Blob storage GitHub pages That is a wrap  I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub pages. I am now blogging at no extra cost other than domain renewal!
+In the process not only did I learn about Hugo, but I also looked at three ways to deploy / host my Hugo-made website.</description>
+    </item>
+    
     <item>
       <title>Post 3</title>
-      <link>https://new.cookadam.co.uk/p/post-3/</link>
+      <link>https://adamcook.io/p/post-3/</link>
       <pubDate>Sat, 03 Oct 2020 18:20:05 +0100</pubDate>
       
-      <guid>https://new.cookadam.co.uk/p/post-3/</guid>
+      <guid>https://adamcook.io/p/post-3/</guid>
       <description>Hello world </description>
     </item>
     
     <item>
       <title>Post 2</title>
-      <link>https://new.cookadam.co.uk/p/post-2/</link>
+      <link>https://adamcook.io/p/post-2/</link>
       <pubDate>Fri, 02 Oct 2020 18:20:05 +0100</pubDate>
       
-      <guid>https://new.cookadam.co.uk/p/post-2/</guid>
+      <guid>https://adamcook.io/p/post-2/</guid>
       <description>Hello world </description>
     </item>
     
     <item>
       <title>Post 1</title>
-      <link>https://new.cookadam.co.uk/p/post-1/</link>
+      <link>https://adamcook.io/p/post-1/</link>
       <pubDate>Thu, 01 Oct 2020 18:20:05 +0100</pubDate>
       
-      <guid>https://new.cookadam.co.uk/p/post-1/</guid>
+      <guid>https://adamcook.io/p/post-1/</guid>
       <description>Hello world </description>
     </item>
     
