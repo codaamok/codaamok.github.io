@@ -383,7 +383,7 @@ PS C:\git\USERNAME.github.io-hugo&amp;gt; $null&amp;gt;&amp;gt;public\.nojekyll
         <pubDate>Sun, 28 Oct 2018 00:00:00 +0100</pubDate>
         
         <guid>https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/</guid>
-        <description>&lt;img src="https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-01.jpg" alt="Featured image of post ConfigMgr hardware inventory troubleshooting" /&gt;&lt;p&gt;I&amp;rsquo;ve recently updated a site to 1806 and was keen to get all clients up to date too. Some machines targeted for the pre-production client were not upgrading. When I looked closer at one client I suspected client health because a hardware inventory had not been submitted in months.&lt;/p&gt;
+        <description>&lt;img src="https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/configmgr-hardware-inventory-troubleshooting-01.jpg" alt="Featured image of post ConfigMgr hardware inventory troubleshooting" /&gt;&lt;p&gt;I&amp;rsquo;ve recently updated a site to 1806 and was keen to get all clients up to date too. Some machines targeted for the pre-production client were not upgrading. When I looked closer at one client I suspected client health because a hardware inventory had not been submitted in months.&lt;/p&gt;
 &lt;p&gt;Little did I know until recently, a lack of recent hardware inventory data could be a result of other things and client health is least likely to be the root cause. Instead of blindly reinstalling or manually upgrading the client, I wanted to try and understand what&amp;rsquo;s going on.&lt;/p&gt;
 &lt;p&gt;If you&amp;rsquo;re concerned about client health look at &lt;a class=&#34;link&#34; href=&#34;https://www.andersrodland.com/configmgr-client-health/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Anders Rodland&amp;rsquo;s ConfigMgr Client Health script&lt;/a&gt;.&lt;/p&gt;
@@ -439,9 +439,9 @@ PS C:\git\USERNAME.github.io-hugo&amp;gt; $null&amp;gt;&amp;gt;public\.nojekyll
 &lt;/tbody&gt;
 &lt;/table&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-01.jpg&#34; data-size=&#34;1027x527&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-01_hub25f78b6c8b4fb440eba083135e45982_98737_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-01_hub25f78b6c8b4fb440eba083135e45982_98737_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-01.jpg&#34; width=&#34;1027&#34; height=&#34;527&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/configmgr-hardware-inventory-troubleshooting-01.jpg&#34; data-size=&#34;1027x527&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/configmgr-hardware-inventory-troubleshooting-01_hub25f78b6c8b4fb440eba083135e45982_98737_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/configmgr-hardware-inventory-troubleshooting-01_hub25f78b6c8b4fb440eba083135e45982_98737_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/configmgr-hardware-inventory-troubleshooting-01.jpg&#34; width=&#34;1027&#34; height=&#34;527&#34; loading=&#34;lazy&#34;
 				alt=&#34;InventoryAgent.log&#34;&gt;
 		&lt;/a&gt;
 		
@@ -512,9 +512,9 @@ net start BITS
 &lt;h2 id=&#34;back-to-the-server&#34;&gt;Back to the server&lt;/h2&gt;
 &lt;p&gt;Starting off with the IIS logs I saw successful POST from the client, so data uploaded OK.&lt;/p&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-02.jpg&#34; data-size=&#34;1027x527&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-02_hu52b2e100e8075b831144081d27c626e5_98611_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-02_hu52b2e100e8075b831144081d27c626e5_98611_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-02.jpg&#34; width=&#34;1027&#34; height=&#34;527&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/configmgr-hardware-inventory-troubleshooting-02.jpg&#34; data-size=&#34;1027x527&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/configmgr-hardware-inventory-troubleshooting-02_hu52b2e100e8075b831144081d27c626e5_98611_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/configmgr-hardware-inventory-troubleshooting-02_hu52b2e100e8075b831144081d27c626e5_98611_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/configmgr-hardware-inventory-troubleshooting-02.jpg&#34; width=&#34;1027&#34; height=&#34;527&#34; loading=&#34;lazy&#34;
 				alt=&#34;IIS log file&#34;&gt;
 		&lt;/a&gt;
 		
@@ -523,9 +523,9 @@ net start BITS
 	&lt;/figure&gt;&lt;/p&gt;
 &lt;p&gt;Next, I want see how the management point handles the report. In the below you can see that it successfully receives it in XML form and parses it into a MIF file, ready to then be parsed by the SMS_INVENTORY_DATA_LOADER and submitted in to the site database. Here, I had no issues.&lt;/p&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-03.jpg&#34; data-size=&#34;1134x310&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-03_hu84686cd0fa2de9575617ecd542a88a40_97721_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-03_hu84686cd0fa2de9575617ecd542a88a40_97721_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-03.jpg&#34; width=&#34;1134&#34; height=&#34;310&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/configmgr-hardware-inventory-troubleshooting-03.jpg&#34; data-size=&#34;1134x310&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/configmgr-hardware-inventory-troubleshooting-03_hu84686cd0fa2de9575617ecd542a88a40_97721_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/configmgr-hardware-inventory-troubleshooting-03_hu84686cd0fa2de9575617ecd542a88a40_97721_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/configmgr-hardware-inventory-troubleshooting-03.jpg&#34; width=&#34;1134&#34; height=&#34;310&#34; loading=&#34;lazy&#34;
 				alt=&#34;MP_Hinv.log&#34;&gt;
 		&lt;/a&gt;
 		
@@ -535,9 +535,9 @@ net start BITS
 &lt;p&gt;However I had issues with SMS_INVENTORY_DATA_LOADER. Nothing too complicated though, the MIF was just too big than the allowed MIF size. I guess where its a mature server, been in production in a while, accumulated a lot of &amp;ldquo;things&amp;rdquo;, as well as whatever additional hardware classes is configured client settings for hardware inventory. And the fact it&amp;rsquo;s a full report.&lt;/p&gt;
 &lt;p&gt;The below suggests my maximum allowed size is 1 byte, this was true just for the purpose of creating this screenshot.&lt;/p&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-04.jpg&#34; data-size=&#34;1026x523&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-04_hu05eb4c3f05d5178c137c278912f7f85f_112329_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-04_hu05eb4c3f05d5178c137c278912f7f85f_112329_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-04.jpg&#34; width=&#34;1026&#34; height=&#34;523&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/configmgr-hardware-inventory-troubleshooting-04.jpg&#34; data-size=&#34;1026x523&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/configmgr-hardware-inventory-troubleshooting-04_hu05eb4c3f05d5178c137c278912f7f85f_112329_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/configmgr-hardware-inventory-troubleshooting-04_hu05eb4c3f05d5178c137c278912f7f85f_112329_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/configmgr-hardware-inventory-troubleshooting-04.jpg&#34; width=&#34;1026&#34; height=&#34;523&#34; loading=&#34;lazy&#34;
 				alt=&#34;dataldr.log&#34;&gt;
 		&lt;/a&gt;
 		
