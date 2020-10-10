@@ -19,6 +19,16 @@ In this post I want to share with you what Hugo is, why I like it and those thre
     </item>
     
     <item>
+      <title>ConfigMgr throttling distribution point bandwidth</title>
+      <link>https://adamcook.io/p/configmgr-throttling-distribution-point-bandwidth/</link>
+      <pubDate>Sun, 17 Feb 2019 00:00:00 +0100</pubDate>
+      
+      <guid>https://adamcook.io/p/configmgr-throttling-distribution-point-bandwidth/</guid>
+      <description>ℹ️ It looks like as I was writing this Microsoft have just publicly released a former internal document detailing some things that I had claimed to be undocumented (click here): Deep, deep, DEEP dive into content distribution in #SCCM by the great @vinay_pamnani Internal-only content originally, now free for public use! https://t.co/oUPTSzrTmt
+&amp;mdash; Matt Toto (@_contoto) February 4, 2019   In this post I&amp;rsquo;ll cover ways you can control bandwidth for Configuration Manager using the rate limit config available for each distribution point.</description>
+    </item>
+    
+    <item>
       <title>ConfigMgr hardware inventory troubleshooting</title>
       <link>https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/</link>
       <pubDate>Sun, 28 Oct 2018 00:00:00 +0100</pubDate>

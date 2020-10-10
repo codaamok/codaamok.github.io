@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='ℹ️ It looks like as I was writing this Microsoft have just publicly released a former internal document detailing some things that I had claimed to be undocumented (click here): Deep, deep, DEEP dive into content distribution in #SCCM by the great @vinay_pamnani Internal-only content originally, now free for public use! https://t.co/oUPTSzrTmt
+&amp;mdash; Matt Toto (@_contoto) February 4, 2019   In this post I&amp;rsquo;ll cover ways you can control bandwidth for Configuration Manager using the rate limit config available for each distribution point.'><title>ConfigMgr throttling distribution point bandwidth</title>
+    
+    <link rel='canonical' href='https://adamcook.io/p/configmgr-throttling-distribution-point-bandwidth/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='ConfigMgr throttling distribution point bandwidth'>
+<meta property='og:description' content='ℹ️ It looks like as I was writing this Microsoft have just publicly released a former internal document detailing some things that I had claimed to be undocumented (click here): Deep, deep, DEEP dive into content distribution in #SCCM by the great @vinay_pamnani Internal-only content originally, now free for public use! https://t.co/oUPTSzrTmt
+&amp;mdash; Matt Toto (@_contoto) February 4, 2019   In this post I&amp;rsquo;ll cover ways you can control bandwidth for Configuration Manager using the rate limit config available for each distribution point.'>
+<meta property='og:url' content='https://adamcook.io/p/configmgr-throttling-distribution-point-bandwidth/'>
+<meta property='og:site_name' content='Adam Cook'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2019-02-17T00:00:00&#43;01:00'/><meta property='article:modified_time' content='2019-02-17T00:00:00&#43;01:00'/><meta property='og:image' content='https://adamcook.io/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-04.jpg' />
+<meta name="twitter:site" content="codaamok"><meta name="twitter:title" content="ConfigMgr throttling distribution point bandwidth">
+<meta name="twitter:description" content="ℹ️ It looks like as I was writing this Microsoft have just publicly released a former internal document detailing some things that I had claimed to be undocumented (click here): Deep, deep, DEEP dive into content distribution in #SCCM by the great @vinay_pamnani Internal-only content originally, now free for public use! https://t.co/oUPTSzrTmt
+&amp;mdash; Matt Toto (@_contoto) February 4, 2019   In this post I&amp;rsquo;ll cover ways you can control bandwidth for Configuration Manager using the rate limit config available for each distribution point."><meta name="twitter:card" content="summary">
+	<meta name="twitter:image" content='https://adamcook.io/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-04.jpg' /></head><body class="">
+        <div class="container flex on-phone--column align-items--flex-start extended article-page with-toolbar">
+            <aside class="sidebar left-sidebar sticky">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header class="site-info">
+        
+            <figure class="site-avatar">
+                
+
+                
+                    
+                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_2.png" width="300"
+                        height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+
+                <span class="emoji">🙃</span>
+            </figure>
+        
+        <h1 class="site-name"><a href="https://adamcook.io/">Adam Cook</a></h1>
+        <h2 class="site-description">Passionate about helping people. #PowerShell, #ConfigMgr and #Azure. Misses #Linux.</h2>
+    </header>
+
+    <ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='https://adamcook.io/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://adamcook.io/archives'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://twitter.com/codaamok'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84 0 0 0 .497 -3.753C20.18 7.773 21.692 5.25 22 4.009z" />
+</svg>
+                
+                <span>Twitter</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://github.com/codaamok'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+                
+                <span>GitHub</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://linkedin.com/in/adamcharlescook'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-linkedin" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="4" width="16" height="16" rx="2" />
+  <line x1="8" y1="11" x2="8" y2="16" />
+  <line x1="8" y1="8" x2="8" y2="8.01" />
+  <line x1="12" y1="16" x2="12" y2="11" />
+  <path d="M16 16v-3a2 2 0 0 0 -4 0" />
+</svg>
+                
+                <span>LinkedIn</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://www.youtube.com/channel/UCjv4o4ToaauMNKP4wfIhP0A'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-youtube" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="3" y="5" width="18" height="14" rx="4" />
+  <path d="M10 9l5 3l-5 3z" />
+</svg>
+                
+                <span>YouTube</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://pssouth.co.uk'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-prompt" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <polyline points="5 7 10 12 5 17" />
+  <line x1="13" y1="17" x2="19" y2="17" />
+</svg>
+                
+                <span>PowerShell Southampton</span>
+            </a>
+        </li>
+        
+    </ol>
+</aside>
+            <main class="main full-width">
+    <div id="article-toolbar">
+        <a href="https://adamcook.io/" class="back-home">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+            <span>Back</span>
+        </a>
+    </div>
+
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <img srcset="/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-04_hu4d744b3ee3a02480a5bb7c9cf1213178_96508_1024x0_resize_q75_box.jpg 1024w, /p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-04_hu4d744b3ee3a02480a5bb7c9cf1213178_96508_2000x0_resize_q75_box.jpg 2000w"
+                    src="/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-04_hu4d744b3ee3a02480a5bb7c9cf1213178_96508_2000x0_resize_q75_box.jpg" width="1669" height="663" loading="lazy"
+                    alt="Featured image of post ConfigMgr throttling distribution point bandwidth" />
+            
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="https://adamcook.io/categories/configmgr/" 
+                    class="color-tag"
+                    data-image="/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-04_hu4d744b3ee3a02480a5bb7c9cf1213178_96508_20x20_fill_q75_box_smart1.jpg" 
+                    data-key="" 
+                    data-hash="md5-bo540NqbhBR8dFninhZAsA==">
+                    ConfigMgr
+                </a>
+            
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="https://adamcook.io/p/configmgr-throttling-distribution-point-bandwidth/">ConfigMgr throttling distribution point bandwidth</a>
+    </h2>
+
+    <table>
+        <tr>
+            <td width="25%">
+                <footer class="article-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="5" width="16" height="16" rx="2" />
+  <line x1="16" y1="3" x2="16" y2="7" />
+  <line x1="8" y1="3" x2="8" y2="7" />
+  <line x1="4" y1="11" x2="20" y2="11" />
+  <line x1="11" y1="15" x2="12" y2="15" />
+  <line x1="12" y1="15" x2="12" y2="18" />
+</svg>
+                    <time class="article-time--published">17 February 2019</time>
+                </footer>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <footer class="article-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--published">
+                        Reading time: 5 minutes.
+                    </time>
+                </footer>
+            </td>
+        </tr>
+    </table></div>
+</header>
+
+    <section class="article-content">
+    <blockquote>
+<p>ℹ️ It looks like as I was writing this Microsoft have just publicly released a former internal document detailing some things that I had claimed to be undocumented (<a class="link" href="https://support.microsoft.com/en-us/help/4482728/understand-troubleshoot-content-distribution-in-configuration-manager"  target="_blank" rel="noopener"
+    >click here</a>):
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Deep, deep, DEEP dive into content distribution in <a href="https://twitter.com/hashtag/SCCM?src=hash&amp;ref_src=twsrc%5Etfw">#SCCM</a> by the great <a href="https://twitter.com/vinay_pamnani?ref_src=twsrc%5Etfw">@vinay_pamnani</a>   Internal-only content originally, now free for public use! <a href="https://t.co/oUPTSzrTmt">https://t.co/oUPTSzrTmt</a></p>&mdash; Matt Toto (@_contoto) <a href="https://twitter.com/_contoto/status/1092469116349440003?ref_src=twsrc%5Etfw">February 4, 2019</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+</p>
+</blockquote>
+<p>In this post I&rsquo;ll cover ways you can control bandwidth for Configuration Manager using the rate limit config available for each distribution point. Outside of rate limits, a modern approach to traffic shaping content distribution to DPs is LEDBAT. [Read this great write up](<a href="https://deploymentresearch.com/Research/Post/657/LEDBAT-with-ConfigMgr-Pure-Love-By-Daniel-Olsson%5D">https://deploymentresearch.com/Research/Post/657/LEDBAT-with-ConfigMgr-Pure-Love-By-Daniel-Olsson]</a> by <a class="link" href="https://deploymentresearch.com/Research/Post/657/LEDBAT-with-ConfigMgr-Pure-Love-By-Daniel-Olsson"  target="_blank" rel="noopener"
+    >Daniel Olsson</a> for more LEDBAT info in this use case.</p>
+<p><figure>
+		<a href="/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-01.jpg" data-size="688x636">
+			<img srcset="/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-01_hu0bf41bd5756ea95c2802a66b5baf5007_53945_480x0_resize_q75_box.jpg 480w, /p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-01_hu0bf41bd5756ea95c2802a66b5baf5007_53945_1024x0_resize_q75_box.jpg 1024w"
+				src="/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-01.jpg" width="688" height="636" loading="lazy"
+				alt="Distribution Point rate limits">
+		</a>
+		
+		<figcaption>Distribution Point rate limits</figcaption>
+		
+	</figure></p>
+<p>How familiar are you with the difference between the options &ldquo;pulse mode&rdquo; and &ldquo;limited to specified maximum transfer per hour&rdquo;? I wasn&rsquo;t sure up until recently, and like me you may have misunderstood the % you&rsquo;re applying for each hour slot, when you may want pulse mode instead.</p>
+<h2 id="pulse-mode">Pulse mode</h2>
+<p>Pulse mode is simple. Pump out x sized data block every y seconds. Unfortunately, the maximum data block size is 256KB - enabling you to set a maximum cap of 2Mbps - so I support <a class="link" href="https://configurationmanager.uservoice.com/forums/300492-ideas/suggestions/36773581-increase-block-size-for-pulse-mode-distribution-p"  target="_blank" rel="noopener"
+    >&lsquo;Increase block size for pulse mode (distribution point rate limit)'</a>, do you?</p>
+<h2 id="limited-to-specified-maximum-transfer-per-hour">Limited to specified maximum transfer per hour</h2>
+<p>As for &ldquo;limited to specified maximum transfer per hour&rdquo;&hellip; Turns out the % you apply for each hour is strictly relevant to how long for Configuration Manager can send using 100% available bandwidth, following by the how long Configuration Manager will not transmit data for, during that hour slot. The <a class="link" href="https://docs.microsoft.com/en-us/sccm/core/servers/deploy/configure/install-and-configure-distribution-points#bkmk_config-rate"  target="_blank" rel="noopener"
+    >documentation</a> explains this well.</p>
+<p>However it does not explain the behaviour. For example, if you configured it to be 50/50, does this mean it&rsquo;s pumping content flat out for 30 consecutive minutes of the hour and dead quiet for the other 30 conseuctive minutes? Perhaps that&rsquo;s too much detail to care for and simply knowing that the DP will go full-pelt for 50% of the hour is good enough for you. But I was curious.</p>
+<p>In my lab, I set a distribution point&rsquo;s &ldquo;limit to specified maximum transfer per hour&rdquo; to 10%. On the SCCM VM I set a bandwidth maximum limit of 10Mbps, in Hyper-V this is only for outbound traffic but that&rsquo;s OK it&rsquo;s what I&rsquo;m testing. The bandwidth limit is mostly so I can transfer a 12GB package and make it run for long enough to watch what&rsquo;s going on.</p>
+<p>With perfmon I wanted to cover 3600 seconds, and being limited to just 1000 samples, I could only go down to 1 sample every 4 seconds.</p>
+<p><figure>
+		<a href="/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-02.jpg" data-size="1401x553">
+			<img srcset="/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-02_hu75f2d1fa595ae38c3f4f7fe78330a8c9_168011_480x0_resize_q75_box.jpg 480w, /p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-02_hu75f2d1fa595ae38c3f4f7fe78330a8c9_168011_1024x0_resize_q75_box.jpg 1024w"
+				src="/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-02.jpg" width="1401" height="553" loading="lazy"
+				alt="PkgXferMgr.log">
+		</a>
+		
+		<figcaption>PkgXferMgr.log</figcaption>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-03.jpg" data-size="1401x553">
+			<img srcset="/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-03_hudd5017d5b504d060beea5d3cedf9193c_190417_480x0_resize_q75_box.jpg 480w, /p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-03_hudd5017d5b504d060beea5d3cedf9193c_190417_1024x0_resize_q75_box.jpg 1024w"
+				src="/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-03.jpg" width="1401" height="553" loading="lazy"
+				alt="PkgXferMgr.log">
+		</a>
+		
+		<figcaption>PkgXferMgr.log</figcaption>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-04.jpg" data-size="1669x663">
+			<img srcset="/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-04_hu4d744b3ee3a02480a5bb7c9cf1213178_96508_480x0_resize_q75_box.jpg 480w, /p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-04_hu4d744b3ee3a02480a5bb7c9cf1213178_96508_1024x0_resize_q75_box.jpg 1024w"
+				src="/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-04.jpg" width="1669" height="663" loading="lazy"
+				alt="perfmon">
+		</a>
+		
+		<figcaption>perfmon</figcaption>
+		
+	</figure></p>
+<p>After a few minutes of watching perfmon, task manager and resource monitor, it became clear that perfmon&rsquo;s graph is not a true reflection. While it shows the behaviour, but it doesn&rsquo;t show that Configuration Manager was actually pulsing at 10Mbps (or near abouts). The perfmon graph, and the calculations made by
+SMS_PACKAGE_TRANSFER_MANAGER seemed to be perfectly time so perfmon could not plot/sample the peak of each pulse.</p>
+<p>I could have covered fewer seconds and sampled every 1 second and maybe caught the pulses in the graph. But the demonstration was to monitor the behaviour for the configured hour slot. So no, I wanted to look at the results for the last hour.</p>
+<p>From the above two log file snippets, I&rsquo;ve learnt that SMS_PACKAGE_TRANSFER_MANAGER:</p>
+<ul>
+<li>Determines current available bandwidth capacity</li>
+<li>By knowing the current available bandwidth capacity, calculate when the next pulse will be, while still satisfying the config applied by admin (in my case, 10%)</li>
+</ul>
+<p>So it&rsquo;s not black and white like I first thought, e.g. flat out for 10% of the hour and quiet for the remainder. From what I&rsquo;ve learnt I appreciate the current behaviour is probably most ideal; it doesn&rsquo;t create prolonged periods of congestion.</p>
+<p>With the current limitation of pulse mode (256KB block size), using this config could enable you to create a greater average. However, for brief moments of time during the hour you may still saturate bandwidth at either end causing spikes of latency – albeit for a second, not even that.</p>
+<h2 id="no-concurrent-transfers-to-a-distribution-point-while-it-has-any-rate-limit-defined">No concurrent transfers to a distribution point while it has any rate limit defined</h2>
+<p>Something you may also not be aware of is the behaviour of SMS_DISTRIBUTION_MANAGER when you configure any rate limit.</p>
+<p>The <a class="link" href="https://docs.microsoft.com/en-us/sccm/core/servers/deploy/configure/install-and-configure-distribution-points#bkmk_config-rate"  target="_blank" rel="noopener"
+    >documentation</a> doesn&rsquo;t yet say this, and I gave feedback, but when you configure any rate limit – whether pulse mode or the other – only one package will transfer at a time to that distribution point. Anything you had configured in the properties for the Software Distribution Component will be ignored.</p>
+<p>It&rsquo;s not a huge unknown. If you&rsquo;re experienced then you may have known this already. However I have
+(at the time of writing this) three years experience and I had no idea. I only discovered it while learning about the “limited to specified maximum transfer per hour” discussed in last section from a <a class="link" href="https://www.experts-exchange.com/articles/12177/SCCM-2012-How-Rate-Limiting-Pulse-Mode-saved-the-day.html"  target="_blank" rel="noopener"
+    >great write up here</a> by <a class="link" href="https://twitter.com/sccmcanuck"  target="_blank" rel="noopener"
+    >Chris Nienabar</a>.</p>
+<h2 id="software-distribution-component">Software Distribution Component</h2>
+<p>This brings me on to the two relevant options in the Software Distribution Component.</p>
+<p>Where are the properties for the Software Distribution Component? Administratrtion &gt; Sites &gt; select your site &gt; Configure Site Components &gt; Software Distribution Components</p>
+<p>The two key options here are <strong>Maximum number of packages</strong> and <strong>Maximum threads per package</strong>. This is what <a class="link" href="https://docs.microsoft.com/en-us/sccm/core/servers/deploy/configure/site-components#software-distribution"  target="_blank" rel="noopener"
+    >the documentation</a> has to say about it:</p>
+<blockquote>
+<p>On the General tab, specify settings that modify how the site server transfers content to its distribution points. When you increase the values you use for concurrent distribution settings, content distribution can use more network bandwidth.</p>
+</blockquote>
+<p><figure>
+		<a href="/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-05.jpg" data-size="528x545">
+			<img srcset="/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-05_hu4d3a1ede020e46eff141717f3a23ff3a_125751_480x0_resize_q75_box.jpg 480w, /p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-05_hu4d3a1ede020e46eff141717f3a23ff3a_125751_1024x0_resize_q75_box.jpg 1024w"
+				src="/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-05.jpg" width="528" height="545" loading="lazy"
+				alt="Software Distribution Component Properties">
+		</a>
+		
+		<figcaption>Software Distribution Component Properties</figcaption>
+		
+	</figure></p>
+<p>I don&rsquo;t want to come across like I&rsquo;m hating on Microsoft&rsquo;s documentation because <a class="link" href="https://twitter.com/AaronCzechowski"  target="_blank" rel="noopener"
+    >I see this dude&rsquo;s tweets</a> and I can tell hard work goes in to making things as great as they are. But hopefully I&rsquo;ll have an opportunity here to further explain these two options, probably moreso the second than the first:</p>
+<p><strong>Maximum number of packages</strong>: The number of packages that can be concurrently push.</p>
+<p><strong>Maximum threads per packages</strong>: The number of distribution points that the distribution manager can concurrently push content to.</p>
+<p>The defaults are 3 and 5, so in effect it means you can transfer 3 packages to 5 distribution points concurrently.</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+    
+</article>
+
+    <aside class="widget related-contents--wrapper">
+    
+    
+</aside>
+
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "adam-cook" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">&copy; 2020 Adam Cook</section>
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.0.5">Stack</a></b> designed by
+        <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true" style="display:none">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+            </main>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"
+    integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g=" crossorigin="anonymous"></script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<link rel="stylesheet" href="/css/highlight/light.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="/css/highlight/dark.min.css" media="(prefers-color-scheme: dark)">
+
+    </body>
+</html>
