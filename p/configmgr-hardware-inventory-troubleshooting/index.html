@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='I&amp;rsquo;ve recently updated a site to 1806 and was keen to get all clients up to date too. Some machines targeted for the pre-production client were not upgrading. When I looked closer at one client I suspected client health because a hardware inventory had not been submitted in months.
+Little did I know until recently, a lack of recent hardware inventory data could be a result of other things and client health is least likely to be the root cause.'><title>ConfigMgr hardware inventory troubleshooting</title>
+    
+    <link rel='canonical' href='https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='ConfigMgr hardware inventory troubleshooting'>
+<meta property='og:description' content='I&amp;rsquo;ve recently updated a site to 1806 and was keen to get all clients up to date too. Some machines targeted for the pre-production client were not upgrading. When I looked closer at one client I suspected client health because a hardware inventory had not been submitted in months.
+Little did I know until recently, a lack of recent hardware inventory data could be a result of other things and client health is least likely to be the root cause.'>
+<meta property='og:url' content='https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/'>
+<meta property='og:site_name' content='Adam Cook'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2018-10-28T00:00:00&#43;01:00'/><meta property='article:modified_time' content='2018-10-28T00:00:00&#43;01:00'/><meta property='og:image' content='https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-01.jpg' />
+<meta name="twitter:site" content="codaamok"><meta name="twitter:title" content="ConfigMgr hardware inventory troubleshooting">
+<meta name="twitter:description" content="I&amp;rsquo;ve recently updated a site to 1806 and was keen to get all clients up to date too. Some machines targeted for the pre-production client were not upgrading. When I looked closer at one client I suspected client health because a hardware inventory had not been submitted in months.
+Little did I know until recently, a lack of recent hardware inventory data could be a result of other things and client health is least likely to be the root cause."><meta name="twitter:card" content="summary">
+	<meta name="twitter:image" content='https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-01.jpg' /></head><body class="">
+        <div class="container flex on-phone--column align-items--flex-start extended article-page with-toolbar">
+            <aside class="sidebar left-sidebar sticky">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header class="site-info">
+        
+            <figure class="site-avatar">
+                
+
+                
+                    
+                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_2.png" width="300"
+                        height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+
+                <span class="emoji">🙃</span>
+            </figure>
+        
+        <h1 class="site-name"><a href="https://adamcook.io/">Adam Cook</a></h1>
+        <h2 class="site-description">Passionate about helping people. #PowerShell, #ConfigMgr and #Azure. Misses #Linux.</h2>
+    </header>
+
+    <ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='https://adamcook.io/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://adamcook.io/archives'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://twitter.com/codaamok'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84 0 0 0 .497 -3.753C20.18 7.773 21.692 5.25 22 4.009z" />
+</svg>
+                
+                <span>Twitter</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://github.com/codaamok'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+                
+                <span>GitHub</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://linkedin.com/in/adamcharlescook'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-linkedin" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="4" width="16" height="16" rx="2" />
+  <line x1="8" y1="11" x2="8" y2="16" />
+  <line x1="8" y1="8" x2="8" y2="8.01" />
+  <line x1="12" y1="16" x2="12" y2="11" />
+  <path d="M16 16v-3a2 2 0 0 0 -4 0" />
+</svg>
+                
+                <span>LinkedIn</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://www.youtube.com/channel/UCjv4o4ToaauMNKP4wfIhP0A'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-youtube" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="3" y="5" width="18" height="14" rx="4" />
+  <path d="M10 9l5 3l-5 3z" />
+</svg>
+                
+                <span>YouTube</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://pssouth.co.uk'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-prompt" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <polyline points="5 7 10 12 5 17" />
+  <line x1="13" y1="17" x2="19" y2="17" />
+</svg>
+                
+                <span>PowerShell Southampton</span>
+            </a>
+        </li>
+        
+    </ol>
+</aside>
+            <main class="main full-width">
+    <div id="article-toolbar">
+        <a href="https://adamcook.io/" class="back-home">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+            <span>Back</span>
+        </a>
+    </div>
+
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <img srcset="/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-01_hub25f78b6c8b4fb440eba083135e45982_98737_1024x0_resize_q75_box.jpg 1024w, /p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-01_hub25f78b6c8b4fb440eba083135e45982_98737_2000x0_resize_q75_box.jpg 2000w"
+                    src="/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-01_hub25f78b6c8b4fb440eba083135e45982_98737_2000x0_resize_q75_box.jpg" width="1027" height="527" loading="lazy"
+                    alt="Featured image of post ConfigMgr hardware inventory troubleshooting" />
+            
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="https://adamcook.io/categories/configmgr/" 
+                    class="color-tag"
+                    data-image="/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-01_hub25f78b6c8b4fb440eba083135e45982_98737_20x20_fill_q75_box_smart1.jpg" 
+                    data-key="" 
+                    data-hash="md5-W4dSIgsM/BTEsMuPvQypKw==">
+                    ConfigMgr
+                </a>
+            
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/">ConfigMgr hardware inventory troubleshooting</a>
+    </h2>
+
+    <footer class="article-time">
+        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+        <time class="article-time--published">28 October 2018</time>
+    </footer></div>
+</header>
+
+    <section class="article-content">
+    <p>I&rsquo;ve recently updated a site to 1806 and was keen to get all clients up to date too. Some machines targeted for the pre-production client were not upgrading. When I looked closer at one client I suspected client health because a hardware inventory had not been submitted in months.</p>
+<p>Little did I know until recently, a lack of recent hardware inventory data could be a result of other things and client health is least likely to be the root cause. Instead of blindly reinstalling or manually upgrading the client, I wanted to try and understand what&rsquo;s going on.</p>
+<p>If you&rsquo;re concerned about client health look at <a class="link" href="https://www.andersrodland.com/configmgr-client-health/"  target="_blank" rel="noopener"
+    >Anders Rodland&rsquo;s ConfigMgr Client Health script</a>.</p>
+<p>There are great articles already out there on this topic, here&rsquo;s some I used to help me with this issue:</p>
+<ul>
+<li><a class="link" href="https://blogs.technet.microsoft.com/scotts-it-blog/2015/04/23/hardware-inventory-in-depth-part-1/"  target="_blank" rel="noopener"
+    >Hardware Inventory – In-Depth (Part 1)</a></li>
+<li><a class="link" href="https://www.enhansoft.com/blog/updated-troubleshoot-configmgr-hardware-inventory-issues"  target="_blank" rel="noopener"
+    >Updated – Troubleshoot ConfigMgr Hardware Inventory Issues</a></li>
+<li><a class="link" href="https://blogs.technet.microsoft.com/sudheesn/2010/05/31/troubleshooting-sccm-part-ii-hardware-inventory/"  target="_blank" rel="noopener"
+    >Troubleshooting SCCM ..Part II (Hardware Inventory)</a></li>
+<li><a class="link" href="https://thesysadminchannel.com/troubleshooting-hardware-inventory-sccm-full-guide/"  target="_blank" rel="noopener"
+    >Solved: Troubleshooting Hardware Inventory in SCCM | Step By Step Guide</a></li>
+</ul>
+<p>From the above I understood the problem could be:</p>
+<ul>
+<li>Broken WMI repository on the client</li>
+<li>BITS on the client is failing to POST the data to the MP</li>
+<li>The INVENTORY_DATA_LOADER (?) refusing to handle the MIF because perhaps:
+<ul>
+<li>bad syntax</li>
+<li>mismatch in versions</li>
+<li>too big as it exceeds the MAX FILE SIZE</li>
+</ul>
+</li>
+</ul>
+<h2 id="client-side">Client side</h2>
+<p>First port of call was InventoryAgent.log on the client. This log file records activity on the client about hardware and software inventory processes and heartbeat discovery. At the start of the cycle you will see the log tell us which action its performing and whether it&rsquo;s a full, delta and resync report.</p>
+<table>
+<thead>
+<tr>
+<th>Action</th>
+<th>Guid</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Hardware inventory</td>
+<td>{00000000-0000-0000-0000-000000000001}</td>
+</tr>
+<tr>
+<td>Software inventory</td>
+<td>{00000000-0000-0000-0000-000000000002}</td>
+</tr>
+<tr>
+<td>Data Discovery Record (DDR)</td>
+<td>{00000000-0000-0000-0000-000000000003}</td>
+</tr>
+<tr>
+<td>File collection</td>
+<td>{00000000-0000-0000-0000-000000000010}</td>
+</tr>
+</tbody>
+</table>
+<p><figure>
+		<a href="/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-01.jpg" data-size="1027x527">
+			<img srcset="/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-01_hub25f78b6c8b4fb440eba083135e45982_98737_480x0_resize_q75_box.jpg 480w, /p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-01_hub25f78b6c8b4fb440eba083135e45982_98737_1024x0_resize_q75_box.jpg 1024w"
+				src="/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-01.jpg" width="1027" height="527" loading="lazy"
+				alt="InventoryAgent.log">
+		</a>
+		
+		<figcaption>InventoryAgent.log</figcaption>
+		
+	</figure></p>
+<p>Looking at InventoryAgent.log above you can see:</p>
+<ul>
+<li>The hardware inventory action took place by looking at the GUID</li>
+<li>The MajorVersion and MinorVersion; MajorVersion increments with every full or resync report and the MinorVersion increments with every delta report.
+<ul>
+<li>Full is triggered for the initial report</li>
+<li>Delta is triggered for each hardware inventory after the full</li>
+<li>Resync is triggered when either the client recognises there&rsquo;s a mismatch in report versions when comparing what has previously been executed, or when SMS_INVENTORY_DATA_LOADER compares what the client has sent compared to what&rsquo;s in the site database</li>
+</ul>
+</li>
+</ul>
+<p>You can manually trigger a delta by running the Hardware Inventory Cycle in the Control Panel applet, however consider running the below if you want to force a full report. Also consider using <a class="link" href="https://recastsoftware.com/"  target="_blank" rel="noopener"
+    >Recast&rsquo;s Right Click Tools</a> which gives you this option from the console.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-CimInstance -Namespace <span style="color:#e6db74">&#34;root\ccm\invagt&#34;</span> -ClassName <span style="color:#e6db74">&#34;InventoryActionStatus&#34;</span> | 
+    Where-Object { $_.InventoryActionID <span style="color:#f92672">-eq</span> <span style="color:#e6db74">&#34;{00000000-0000-0000-0000-000000000001}&#34;</span> } | 
+        Remove-CimInstance
+
+$InvokeCimMethodSplat = @{
+    ComputerName = $env:COMPUTERNAME
+    Namespace = <span style="color:#e6db74">&#34;root\ccm&#34;</span>
+    Class = <span style="color:#e6db74">&#34;SMS_Client&#34;</span>
+    Arguments = @{
+        TriggerSchedule = <span style="color:#e6db74">&#34;{00000000-0000-0000-0000-000000000001}&#34;</span>
+    }
+}
+
+Invoke-CimMethod @InvokeCimMethodSplat
+</code></pre></div><p>Going back to the problem I was troubleshooting&hellip; I was confident WMI was healthy because I could see various areas of WMI being successfully queried and at the end of the cycle I saw &ldquo;Inventory: Successfully sent report. Destination:mp:MP_HinvEndpoint&hellip;&rdquo;. After seeing that, I figured let&rsquo;s look server side.</p>
+<h2 id="server-side">Server side</h2>
+<p>The three key areas server side in this scenario are:</p>
+<ul>
+<li>SMSINVENTORY_DATA_LOADER - dataldr.log</li>
+<li>Management Point - MP_hinv.log</li>
+<li>IIS - C:\inetpub\logs\LogFiles  - This is the default location for IIS logs, if everything else is default, your SCCM IIS logs should be in a sub folder named W3SVC1. You can find out yourself by looking in IIS Manager.</li>
+</ul>
+<p>In all three of the above, I could not see any reference of the machine&rsquo;s name, IP or GUID.</p>
+<h2 id="back-to-the-client">Back to the client</h2>
+<p>Looking back at the client, I could see a big queue of BITS job with mixed states: suspended, queued, error and transient_error. You can view the current BITS jobs using the below commands:</p>
+<p>CMD</p>
+<pre><code>bitsadmin /list /allusers
+</code></pre><p>PowerShell</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-BitsTransfer -AllUsers
+</code></pre></div><p>Get more information about the reason why they&rsquo;re failing with:</p>
+<p>CMD</p>
+<pre><code>bitsadmin /info JOBID /verbose
+</code></pre><p>PowerShell</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-BitsTransfer -JobId JOBID | Select-Object *
+</code></pre></div><p>To reset all BITS jobs&hellip; You will notice most of the jobs are owned by SYSTEM or NETWORK SERVICE, of which commands you run in any other context will not be successful at purging. A workaround could be to create a scheduled task that runs as SYSTEM to run either of the below:</p>
+<p>CMD</p>
+<pre><code>bitsadmin /reset /allusers
+</code></pre><p>PowerShell</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-BitsTransfer -AllUsers | Remove-BitsTransfer
+</code></pre></div><p>However, an easier way posted by <a class="link" href="http://www.scconfigmgr.com/2014/03/28/how-to-reset-bits-transfer-queue/"  target="_blank" rel="noopener"
+    >Nickolaj Andersen</a> works well:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cmd" data-lang="cmd">net stop BITS 
+ipconfig /flushdns 
+<span style="color:#66d9ef">ren</span> <span style="color:#e6db74">&#34;</span>%ALLUSERSPROFILE%<span style="color:#e6db74">\Application Data\Microsoft\Network\Downloader\qmgr0.dat&#34;</span> qmgr0.dat.old 
+<span style="color:#66d9ef">ren</span> <span style="color:#e6db74">&#34;</span>%ALLUSERSPROFILE%<span style="color:#e6db74">\Application Data\Microsoft\Network\Downloader\qmgr1.dat&#34;</span> qmgr1.dat.old
+net start BITS
+</code></pre></div><p>For me, my problem was proxy related. I could see error messages referencing timeouts as the issue, I got this by looking at the verbose BITS jobs information.</p>
+<p>After fixing that and clearing all jobs, I triggered another full hardware inventory report and quickly saw the BITS job leave the client with no hang ups.</p>
+<h2 id="back-to-the-server">Back to the server</h2>
+<p>Starting off with the IIS logs I saw successful POST from the client, so data uploaded OK.</p>
+<p><figure>
+		<a href="/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-02.jpg" data-size="1027x527">
+			<img srcset="/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-02_hu52b2e100e8075b831144081d27c626e5_98611_480x0_resize_q75_box.jpg 480w, /p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-02_hu52b2e100e8075b831144081d27c626e5_98611_1024x0_resize_q75_box.jpg 1024w"
+				src="/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-02.jpg" width="1027" height="527" loading="lazy"
+				alt="IIS log file">
+		</a>
+		
+		<figcaption>IIS log file</figcaption>
+		
+	</figure></p>
+<p>Next, I want see how the management point handles the report. In the below you can see that it successfully receives it in XML form and parses it into a MIF file, ready to then be parsed by the SMS_INVENTORY_DATA_LOADER and submitted in to the site database. Here, I had no issues.</p>
+<p><figure>
+		<a href="/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-03.jpg" data-size="1134x310">
+			<img srcset="/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-03_hu84686cd0fa2de9575617ecd542a88a40_97721_480x0_resize_q75_box.jpg 480w, /p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-03_hu84686cd0fa2de9575617ecd542a88a40_97721_1024x0_resize_q75_box.jpg 1024w"
+				src="/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-03.jpg" width="1134" height="310" loading="lazy"
+				alt="MP_Hinv.log">
+		</a>
+		
+		<figcaption>MP_Hinv.log</figcaption>
+		
+	</figure></p>
+<p>However I had issues with SMS_INVENTORY_DATA_LOADER. Nothing too complicated though, the MIF was just too big than the allowed MIF size. I guess where its a mature server, been in production in a while, accumulated a lot of &ldquo;things&rdquo;, as well as whatever additional hardware classes is configured client settings for hardware inventory. And the fact it&rsquo;s a full report.</p>
+<p>The below suggests my maximum allowed size is 1 byte, this was true just for the purpose of creating this screenshot.</p>
+<p><figure>
+		<a href="/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-04.jpg" data-size="1026x523">
+			<img srcset="/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-04_hu05eb4c3f05d5178c137c278912f7f85f_112329_480x0_resize_q75_box.jpg 480w, /p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-04_hu05eb4c3f05d5178c137c278912f7f85f_112329_1024x0_resize_q75_box.jpg 1024w"
+				src="/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-04.jpg" width="1026" height="523" loading="lazy"
+				alt="dataldr.log">
+		</a>
+		
+		<figcaption>dataldr.log</figcaption>
+		
+	</figure></p>
+<p>On the primary site server I increased <code>HKLM\Software\Microsoft\SMS\Components\SMS_INVENTORY_DATA_LOADER\Max MIF Size</code>. The decimal value is in bytes so set it to a value at your discretion, your best gauge is see how far over the limit you are by observing the error in dataldr.log and add a little more. Then restart the SMS_INVENTORY_DATA_LOADER component in Configuration Manager Service Manager (Monitoring &gt; Component Status &gt; Right click any component &gt; Start &gt; Configuration Manager Service Manager).</p>
+<p>Then, some time later, the hardware scan timestamp for the device in the console updated and I could see the new data in the device&rsquo;s Resource Manager.</p>
+<p>I felt this was worth writing up because while the links I shared at the start cover most of what I&rsquo;ve written, I wanted to show that BITS is a factor - the other posts don&rsquo;t touch on this - and use it as a note for me in future. You may find you&rsquo;ll only hit one or two of these issues when troubleshooting hardware inventory, unlikely to be all of them in one go like I almost did.</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+    
+</article>
+
+    <aside class="widget related-contents--wrapper">
+    
+    
+</aside>
+
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "adam-cook" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">&copy; 2020 Adam Cook</section>
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.0.5">Stack</a></b> designed by
+        <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true" style="display:none">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+            </main>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"
+    integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g=" crossorigin="anonymous"></script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<link rel="stylesheet" href="/css/highlight/light.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="/css/highlight/dark.min.css" media="(prefers-color-scheme: dark)">
+
+    </body>
+</html>

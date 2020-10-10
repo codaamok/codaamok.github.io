@@ -8,11 +8,11 @@
         <language>en-us</language>
         <lastBuildDate>Mon, 05 Oct 2020 21:04:10 +0100</lastBuildDate><atom:link href="https://adamcook.io/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>Deploying Hugo websites in Azure for pennies or free on GitHub pages</title>
-        <link>https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/</link>
+        <link>https://adamcook.io/p/deploying-hugo/</link>
         <pubDate>Mon, 05 Oct 2020 21:04:10 +0100</pubDate>
         
-        <guid>https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/</guid>
-        <description>&lt;img src="https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/cover.jpg" alt="Featured image of post Deploying Hugo websites in Azure for pennies or free on GitHub pages" /&gt;&lt;p&gt;I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub pages. I am now blogging at no extra cost other than domain renewal!&lt;/p&gt;
+        <guid>https://adamcook.io/p/deploying-hugo/</guid>
+        <description>&lt;img src="https://adamcook.io/p/deploying-hugo/images/cover.jpg" alt="Featured image of post Deploying Hugo websites in Azure for pennies or free on GitHub pages" /&gt;&lt;p&gt;I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub pages. I am now blogging at no extra cost other than domain renewal!&lt;/p&gt;
 &lt;p&gt;In the process not only did I learn about Hugo, but I also looked at three ways to deploy / host my Hugo-made website.&lt;/p&gt;
 &lt;p&gt;In this post I want to share with you what Hugo is, why I like it and those three ways that I learned on how to deploy a Hugo website - with Azure Static Web Apps (preview), Azure Blob storage and GitHub pages.&lt;/p&gt;
 &lt;p&gt;For Azure Static Web Apps and Blob storage, I will be using Cloudflare. I am also assuming you will be using your own domain name. It is not a big deal if you do not want to, just ignore details focused on defining custom domains and creating CNAME records.&lt;/p&gt;
@@ -68,18 +68,18 @@
 &lt;li&gt;Finalise the resource creation via &lt;code&gt;Review + create&lt;/code&gt; and if validation succeeds, click &lt;code&gt;Create&lt;/code&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-01.jpg&#34; data-size=&#34;1355x782&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-01_huef68e5499686639eded21e238ca19ac4_60604_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-01_huef68e5499686639eded21e238ca19ac4_60604_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-01.jpg&#34; width=&#34;1355&#34; height=&#34;782&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-01.jpg&#34; data-size=&#34;1355x782&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-01_huef68e5499686639eded21e238ca19ac4_60604_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-01_huef68e5499686639eded21e238ca19ac4_60604_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-01.jpg&#34; width=&#34;1355&#34; height=&#34;782&#34; loading=&#34;lazy&#34;
 				alt=&#34;Static Web App resource creation in Azure Portal&#34;&gt;
 		&lt;/a&gt;
 		
 		&lt;figcaption&gt;Static Web App resource creation in Azure Portal&lt;/figcaption&gt;
 		
 	&lt;/figure&gt; &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-02.jpg&#34; data-size=&#34;1920x1336&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-02_hu7c695f106d7069e463451d2ad9980f62_140124_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-02_hu7c695f106d7069e463451d2ad9980f62_140124_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-02.jpg&#34; width=&#34;1920&#34; height=&#34;1336&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-02.jpg&#34; data-size=&#34;1920x1336&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-02_hu7c695f106d7069e463451d2ad9980f62_140124_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-02_hu7c695f106d7069e463451d2ad9980f62_140124_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-02.jpg&#34; width=&#34;1920&#34; height=&#34;1336&#34; loading=&#34;lazy&#34;
 				alt=&#34;Static Web App resource creation in Azure Portal&#34;&gt;
 		&lt;/a&gt;
 		
@@ -90,18 +90,18 @@
     &gt;Azure/static-web-apps-deploy&lt;/a&gt; action. &lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/azure/static-web-apps/github-actions-workflow&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Here&amp;rsquo;s the link&lt;/a&gt; to the docs for said action.&lt;/p&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-03.jpg&#34; data-size=&#34;1461x759&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-03_hu4bc9b7cca5ad322bfd27609a7035dcab_68362_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-03_hu4bc9b7cca5ad322bfd27609a7035dcab_68362_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-03.jpg&#34; width=&#34;1461&#34; height=&#34;759&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-03.jpg&#34; data-size=&#34;1461x759&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-03_hu4bc9b7cca5ad322bfd27609a7035dcab_68362_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-03_hu4bc9b7cca5ad322bfd27609a7035dcab_68362_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-03.jpg&#34; width=&#34;1461&#34; height=&#34;759&#34; loading=&#34;lazy&#34;
 				alt=&#34;Creation of GitHub Actions workflow file by Azure&#34;&gt;
 		&lt;/a&gt;
 		
 		&lt;figcaption&gt;Creation of GitHub Actions workflow file by Azure&lt;/figcaption&gt;
 		
 	&lt;/figure&gt; &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-04.jpg&#34; data-size=&#34;1149x1040&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-04_hucccb004310e54a0a52abdb29283eac54_68189_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-04_hucccb004310e54a0a52abdb29283eac54_68189_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-04.jpg&#34; width=&#34;1149&#34; height=&#34;1040&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-04.jpg&#34; data-size=&#34;1149x1040&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-04_hucccb004310e54a0a52abdb29283eac54_68189_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-04_hucccb004310e54a0a52abdb29283eac54_68189_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-04.jpg&#34; width=&#34;1149&#34; height=&#34;1040&#34; loading=&#34;lazy&#34;
 				alt=&#34;Static Web Apps Deploy actions workflow file&#34;&gt;
 		&lt;/a&gt;
 		
@@ -110,16 +110,16 @@
 	&lt;/figure&gt;&lt;/p&gt;
 &lt;p&gt;At this point, you will be able to see your static website live available from a HTTPS endpoint.&lt;/p&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-05.jpg&#34; data-size=&#34;1347x796&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-05_hu07251bb2a0a18783554b85726ad821a5_72359_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-05_hu07251bb2a0a18783554b85726ad821a5_72359_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-05.jpg&#34; width=&#34;1347&#34; height=&#34;796&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-05.jpg&#34; data-size=&#34;1347x796&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-05_hu07251bb2a0a18783554b85726ad821a5_72359_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-05_hu07251bb2a0a18783554b85726ad821a5_72359_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-05.jpg&#34; width=&#34;1347&#34; height=&#34;796&#34; loading=&#34;lazy&#34;
 				alt=&#34;&amp;nbsp;&#34;&gt;
 		&lt;/a&gt;
 		
 	&lt;/figure&gt; &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-06.jpg&#34; data-size=&#34;1347x796&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-06_hu036db5a0fd2626900c29f94d277788a1_43289_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-06_hu036db5a0fd2626900c29f94d277788a1_43289_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-06.jpg&#34; width=&#34;1347&#34; height=&#34;796&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-06.jpg&#34; data-size=&#34;1347x796&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-06_hu036db5a0fd2626900c29f94d277788a1_43289_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-06_hu036db5a0fd2626900c29f94d277788a1_43289_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-06.jpg&#34; width=&#34;1347&#34; height=&#34;796&#34; loading=&#34;lazy&#34;
 				alt=&#34;&amp;nbsp;&#34;&gt;
 		&lt;/a&gt;
 		
@@ -129,18 +129,18 @@
 &lt;li&gt;After that, configure the static web app resource to point to your domain.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-07.jpg&#34; data-size=&#34;1347x796&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-07_hu36c7c823f442b2dfc21dc0999ad1e7c7_72721_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-07_hu36c7c823f442b2dfc21dc0999ad1e7c7_72721_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-07.jpg&#34; width=&#34;1347&#34; height=&#34;796&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-07.jpg&#34; data-size=&#34;1347x796&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-07_hu36c7c823f442b2dfc21dc0999ad1e7c7_72721_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-07_hu36c7c823f442b2dfc21dc0999ad1e7c7_72721_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-07.jpg&#34; width=&#34;1347&#34; height=&#34;796&#34; loading=&#34;lazy&#34;
 				alt=&#34;Creating a CNAME record in Cloudflare&#34;&gt;
 		&lt;/a&gt;
 		
 		&lt;figcaption&gt;Creating a CNAME record in Cloudflare&lt;/figcaption&gt;
 		
 	&lt;/figure&gt; &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-08.jpg&#34; data-size=&#34;1347x796&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-08_huf01b0a15de4e9a5a6ddfe266846e1f03_75865_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-08_huf01b0a15de4e9a5a6ddfe266846e1f03_75865_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-08.jpg&#34; width=&#34;1347&#34; height=&#34;796&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-08.jpg&#34; data-size=&#34;1347x796&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-08_huf01b0a15de4e9a5a6ddfe266846e1f03_75865_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-08_huf01b0a15de4e9a5a6ddfe266846e1f03_75865_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-08.jpg&#34; width=&#34;1347&#34; height=&#34;796&#34; loading=&#34;lazy&#34;
 				alt=&#34;Add custom domain to the static web app resource&#34;&gt;
 		&lt;/a&gt;
 		
@@ -159,18 +159,18 @@
 &lt;li&gt;Fill out the necessary information and click the usual &lt;code&gt;Review + create&lt;/code&gt; and &lt;code&gt;Create&lt;/code&gt; after validation&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-09.jpg&#34; data-size=&#34;1347x796&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-09_hu8e02045dd7fb5b90e83e8f249857e484_62652_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-09_hu8e02045dd7fb5b90e83e8f249857e484_62652_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-09.jpg&#34; width=&#34;1347&#34; height=&#34;796&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-09.jpg&#34; data-size=&#34;1347x796&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-09_hu8e02045dd7fb5b90e83e8f249857e484_62652_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-09_hu8e02045dd7fb5b90e83e8f249857e484_62652_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-09.jpg&#34; width=&#34;1347&#34; height=&#34;796&#34; loading=&#34;lazy&#34;
 				alt=&#34;Storage account creation in Azure Portal&#34;&gt;
 		&lt;/a&gt;
 		
 		&lt;figcaption&gt;Storage account creation in Azure Portal&lt;/figcaption&gt;
 		
 	&lt;/figure&gt; &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-10.jpg&#34; data-size=&#34;1347x1038&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-10_hu79c8dd91c5acc0a3b7025b8d45ccf7fe_97251_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-10_hu79c8dd91c5acc0a3b7025b8d45ccf7fe_97251_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-10.jpg&#34; width=&#34;1347&#34; height=&#34;1038&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-10.jpg&#34; data-size=&#34;1347x1038&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-10_hu79c8dd91c5acc0a3b7025b8d45ccf7fe_97251_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-10_hu79c8dd91c5acc0a3b7025b8d45ccf7fe_97251_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-10.jpg&#34; width=&#34;1347&#34; height=&#34;1038&#34; loading=&#34;lazy&#34;
 				alt=&#34;Storage account creation in Azure Portal&#34;&gt;
 		&lt;/a&gt;
 		
@@ -186,18 +186,18 @@
 &lt;li&gt;Wait a little bit (a couple of minutes?), then back in the &amp;ldquo;Custom domain&amp;rdquo; blade of the Azure portal, click Save and the domain should validate OK.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-11.jpg&#34; data-size=&#34;1263x767&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-11_hu090a302355deb929678accc689402a5f_78521_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-11_hu090a302355deb929678accc689402a5f_78521_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-11.jpg&#34; width=&#34;1263&#34; height=&#34;767&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-11.jpg&#34; data-size=&#34;1263x767&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-11_hu090a302355deb929678accc689402a5f_78521_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-11_hu090a302355deb929678accc689402a5f_78521_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-11.jpg&#34; width=&#34;1263&#34; height=&#34;767&#34; loading=&#34;lazy&#34;
 				alt=&#34;Enable the storage account to be a static website&#34;&gt;
 		&lt;/a&gt;
 		
 		&lt;figcaption&gt;Enable the storage account to be a static website&lt;/figcaption&gt;
 		
 	&lt;/figure&gt; &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-12.jpg&#34; data-size=&#34;1263x767&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-12_hu2d7ff0fa065962dec3854ffea804ecf3_63859_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-12_hu2d7ff0fa065962dec3854ffea804ecf3_63859_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-12.jpg&#34; width=&#34;1263&#34; height=&#34;767&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-12.jpg&#34; data-size=&#34;1263x767&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-12_hu2d7ff0fa065962dec3854ffea804ecf3_63859_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-12_hu2d7ff0fa065962dec3854ffea804ecf3_63859_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-12.jpg&#34; width=&#34;1263&#34; height=&#34;767&#34; loading=&#34;lazy&#34;
 				alt=&#34;Change the $web container access policy to Container&#34;&gt;
 		&lt;/a&gt;
 		
@@ -205,18 +205,18 @@
 		
 	&lt;/figure&gt;
 &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-14.jpg&#34; data-size=&#34;1263x767&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-14_hu090a302355deb929678accc689402a5f_89995_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-14_hu090a302355deb929678accc689402a5f_89995_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-14.jpg&#34; width=&#34;1263&#34; height=&#34;767&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-14.jpg&#34; data-size=&#34;1263x767&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-14_hu090a302355deb929678accc689402a5f_89995_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-14_hu090a302355deb929678accc689402a5f_89995_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-14.jpg&#34; width=&#34;1263&#34; height=&#34;767&#34; loading=&#34;lazy&#34;
 				alt=&#34;Enter your custom domain&#34;&gt;
 		&lt;/a&gt;
 		
 		&lt;figcaption&gt;Enter your custom domain&lt;/figcaption&gt;
 		
 	&lt;/figure&gt; &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-15.jpg&#34; data-size=&#34;1444x857&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-15_hu980c2ad6e5b7f99e41bdc9c42a04417c_81683_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-15_hu980c2ad6e5b7f99e41bdc9c42a04417c_81683_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-15.jpg&#34; width=&#34;1444&#34; height=&#34;857&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-15.jpg&#34; data-size=&#34;1444x857&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-15_hu980c2ad6e5b7f99e41bdc9c42a04417c_81683_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-15_hu980c2ad6e5b7f99e41bdc9c42a04417c_81683_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-15.jpg&#34; width=&#34;1444&#34; height=&#34;857&#34; loading=&#34;lazy&#34;
 				alt=&#34;Creating a CNAME record in Cloudflare&#34;&gt;
 		&lt;/a&gt;
 		
@@ -234,18 +234,18 @@
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Upload &lt;code&gt;index.html&lt;/code&gt; to the &lt;code&gt;$web&lt;/code&gt; container and check it out! It&amp;rsquo;s worth pointing out that the &lt;a class=&#34;link&#34; href=&#34;https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurestorage&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Azure Storage Visual Studio Code extension&lt;/a&gt; lets you modify files directly in your Blob container.&lt;/p&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-16.gif&#34; data-size=&#34;1736x769&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-16_hua7f857b9f70ef40cf1a2b25db3d8bc35_560377_480x0_resize_box.gif 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-16_hua7f857b9f70ef40cf1a2b25db3d8bc35_560377_1024x0_resize_box.gif 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-16.gif&#34; width=&#34;1736&#34; height=&#34;769&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-16.gif&#34; data-size=&#34;1736x769&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-16_hua7f857b9f70ef40cf1a2b25db3d8bc35_560377_480x0_resize_box.gif 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-16_hua7f857b9f70ef40cf1a2b25db3d8bc35_560377_1024x0_resize_box.gif 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-16.gif&#34; width=&#34;1736&#34; height=&#34;769&#34; loading=&#34;lazy&#34;
 				alt=&#34;Click me to see animation&#34;&gt;
 		&lt;/a&gt;
 		
 		&lt;figcaption&gt;Click me to see animation&lt;/figcaption&gt;
 		
 	&lt;/figure&gt; &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-17.jpg&#34; data-size=&#34;1051x552&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-17_hue8f39cb830b111f5676f74261c177ba9_21130_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-17_hue8f39cb830b111f5676f74261c177ba9_21130_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-17.jpg&#34; width=&#34;1051&#34; height=&#34;552&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-17.jpg&#34; data-size=&#34;1051x552&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-17_hue8f39cb830b111f5676f74261c177ba9_21130_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-17_hue8f39cb830b111f5676f74261c177ba9_21130_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-17.jpg&#34; width=&#34;1051&#34; height=&#34;552&#34; loading=&#34;lazy&#34;
 				alt=&#34;&amp;nbsp;&#34;&gt;
 		&lt;/a&gt;
 		
@@ -257,18 +257,18 @@
 &lt;li&gt;From the Settings of your GitHub repository, create a secret named &lt;code&gt;AZURE_STORAGE_BLOB_SAS_CONNECTIONSTRING&lt;/code&gt;.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-18.jpg&#34; data-size=&#34;1344x1315&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-18_hu81fb38a9e4eb0d857fedfe6ad8a6b63e_144502_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-18_hu81fb38a9e4eb0d857fedfe6ad8a6b63e_144502_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-18.jpg&#34; width=&#34;1344&#34; height=&#34;1315&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-18.jpg&#34; data-size=&#34;1344x1315&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-18_hu81fb38a9e4eb0d857fedfe6ad8a6b63e_144502_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-18_hu81fb38a9e4eb0d857fedfe6ad8a6b63e_144502_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-18.jpg&#34; width=&#34;1344&#34; height=&#34;1315&#34; loading=&#34;lazy&#34;
 				alt=&#34;Create SAS and connection string&#34;&gt;
 		&lt;/a&gt;
 		
 		&lt;figcaption&gt;Create SAS and connection string&lt;/figcaption&gt;
 		
 	&lt;/figure&gt; &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-19.jpg&#34; data-size=&#34;1424x892&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-19_hu7eb12ce693e09550046076b69eeec561_69124_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-19_hu7eb12ce693e09550046076b69eeec561_69124_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-19.jpg&#34; width=&#34;1424&#34; height=&#34;892&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-19.jpg&#34; data-size=&#34;1424x892&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-19_hu7eb12ce693e09550046076b69eeec561_69124_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-19_hu7eb12ce693e09550046076b69eeec561_69124_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-19.jpg&#34; width=&#34;1424&#34; height=&#34;892&#34; loading=&#34;lazy&#34;
 				alt=&#34;Create secret in your GitHub repository&#34;&gt;
 		&lt;/a&gt;
 		
@@ -333,18 +333,18 @@
 &lt;li&gt;Check the box to &lt;code&gt;Enforce HTTPS&lt;/code&gt; however note that this really does take ~24 hours to generate the certificate.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-20.jpg&#34; data-size=&#34;1276x356&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-20_hu2fc4b8bb8c4d2bfd479f0e8a6b1991be_28663_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-20_hu2fc4b8bb8c4d2bfd479f0e8a6b1991be_28663_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-20.jpg&#34; width=&#34;1276&#34; height=&#34;356&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-20.jpg&#34; data-size=&#34;1276x356&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-20_hu2fc4b8bb8c4d2bfd479f0e8a6b1991be_28663_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-20_hu2fc4b8bb8c4d2bfd479f0e8a6b1991be_28663_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-20.jpg&#34; width=&#34;1276&#34; height=&#34;356&#34; loading=&#34;lazy&#34;
 				alt=&#34;GitHub repository settings&#34;&gt;
 		&lt;/a&gt;
 		
 		&lt;figcaption&gt;GitHub repository settings&lt;/figcaption&gt;
 		
 	&lt;/figure&gt; &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-21.jpg&#34; data-size=&#34;1424x892&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-21_hubf36c5012ab5c09dbe2db0bf298f396d_73874_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-21_hubf36c5012ab5c09dbe2db0bf298f396d_73874_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-21.jpg&#34; width=&#34;1424&#34; height=&#34;892&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-21.jpg&#34; data-size=&#34;1424x892&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-21_hubf36c5012ab5c09dbe2db0bf298f396d_73874_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-21_hubf36c5012ab5c09dbe2db0bf298f396d_73874_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-21.jpg&#34; width=&#34;1424&#34; height=&#34;892&#34; loading=&#34;lazy&#34;
 				alt=&#34;Configure GitHub repository for GitHub pages&#34;&gt;
 		&lt;/a&gt;
 		
@@ -375,6 +375,178 @@ PS C:\git\USERNAME.github.io-hugo&amp;gt; $null&amp;gt;&amp;gt;public\.nojekyll
 &lt;p&gt;I hope you found this helpful!&lt;/p&gt;
 &lt;p&gt;If you have any questions or feedback, drop a comment below, ping me on Twitter or find me in the &lt;a class=&#34;link&#34; href=&#34;https://winadmins.io&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;WinAdmins Discord&lt;/a&gt; (my handle is @acc)!&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>ConfigMgr hardware inventory troubleshooting</title>
+        <link>https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/</link>
+        <pubDate>Sun, 28 Oct 2018 00:00:00 +0100</pubDate>
+        
+        <guid>https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/</guid>
+        <description>&lt;img src="https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-01.jpg" alt="Featured image of post ConfigMgr hardware inventory troubleshooting" /&gt;&lt;p&gt;I&amp;rsquo;ve recently updated a site to 1806 and was keen to get all clients up to date too. Some machines targeted for the pre-production client were not upgrading. When I looked closer at one client I suspected client health because a hardware inventory had not been submitted in months.&lt;/p&gt;
+&lt;p&gt;Little did I know until recently, a lack of recent hardware inventory data could be a result of other things and client health is least likely to be the root cause. Instead of blindly reinstalling or manually upgrading the client, I wanted to try and understand what&amp;rsquo;s going on.&lt;/p&gt;
+&lt;p&gt;If you&amp;rsquo;re concerned about client health look at &lt;a class=&#34;link&#34; href=&#34;https://www.andersrodland.com/configmgr-client-health/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Anders Rodland&amp;rsquo;s ConfigMgr Client Health script&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;There are great articles already out there on this topic, here&amp;rsquo;s some I used to help me with this issue:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://blogs.technet.microsoft.com/scotts-it-blog/2015/04/23/hardware-inventory-in-depth-part-1/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Hardware Inventory – In-Depth (Part 1)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.enhansoft.com/blog/updated-troubleshoot-configmgr-hardware-inventory-issues&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Updated – Troubleshoot ConfigMgr Hardware Inventory Issues&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://blogs.technet.microsoft.com/sudheesn/2010/05/31/troubleshooting-sccm-part-ii-hardware-inventory/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Troubleshooting SCCM ..Part II (Hardware Inventory)&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://thesysadminchannel.com/troubleshooting-hardware-inventory-sccm-full-guide/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Solved: Troubleshooting Hardware Inventory in SCCM | Step By Step Guide&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;From the above I understood the problem could be:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Broken WMI repository on the client&lt;/li&gt;
+&lt;li&gt;BITS on the client is failing to POST the data to the MP&lt;/li&gt;
+&lt;li&gt;The INVENTORY_DATA_LOADER (?) refusing to handle the MIF because perhaps:
+&lt;ul&gt;
+&lt;li&gt;bad syntax&lt;/li&gt;
+&lt;li&gt;mismatch in versions&lt;/li&gt;
+&lt;li&gt;too big as it exceeds the MAX FILE SIZE&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;client-side&#34;&gt;Client side&lt;/h2&gt;
+&lt;p&gt;First port of call was InventoryAgent.log on the client. This log file records activity on the client about hardware and software inventory processes and heartbeat discovery. At the start of the cycle you will see the log tell us which action its performing and whether it&amp;rsquo;s a full, delta and resync report.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Action&lt;/th&gt;
+&lt;th&gt;Guid&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Hardware inventory&lt;/td&gt;
+&lt;td&gt;{00000000-0000-0000-0000-000000000001}&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Software inventory&lt;/td&gt;
+&lt;td&gt;{00000000-0000-0000-0000-000000000002}&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Data Discovery Record (DDR)&lt;/td&gt;
+&lt;td&gt;{00000000-0000-0000-0000-000000000003}&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;File collection&lt;/td&gt;
+&lt;td&gt;{00000000-0000-0000-0000-000000000010}&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-01.jpg&#34; data-size=&#34;1027x527&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-01_hub25f78b6c8b4fb440eba083135e45982_98737_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-01_hub25f78b6c8b4fb440eba083135e45982_98737_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-01.jpg&#34; width=&#34;1027&#34; height=&#34;527&#34; loading=&#34;lazy&#34;
+				alt=&#34;InventoryAgent.log&#34;&gt;
+		&lt;/a&gt;
+		
+		&lt;figcaption&gt;InventoryAgent.log&lt;/figcaption&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;Looking at InventoryAgent.log above you can see:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The hardware inventory action took place by looking at the GUID&lt;/li&gt;
+&lt;li&gt;The MajorVersion and MinorVersion; MajorVersion increments with every full or resync report and the MinorVersion increments with every delta report.
+&lt;ul&gt;
+&lt;li&gt;Full is triggered for the initial report&lt;/li&gt;
+&lt;li&gt;Delta is triggered for each hardware inventory after the full&lt;/li&gt;
+&lt;li&gt;Resync is triggered when either the client recognises there&amp;rsquo;s a mismatch in report versions when comparing what has previously been executed, or when SMS_INVENTORY_DATA_LOADER compares what the client has sent compared to what&amp;rsquo;s in the site database&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You can manually trigger a delta by running the Hardware Inventory Cycle in the Control Panel applet, however consider running the below if you want to force a full report. Also consider using &lt;a class=&#34;link&#34; href=&#34;https://recastsoftware.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Recast&amp;rsquo;s Right Click Tools&lt;/a&gt; which gives you this option from the console.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-CimInstance -Namespace &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;root\ccm\invagt&amp;#34;&lt;/span&gt; -ClassName &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;InventoryActionStatus&amp;#34;&lt;/span&gt; | 
+    Where-Object { $_.InventoryActionID &lt;span style=&#34;color:#f92672&#34;&gt;-eq&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;{00000000-0000-0000-0000-000000000001}&amp;#34;&lt;/span&gt; } | 
+        Remove-CimInstance
+
+$InvokeCimMethodSplat = @{
+    ComputerName = $env:COMPUTERNAME
+    Namespace = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;root\ccm&amp;#34;&lt;/span&gt;
+    Class = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_Client&amp;#34;&lt;/span&gt;
+    Arguments = @{
+        TriggerSchedule = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;{00000000-0000-0000-0000-000000000001}&amp;#34;&lt;/span&gt;
+    }
+}
+
+Invoke-CimMethod @InvokeCimMethodSplat
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Going back to the problem I was troubleshooting&amp;hellip; I was confident WMI was healthy because I could see various areas of WMI being successfully queried and at the end of the cycle I saw &amp;ldquo;Inventory: Successfully sent report. Destination:mp:MP_HinvEndpoint&amp;hellip;&amp;rdquo;. After seeing that, I figured let&amp;rsquo;s look server side.&lt;/p&gt;
+&lt;h2 id=&#34;server-side&#34;&gt;Server side&lt;/h2&gt;
+&lt;p&gt;The three key areas server side in this scenario are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;SMSINVENTORY_DATA_LOADER - dataldr.log&lt;/li&gt;
+&lt;li&gt;Management Point - MP_hinv.log&lt;/li&gt;
+&lt;li&gt;IIS - C:\inetpub\logs\LogFiles  - This is the default location for IIS logs, if everything else is default, your SCCM IIS logs should be in a sub folder named W3SVC1. You can find out yourself by looking in IIS Manager.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In all three of the above, I could not see any reference of the machine&amp;rsquo;s name, IP or GUID.&lt;/p&gt;
+&lt;h2 id=&#34;back-to-the-client&#34;&gt;Back to the client&lt;/h2&gt;
+&lt;p&gt;Looking back at the client, I could see a big queue of BITS job with mixed states: suspended, queued, error and transient_error. You can view the current BITS jobs using the below commands:&lt;/p&gt;
+&lt;p&gt;CMD&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;bitsadmin /list /allusers
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;PowerShell&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-BitsTransfer -AllUsers
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Get more information about the reason why they&amp;rsquo;re failing with:&lt;/p&gt;
+&lt;p&gt;CMD&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;bitsadmin /info JOBID /verbose
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;PowerShell&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-BitsTransfer -JobId JOBID | Select-Object *
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To reset all BITS jobs&amp;hellip; You will notice most of the jobs are owned by SYSTEM or NETWORK SERVICE, of which commands you run in any other context will not be successful at purging. A workaround could be to create a scheduled task that runs as SYSTEM to run either of the below:&lt;/p&gt;
+&lt;p&gt;CMD&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;bitsadmin /reset /allusers
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;PowerShell&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-BitsTransfer -AllUsers | Remove-BitsTransfer
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;However, an easier way posted by &lt;a class=&#34;link&#34; href=&#34;http://www.scconfigmgr.com/2014/03/28/how-to-reset-bits-transfer-queue/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Nickolaj Andersen&lt;/a&gt; works well:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;net stop BITS 
+ipconfig /flushdns 
+&lt;span style=&#34;color:#66d9ef&#34;&gt;ren&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;%ALLUSERSPROFILE%&lt;span style=&#34;color:#e6db74&#34;&gt;\Application Data\Microsoft\Network\Downloader\qmgr0.dat&amp;#34;&lt;/span&gt; qmgr0.dat.old 
+&lt;span style=&#34;color:#66d9ef&#34;&gt;ren&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;%ALLUSERSPROFILE%&lt;span style=&#34;color:#e6db74&#34;&gt;\Application Data\Microsoft\Network\Downloader\qmgr1.dat&amp;#34;&lt;/span&gt; qmgr1.dat.old
+net start BITS
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;For me, my problem was proxy related. I could see error messages referencing timeouts as the issue, I got this by looking at the verbose BITS jobs information.&lt;/p&gt;
+&lt;p&gt;After fixing that and clearing all jobs, I triggered another full hardware inventory report and quickly saw the BITS job leave the client with no hang ups.&lt;/p&gt;
+&lt;h2 id=&#34;back-to-the-server&#34;&gt;Back to the server&lt;/h2&gt;
+&lt;p&gt;Starting off with the IIS logs I saw successful POST from the client, so data uploaded OK.&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-02.jpg&#34; data-size=&#34;1027x527&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-02_hu52b2e100e8075b831144081d27c626e5_98611_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-02_hu52b2e100e8075b831144081d27c626e5_98611_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-02.jpg&#34; width=&#34;1027&#34; height=&#34;527&#34; loading=&#34;lazy&#34;
+				alt=&#34;IIS log file&#34;&gt;
+		&lt;/a&gt;
+		
+		&lt;figcaption&gt;IIS log file&lt;/figcaption&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;Next, I want see how the management point handles the report. In the below you can see that it successfully receives it in XML form and parses it into a MIF file, ready to then be parsed by the SMS_INVENTORY_DATA_LOADER and submitted in to the site database. Here, I had no issues.&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-03.jpg&#34; data-size=&#34;1134x310&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-03_hu84686cd0fa2de9575617ecd542a88a40_97721_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-03_hu84686cd0fa2de9575617ecd542a88a40_97721_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-03.jpg&#34; width=&#34;1134&#34; height=&#34;310&#34; loading=&#34;lazy&#34;
+				alt=&#34;MP_Hinv.log&#34;&gt;
+		&lt;/a&gt;
+		
+		&lt;figcaption&gt;MP_Hinv.log&lt;/figcaption&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;However I had issues with SMS_INVENTORY_DATA_LOADER. Nothing too complicated though, the MIF was just too big than the allowed MIF size. I guess where its a mature server, been in production in a while, accumulated a lot of &amp;ldquo;things&amp;rdquo;, as well as whatever additional hardware classes is configured client settings for hardware inventory. And the fact it&amp;rsquo;s a full report.&lt;/p&gt;
+&lt;p&gt;The below suggests my maximum allowed size is 1 byte, this was true just for the purpose of creating this screenshot.&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-04.jpg&#34; data-size=&#34;1026x523&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-04_hu05eb4c3f05d5178c137c278912f7f85f_112329_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-04_hu05eb4c3f05d5178c137c278912f7f85f_112329_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/sccm-hardware-inventory-troubleshooting-04.jpg&#34; width=&#34;1026&#34; height=&#34;523&#34; loading=&#34;lazy&#34;
+				alt=&#34;dataldr.log&#34;&gt;
+		&lt;/a&gt;
+		
+		&lt;figcaption&gt;dataldr.log&lt;/figcaption&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;On the primary site server I increased &lt;code&gt;HKLM\Software\Microsoft\SMS\Components\SMS_INVENTORY_DATA_LOADER\Max MIF Size&lt;/code&gt;. The decimal value is in bytes so set it to a value at your discretion, your best gauge is see how far over the limit you are by observing the error in dataldr.log and add a little more. Then restart the SMS_INVENTORY_DATA_LOADER component in Configuration Manager Service Manager (Monitoring &amp;gt; Component Status &amp;gt; Right click any component &amp;gt; Start &amp;gt; Configuration Manager Service Manager).&lt;/p&gt;
+&lt;p&gt;Then, some time later, the hardware scan timestamp for the device in the console updated and I could see the new data in the device&amp;rsquo;s Resource Manager.&lt;/p&gt;
+&lt;p&gt;I felt this was worth writing up because while the links I shared at the start cover most of what I&amp;rsquo;ve written, I wanted to show that BITS is a factor - the other posts don&amp;rsquo;t touch on this - and use it as a note for me in future. You may find you&amp;rsquo;ll only hit one or two of these issues when troubleshooting hardware inventory, unlikely to be all of them in one go like I almost did.&lt;/p&gt;
 </description>
         </item>
         

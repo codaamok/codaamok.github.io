@@ -9,13 +9,23 @@
     <lastBuildDate>Mon, 05 Oct 2020 21:04:10 +0100</lastBuildDate><atom:link href="https://adamcook.io/post/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Deploying Hugo websites in Azure for pennies or free on GitHub pages</title>
-      <link>https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/</link>
+      <link>https://adamcook.io/p/deploying-hugo/</link>
       <pubDate>Mon, 05 Oct 2020 21:04:10 +0100</pubDate>
       
-      <guid>https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/</guid>
+      <guid>https://adamcook.io/p/deploying-hugo/</guid>
       <description>I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub pages. I am now blogging at no extra cost other than domain renewal!
 In the process not only did I learn about Hugo, but I also looked at three ways to deploy / host my Hugo-made website.
 In this post I want to share with you what Hugo is, why I like it and those three ways that I learned on how to deploy a Hugo website - with Azure Static Web Apps (preview), Azure Blob storage and GitHub pages.</description>
+    </item>
+    
+    <item>
+      <title>ConfigMgr hardware inventory troubleshooting</title>
+      <link>https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/</link>
+      <pubDate>Sun, 28 Oct 2018 00:00:00 +0100</pubDate>
+      
+      <guid>https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/</guid>
+      <description>I&amp;rsquo;ve recently updated a site to 1806 and was keen to get all clients up to date too. Some machines targeted for the pre-production client were not upgrading. When I looked closer at one client I suspected client health because a hardware inventory had not been submitted in months.
+Little did I know until recently, a lack of recent hardware inventory data could be a result of other things and client health is least likely to be the root cause.</description>
     </item>
     
   </channel>
