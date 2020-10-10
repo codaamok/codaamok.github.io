@@ -8,11 +8,11 @@
         <language>en-us</language>
         <lastBuildDate>Mon, 05 Oct 2020 21:04:10 +0100</lastBuildDate><atom:link href="https://adamcook.io/index.xml" rel="self" type="application/rss+xml" /><item>
         <title>Deploying Hugo websites in Azure for pennies or free on GitHub pages</title>
-        <link>https://adamcook.io/p/deploying-hugo/</link>
+        <link>https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/</link>
         <pubDate>Mon, 05 Oct 2020 21:04:10 +0100</pubDate>
         
-        <guid>https://adamcook.io/p/deploying-hugo/</guid>
-        <description>&lt;img src="https://adamcook.io/p/deploying-hugo/images/cover.jpg" alt="Featured image of post Deploying Hugo websites in Azure for pennies or free on GitHub pages" /&gt;&lt;p&gt;I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub pages. I am now blogging at no extra cost other than domain renewal!&lt;/p&gt;
+        <guid>https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/</guid>
+        <description>&lt;img src="https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/cover.jpg" alt="Featured image of post Deploying Hugo websites in Azure for pennies or free on GitHub pages" /&gt;&lt;p&gt;I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub pages. I am now blogging at no extra cost other than domain renewal!&lt;/p&gt;
 &lt;p&gt;In the process not only did I learn about Hugo, but I also looked at three ways to deploy / host my Hugo-made website.&lt;/p&gt;
 &lt;p&gt;In this post I want to share with you what Hugo is, why I like it and those three ways that I learned on how to deploy a Hugo website - with Azure Static Web Apps (preview), Azure Blob storage and GitHub pages.&lt;/p&gt;
 &lt;p&gt;For Azure Static Web Apps and Blob storage, I will be using Cloudflare. I am also assuming you will be using your own domain name. It is not a big deal if you do not want to, just ignore details focused on defining custom domains and creating CNAME records.&lt;/p&gt;
@@ -68,18 +68,18 @@
 &lt;li&gt;Finalise the resource creation via &lt;code&gt;Review + create&lt;/code&gt; and if validation succeeds, click &lt;code&gt;Create&lt;/code&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-01.jpg&#34; data-size=&#34;1355x782&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-01_huef68e5499686639eded21e238ca19ac4_60604_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-01_huef68e5499686639eded21e238ca19ac4_60604_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-01.jpg&#34; width=&#34;1355&#34; height=&#34;782&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-01.jpg&#34; data-size=&#34;1355x782&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-01_huef68e5499686639eded21e238ca19ac4_60604_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-01_huef68e5499686639eded21e238ca19ac4_60604_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-01.jpg&#34; width=&#34;1355&#34; height=&#34;782&#34; loading=&#34;lazy&#34;
 				alt=&#34;Static Web App resource creation in Azure Portal&#34;&gt;
 		&lt;/a&gt;
 		
 		&lt;figcaption&gt;Static Web App resource creation in Azure Portal&lt;/figcaption&gt;
 		
 	&lt;/figure&gt; &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-02.jpg&#34; data-size=&#34;1920x1336&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-02_hu7c695f106d7069e463451d2ad9980f62_140124_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-02_hu7c695f106d7069e463451d2ad9980f62_140124_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-02.jpg&#34; width=&#34;1920&#34; height=&#34;1336&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-02.jpg&#34; data-size=&#34;1920x1336&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-02_hu7c695f106d7069e463451d2ad9980f62_140124_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-02_hu7c695f106d7069e463451d2ad9980f62_140124_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-02.jpg&#34; width=&#34;1920&#34; height=&#34;1336&#34; loading=&#34;lazy&#34;
 				alt=&#34;Static Web App resource creation in Azure Portal&#34;&gt;
 		&lt;/a&gt;
 		
@@ -90,18 +90,18 @@
     &gt;Azure/static-web-apps-deploy&lt;/a&gt; action. &lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/azure/static-web-apps/github-actions-workflow&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Here&amp;rsquo;s the link&lt;/a&gt; to the docs for said action.&lt;/p&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-03.jpg&#34; data-size=&#34;1461x759&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-03_hu4bc9b7cca5ad322bfd27609a7035dcab_68362_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-03_hu4bc9b7cca5ad322bfd27609a7035dcab_68362_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-03.jpg&#34; width=&#34;1461&#34; height=&#34;759&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-03.jpg&#34; data-size=&#34;1461x759&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-03_hu4bc9b7cca5ad322bfd27609a7035dcab_68362_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-03_hu4bc9b7cca5ad322bfd27609a7035dcab_68362_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-03.jpg&#34; width=&#34;1461&#34; height=&#34;759&#34; loading=&#34;lazy&#34;
 				alt=&#34;Creation of GitHub Actions workflow file by Azure&#34;&gt;
 		&lt;/a&gt;
 		
 		&lt;figcaption&gt;Creation of GitHub Actions workflow file by Azure&lt;/figcaption&gt;
 		
 	&lt;/figure&gt; &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-04.jpg&#34; data-size=&#34;1149x1040&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-04_hucccb004310e54a0a52abdb29283eac54_68189_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-04_hucccb004310e54a0a52abdb29283eac54_68189_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-04.jpg&#34; width=&#34;1149&#34; height=&#34;1040&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-04.jpg&#34; data-size=&#34;1149x1040&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-04_hucccb004310e54a0a52abdb29283eac54_68189_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-04_hucccb004310e54a0a52abdb29283eac54_68189_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-04.jpg&#34; width=&#34;1149&#34; height=&#34;1040&#34; loading=&#34;lazy&#34;
 				alt=&#34;Static Web Apps Deploy actions workflow file&#34;&gt;
 		&lt;/a&gt;
 		
@@ -110,16 +110,16 @@
 	&lt;/figure&gt;&lt;/p&gt;
 &lt;p&gt;At this point, you will be able to see your static website live available from a HTTPS endpoint.&lt;/p&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-05.jpg&#34; data-size=&#34;1347x796&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-05_hu07251bb2a0a18783554b85726ad821a5_72359_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-05_hu07251bb2a0a18783554b85726ad821a5_72359_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-05.jpg&#34; width=&#34;1347&#34; height=&#34;796&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-05.jpg&#34; data-size=&#34;1347x796&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-05_hu07251bb2a0a18783554b85726ad821a5_72359_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-05_hu07251bb2a0a18783554b85726ad821a5_72359_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-05.jpg&#34; width=&#34;1347&#34; height=&#34;796&#34; loading=&#34;lazy&#34;
 				alt=&#34;&amp;nbsp;&#34;&gt;
 		&lt;/a&gt;
 		
 	&lt;/figure&gt; &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-06.jpg&#34; data-size=&#34;1347x796&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-06_hu036db5a0fd2626900c29f94d277788a1_43289_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-06_hu036db5a0fd2626900c29f94d277788a1_43289_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-06.jpg&#34; width=&#34;1347&#34; height=&#34;796&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-06.jpg&#34; data-size=&#34;1347x796&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-06_hu036db5a0fd2626900c29f94d277788a1_43289_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-06_hu036db5a0fd2626900c29f94d277788a1_43289_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-06.jpg&#34; width=&#34;1347&#34; height=&#34;796&#34; loading=&#34;lazy&#34;
 				alt=&#34;&amp;nbsp;&#34;&gt;
 		&lt;/a&gt;
 		
@@ -129,18 +129,18 @@
 &lt;li&gt;After that, configure the static web app resource to point to your domain.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-07.jpg&#34; data-size=&#34;1347x796&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-07_hu36c7c823f442b2dfc21dc0999ad1e7c7_72721_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-07_hu36c7c823f442b2dfc21dc0999ad1e7c7_72721_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-07.jpg&#34; width=&#34;1347&#34; height=&#34;796&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-07.jpg&#34; data-size=&#34;1347x796&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-07_hu36c7c823f442b2dfc21dc0999ad1e7c7_72721_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-07_hu36c7c823f442b2dfc21dc0999ad1e7c7_72721_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-07.jpg&#34; width=&#34;1347&#34; height=&#34;796&#34; loading=&#34;lazy&#34;
 				alt=&#34;Creating a CNAME record in Cloudflare&#34;&gt;
 		&lt;/a&gt;
 		
 		&lt;figcaption&gt;Creating a CNAME record in Cloudflare&lt;/figcaption&gt;
 		
 	&lt;/figure&gt; &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-08.jpg&#34; data-size=&#34;1347x796&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-08_huf01b0a15de4e9a5a6ddfe266846e1f03_75865_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-08_huf01b0a15de4e9a5a6ddfe266846e1f03_75865_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-08.jpg&#34; width=&#34;1347&#34; height=&#34;796&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-08.jpg&#34; data-size=&#34;1347x796&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-08_huf01b0a15de4e9a5a6ddfe266846e1f03_75865_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-08_huf01b0a15de4e9a5a6ddfe266846e1f03_75865_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-08.jpg&#34; width=&#34;1347&#34; height=&#34;796&#34; loading=&#34;lazy&#34;
 				alt=&#34;Add custom domain to the static web app resource&#34;&gt;
 		&lt;/a&gt;
 		
@@ -159,18 +159,18 @@
 &lt;li&gt;Fill out the necessary information and click the usual &lt;code&gt;Review + create&lt;/code&gt; and &lt;code&gt;Create&lt;/code&gt; after validation&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-09.jpg&#34; data-size=&#34;1347x796&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-09_hu8e02045dd7fb5b90e83e8f249857e484_62652_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-09_hu8e02045dd7fb5b90e83e8f249857e484_62652_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-09.jpg&#34; width=&#34;1347&#34; height=&#34;796&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-09.jpg&#34; data-size=&#34;1347x796&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-09_hu8e02045dd7fb5b90e83e8f249857e484_62652_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-09_hu8e02045dd7fb5b90e83e8f249857e484_62652_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-09.jpg&#34; width=&#34;1347&#34; height=&#34;796&#34; loading=&#34;lazy&#34;
 				alt=&#34;Storage account creation in Azure Portal&#34;&gt;
 		&lt;/a&gt;
 		
 		&lt;figcaption&gt;Storage account creation in Azure Portal&lt;/figcaption&gt;
 		
 	&lt;/figure&gt; &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-10.jpg&#34; data-size=&#34;1347x1038&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-10_hu79c8dd91c5acc0a3b7025b8d45ccf7fe_97251_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-10_hu79c8dd91c5acc0a3b7025b8d45ccf7fe_97251_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-10.jpg&#34; width=&#34;1347&#34; height=&#34;1038&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-10.jpg&#34; data-size=&#34;1347x1038&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-10_hu79c8dd91c5acc0a3b7025b8d45ccf7fe_97251_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-10_hu79c8dd91c5acc0a3b7025b8d45ccf7fe_97251_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-10.jpg&#34; width=&#34;1347&#34; height=&#34;1038&#34; loading=&#34;lazy&#34;
 				alt=&#34;Storage account creation in Azure Portal&#34;&gt;
 		&lt;/a&gt;
 		
@@ -186,18 +186,18 @@
 &lt;li&gt;Wait a little bit (a couple of minutes?), then back in the &amp;ldquo;Custom domain&amp;rdquo; blade of the Azure portal, click Save and the domain should validate OK.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-11.jpg&#34; data-size=&#34;1263x767&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-11_hu090a302355deb929678accc689402a5f_78521_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-11_hu090a302355deb929678accc689402a5f_78521_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-11.jpg&#34; width=&#34;1263&#34; height=&#34;767&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-11.jpg&#34; data-size=&#34;1263x767&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-11_hu090a302355deb929678accc689402a5f_78521_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-11_hu090a302355deb929678accc689402a5f_78521_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-11.jpg&#34; width=&#34;1263&#34; height=&#34;767&#34; loading=&#34;lazy&#34;
 				alt=&#34;Enable the storage account to be a static website&#34;&gt;
 		&lt;/a&gt;
 		
 		&lt;figcaption&gt;Enable the storage account to be a static website&lt;/figcaption&gt;
 		
 	&lt;/figure&gt; &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-12.jpg&#34; data-size=&#34;1263x767&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-12_hu2d7ff0fa065962dec3854ffea804ecf3_63859_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-12_hu2d7ff0fa065962dec3854ffea804ecf3_63859_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-12.jpg&#34; width=&#34;1263&#34; height=&#34;767&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-12.jpg&#34; data-size=&#34;1263x767&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-12_hu2d7ff0fa065962dec3854ffea804ecf3_63859_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-12_hu2d7ff0fa065962dec3854ffea804ecf3_63859_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-12.jpg&#34; width=&#34;1263&#34; height=&#34;767&#34; loading=&#34;lazy&#34;
 				alt=&#34;Change the $web container access policy to Container&#34;&gt;
 		&lt;/a&gt;
 		
@@ -205,18 +205,18 @@
 		
 	&lt;/figure&gt;
 &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-14.jpg&#34; data-size=&#34;1263x767&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-14_hu090a302355deb929678accc689402a5f_89995_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-14_hu090a302355deb929678accc689402a5f_89995_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-14.jpg&#34; width=&#34;1263&#34; height=&#34;767&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-14.jpg&#34; data-size=&#34;1263x767&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-14_hu090a302355deb929678accc689402a5f_89995_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-14_hu090a302355deb929678accc689402a5f_89995_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-14.jpg&#34; width=&#34;1263&#34; height=&#34;767&#34; loading=&#34;lazy&#34;
 				alt=&#34;Enter your custom domain&#34;&gt;
 		&lt;/a&gt;
 		
 		&lt;figcaption&gt;Enter your custom domain&lt;/figcaption&gt;
 		
 	&lt;/figure&gt; &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-15.jpg&#34; data-size=&#34;1444x857&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-15_hu980c2ad6e5b7f99e41bdc9c42a04417c_81683_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-15_hu980c2ad6e5b7f99e41bdc9c42a04417c_81683_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-15.jpg&#34; width=&#34;1444&#34; height=&#34;857&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-15.jpg&#34; data-size=&#34;1444x857&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-15_hu980c2ad6e5b7f99e41bdc9c42a04417c_81683_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-15_hu980c2ad6e5b7f99e41bdc9c42a04417c_81683_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-15.jpg&#34; width=&#34;1444&#34; height=&#34;857&#34; loading=&#34;lazy&#34;
 				alt=&#34;Creating a CNAME record in Cloudflare&#34;&gt;
 		&lt;/a&gt;
 		
@@ -234,18 +234,18 @@
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Upload &lt;code&gt;index.html&lt;/code&gt; to the &lt;code&gt;$web&lt;/code&gt; container and check it out! It&amp;rsquo;s worth pointing out that the &lt;a class=&#34;link&#34; href=&#34;https://marketplace.visualstudio.com/items?itemName=ms-azuretools.vscode-azurestorage&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Azure Storage Visual Studio Code extension&lt;/a&gt; lets you modify files directly in your Blob container.&lt;/p&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-16.gif&#34; data-size=&#34;1736x769&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-16_hua7f857b9f70ef40cf1a2b25db3d8bc35_560377_480x0_resize_box.gif 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-16_hua7f857b9f70ef40cf1a2b25db3d8bc35_560377_1024x0_resize_box.gif 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-16.gif&#34; width=&#34;1736&#34; height=&#34;769&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-16.gif&#34; data-size=&#34;1736x769&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-16_hua7f857b9f70ef40cf1a2b25db3d8bc35_560377_480x0_resize_box.gif 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-16_hua7f857b9f70ef40cf1a2b25db3d8bc35_560377_1024x0_resize_box.gif 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-16.gif&#34; width=&#34;1736&#34; height=&#34;769&#34; loading=&#34;lazy&#34;
 				alt=&#34;Click me to see animation&#34;&gt;
 		&lt;/a&gt;
 		
 		&lt;figcaption&gt;Click me to see animation&lt;/figcaption&gt;
 		
 	&lt;/figure&gt; &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-17.jpg&#34; data-size=&#34;1051x552&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-17_hue8f39cb830b111f5676f74261c177ba9_21130_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-17_hue8f39cb830b111f5676f74261c177ba9_21130_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-17.jpg&#34; width=&#34;1051&#34; height=&#34;552&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-17.jpg&#34; data-size=&#34;1051x552&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-17_hue8f39cb830b111f5676f74261c177ba9_21130_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-17_hue8f39cb830b111f5676f74261c177ba9_21130_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-17.jpg&#34; width=&#34;1051&#34; height=&#34;552&#34; loading=&#34;lazy&#34;
 				alt=&#34;&amp;nbsp;&#34;&gt;
 		&lt;/a&gt;
 		
@@ -257,18 +257,18 @@
 &lt;li&gt;From the Settings of your GitHub repository, create a secret named &lt;code&gt;AZURE_STORAGE_BLOB_SAS_CONNECTIONSTRING&lt;/code&gt;.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-18.jpg&#34; data-size=&#34;1344x1315&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-18_hu81fb38a9e4eb0d857fedfe6ad8a6b63e_144502_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-18_hu81fb38a9e4eb0d857fedfe6ad8a6b63e_144502_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-18.jpg&#34; width=&#34;1344&#34; height=&#34;1315&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-18.jpg&#34; data-size=&#34;1344x1315&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-18_hu81fb38a9e4eb0d857fedfe6ad8a6b63e_144502_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-18_hu81fb38a9e4eb0d857fedfe6ad8a6b63e_144502_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-18.jpg&#34; width=&#34;1344&#34; height=&#34;1315&#34; loading=&#34;lazy&#34;
 				alt=&#34;Create SAS and connection string&#34;&gt;
 		&lt;/a&gt;
 		
 		&lt;figcaption&gt;Create SAS and connection string&lt;/figcaption&gt;
 		
 	&lt;/figure&gt; &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-19.jpg&#34; data-size=&#34;1424x892&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-19_hu7eb12ce693e09550046076b69eeec561_69124_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-19_hu7eb12ce693e09550046076b69eeec561_69124_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-19.jpg&#34; width=&#34;1424&#34; height=&#34;892&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-19.jpg&#34; data-size=&#34;1424x892&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-19_hu7eb12ce693e09550046076b69eeec561_69124_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-19_hu7eb12ce693e09550046076b69eeec561_69124_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-19.jpg&#34; width=&#34;1424&#34; height=&#34;892&#34; loading=&#34;lazy&#34;
 				alt=&#34;Create secret in your GitHub repository&#34;&gt;
 		&lt;/a&gt;
 		
@@ -333,18 +333,18 @@
 &lt;li&gt;Check the box to &lt;code&gt;Enforce HTTPS&lt;/code&gt; however note that this really does take ~24 hours to generate the certificate.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;&lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-20.jpg&#34; data-size=&#34;1276x356&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-20_hu2fc4b8bb8c4d2bfd479f0e8a6b1991be_28663_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-20_hu2fc4b8bb8c4d2bfd479f0e8a6b1991be_28663_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-20.jpg&#34; width=&#34;1276&#34; height=&#34;356&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-20.jpg&#34; data-size=&#34;1276x356&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-20_hu2fc4b8bb8c4d2bfd479f0e8a6b1991be_28663_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-20_hu2fc4b8bb8c4d2bfd479f0e8a6b1991be_28663_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-20.jpg&#34; width=&#34;1276&#34; height=&#34;356&#34; loading=&#34;lazy&#34;
 				alt=&#34;GitHub repository settings&#34;&gt;
 		&lt;/a&gt;
 		
 		&lt;figcaption&gt;GitHub repository settings&lt;/figcaption&gt;
 		
 	&lt;/figure&gt; &lt;figure&gt;
-		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-21.jpg&#34; data-size=&#34;1424x892&#34;&gt;
-			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-21_hubf36c5012ab5c09dbe2db0bf298f396d_73874_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo/images/staticwebapp-21_hubf36c5012ab5c09dbe2db0bf298f396d_73874_1024x0_resize_q75_box.jpg 1024w&#34;
-				src=&#34;https://adamcook.io/p/deploying-hugo/images/staticwebapp-21.jpg&#34; width=&#34;1424&#34; height=&#34;892&#34; loading=&#34;lazy&#34;
+		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-21.jpg&#34; data-size=&#34;1424x892&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-21_hubf36c5012ab5c09dbe2db0bf298f396d_73874_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-21_hubf36c5012ab5c09dbe2db0bf298f396d_73874_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-21.jpg&#34; width=&#34;1424&#34; height=&#34;892&#34; loading=&#34;lazy&#34;
 				alt=&#34;Configure GitHub repository for GitHub pages&#34;&gt;
 		&lt;/a&gt;
 		
