@@ -390,7 +390,8 @@ PS C:\git\USERNAME.github.io-hugo&amp;gt; $null&amp;gt;&amp;gt;public\.nojekyll
 &lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
 &lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;In this post I&amp;rsquo;ll cover ways you can control bandwidth for Configuration Manager using the rate limit config available for each distribution point. Outside of rate limits, a modern approach to traffic shaping content distribution to DPs is LEDBAT. [Read this great write up](&lt;a href=&#34;https://deploymentresearch.com/Research/Post/657/LEDBAT-with-ConfigMgr-Pure-Love-By-Daniel-Olsson%5D&#34;&gt;https://deploymentresearch.com/Research/Post/657/LEDBAT-with-ConfigMgr-Pure-Love-By-Daniel-Olsson]&lt;/a&gt; by &lt;a class=&#34;link&#34; href=&#34;https://deploymentresearch.com/Research/Post/657/LEDBAT-with-ConfigMgr-Pure-Love-By-Daniel-Olsson&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+&lt;p&gt;In this post I&amp;rsquo;ll cover ways you can control bandwidth for Configuration Manager using the rate limit config available for each distribution point. Outside of rate limits, a modern approach to traffic shaping content distribution to DPs is LEDBAT. &lt;a class=&#34;link&#34; href=&#34;https://deploymentresearch.com/Research/Post/657/LEDBAT-with-ConfigMgr-Pure-Love-By-Daniel-Olsson&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Read this great write up&lt;/a&gt; by &lt;a class=&#34;link&#34; href=&#34;https://deploymentresearch.com/Research/Post/657/LEDBAT-with-ConfigMgr-Pure-Love-By-Daniel-Olsson&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Daniel Olsson&lt;/a&gt; for more LEDBAT info in this use case.&lt;/p&gt;
 &lt;p&gt;&lt;figure&gt;
 		&lt;a href=&#34;https://adamcook.io/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-01.jpg&#34; data-size=&#34;688x636&#34;&gt;
