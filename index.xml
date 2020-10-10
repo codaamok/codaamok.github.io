@@ -12,7 +12,11 @@
         <pubDate>Mon, 05 Oct 2020 21:04:10 +0100</pubDate>
         
         <guid>https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/</guid>
-        <description>&lt;img src="https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/cover.jpg" alt="Featured image of post Deploying Hugo websites in Azure for pennies or free on GitHub pages" /&gt;&lt;ul&gt;
+        <description>&lt;img src="https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/cover.jpg" alt="Featured image of post Deploying Hugo websites in Azure for pennies or free on GitHub pages" /&gt;&lt;p&gt;I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub pages. I am now blogging at no extra cost other than domain renewal!&lt;/p&gt;
+&lt;p&gt;In the process not only did I learn about Hugo, but I also looked at three ways to deploy / host my Hugo-made website.&lt;/p&gt;
+&lt;p&gt;In this post I want to share with you what Hugo is, why I like it and those three ways that I learned on how to deploy a Hugo website - with Azure Static Web Apps (preview), Azure Blob storage and GitHub pages.&lt;/p&gt;
+&lt;p&gt;For Azure Static Web Apps and Blob storage, I will be using Cloudflare. I am also assuming you will be using your own domain name. It is not a big deal if you do not want to, just ignore details focused on defining custom domains and creating CNAME records.&lt;/p&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#what-is-this-hugo-thing&#34; &gt;What is this Hugo thing?&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#prerequisites&#34; &gt;Prerequisites&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#azure-static-web-apps&#34; &gt;Azure Static Web Apps&lt;/a&gt;&lt;/li&gt;
@@ -20,10 +24,6 @@
 &lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#github-pages&#34; &gt;GitHub pages&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#that-is-a-wrap&#34; &gt;That is a wrap&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub pages. I am now blogging at no extra cost other than domain renewal!&lt;/p&gt;
-&lt;p&gt;In the process not only did I learn about Hugo, but I also looked at three ways to deploy / host my Hugo-made website.&lt;/p&gt;
-&lt;p&gt;In this post I want to share with you what Hugo is, why I like it and those three ways that I learned on how to deploy a Hugo website - with Azure Static Web Apps (preview), Azure Blob storage and GitHub pages.&lt;/p&gt;
-&lt;p&gt;For Azure Static Web Apps and Blob storage, I will be using Cloudflare. I am also assuming you will be using your own domain name. It is not a big deal if you do not want to, just ignore details focused on defining custom domains and creating CNAME records.&lt;/p&gt;
 &lt;h2 id=&#34;what-is-this-hugo-thing&#34;&gt;What is this Hugo thing?&lt;/h2&gt;
 &lt;p&gt;Hugo is a static site generator.&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;continues to stare blankly at the screen&lt;/em&gt;&lt;/p&gt;

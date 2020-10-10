@@ -13,8 +13,9 @@
       <pubDate>Mon, 05 Oct 2020 21:04:10 +0100</pubDate>
       
       <guid>https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/</guid>
-      <description>What is this Hugo thing? Prerequisites Azure Static Web Apps Azure Blob storage GitHub pages That is a wrap  I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub pages. I am now blogging at no extra cost other than domain renewal!
-In the process not only did I learn about Hugo, but I also looked at three ways to deploy / host my Hugo-made website.</description>
+      <description>I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub pages. I am now blogging at no extra cost other than domain renewal!
+In the process not only did I learn about Hugo, but I also looked at three ways to deploy / host my Hugo-made website.
+In this post I want to share with you what Hugo is, why I like it and those three ways that I learned on how to deploy a Hugo website - with Azure Static Web Apps (preview), Azure Blob storage and GitHub pages.</description>
     </item>
     
     <item>

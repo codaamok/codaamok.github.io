@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html lang="en-us"><head>
     <meta charset='utf-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='What is this Hugo thing? Prerequisites Azure Static Web Apps Azure Blob storage GitHub pages That is a wrap  I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub pages. I am now blogging at no extra cost other than domain renewal!
-In the process not only did I learn about Hugo, but I also looked at three ways to deploy / host my Hugo-made website.'><title>Deploying Hugo websites in Azure for pennies or free on GitHub pages</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub pages. I am now blogging at no extra cost other than domain renewal!
+In the process not only did I learn about Hugo, but I also looked at three ways to deploy / host my Hugo-made website.
+In this post I want to share with you what Hugo is, why I like it and those three ways that I learned on how to deploy a Hugo website - with Azure Static Web Apps (preview), Azure Blob storage and GitHub pages.'><title>Deploying Hugo websites in Azure for pennies or free on GitHub pages</title>
     
     <link rel='canonical' href='https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/'>
 
 <link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Deploying Hugo websites in Azure for pennies or free on GitHub pages'>
-<meta property='og:description' content='What is this Hugo thing? Prerequisites Azure Static Web Apps Azure Blob storage GitHub pages That is a wrap  I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub pages. I am now blogging at no extra cost other than domain renewal!
-In the process not only did I learn about Hugo, but I also looked at three ways to deploy / host my Hugo-made website.'>
+<meta property='og:description' content='I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub pages. I am now blogging at no extra cost other than domain renewal!
+In the process not only did I learn about Hugo, but I also looked at three ways to deploy / host my Hugo-made website.
+In this post I want to share with you what Hugo is, why I like it and those three ways that I learned on how to deploy a Hugo website - with Azure Static Web Apps (preview), Azure Blob storage and GitHub pages.'>
 <meta property='og:url' content='https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/'>
 <meta property='og:site_name' content='Adam Cook'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2020-10-05T21:04:10&#43;01:00'/><meta property='article:modified_time' content='2020-10-05T21:04:10&#43;01:00'/><meta property='og:image' content='https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/cover.jpg' />
 <meta name="twitter:site" content="codaamok"><meta name="twitter:title" content="Deploying Hugo websites in Azure for pennies or free on GitHub pages">
-<meta name="twitter:description" content="What is this Hugo thing? Prerequisites Azure Static Web Apps Azure Blob storage GitHub pages That is a wrap  I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub pages. I am now blogging at no extra cost other than domain renewal!
-In the process not only did I learn about Hugo, but I also looked at three ways to deploy / host my Hugo-made website."><meta name="twitter:card" content="summary">
+<meta name="twitter:description" content="I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub pages. I am now blogging at no extra cost other than domain renewal!
+In the process not only did I learn about Hugo, but I also looked at three ways to deploy / host my Hugo-made website.
+In this post I want to share with you what Hugo is, why I like it and those three ways that I learned on how to deploy a Hugo website - with Azure Static Web Apps (preview), Azure Blob storage and GitHub pages."><meta name="twitter:card" content="summary">
 	<meta name="twitter:image" content='https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/cover.jpg' /></head><body class="">
         <div class="container flex on-phone--column align-items--flex-start extended article-page with-toolbar">
             <aside class="sidebar left-sidebar sticky">
@@ -246,7 +249,11 @@ In the process not only did I learn about Hugo, but I also looked at three ways 
 </header>
 
     <section class="article-content">
-    <ul>
+    <p>I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub pages. I am now blogging at no extra cost other than domain renewal!</p>
+<p>In the process not only did I learn about Hugo, but I also looked at three ways to deploy / host my Hugo-made website.</p>
+<p>In this post I want to share with you what Hugo is, why I like it and those three ways that I learned on how to deploy a Hugo website - with Azure Static Web Apps (preview), Azure Blob storage and GitHub pages.</p>
+<p>For Azure Static Web Apps and Blob storage, I will be using Cloudflare. I am also assuming you will be using your own domain name. It is not a big deal if you do not want to, just ignore details focused on defining custom domains and creating CNAME records.</p>
+<ul>
 <li><a class="link" href="#what-is-this-hugo-thing" >What is this Hugo thing?</a></li>
 <li><a class="link" href="#prerequisites" >Prerequisites</a></li>
 <li><a class="link" href="#azure-static-web-apps" >Azure Static Web Apps</a></li>
@@ -254,10 +261,6 @@ In the process not only did I learn about Hugo, but I also looked at three ways 
 <li><a class="link" href="#github-pages" >GitHub pages</a></li>
 <li><a class="link" href="#that-is-a-wrap" >That is a wrap</a></li>
 </ul>
-<p>I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub pages. I am now blogging at no extra cost other than domain renewal!</p>
-<p>In the process not only did I learn about Hugo, but I also looked at three ways to deploy / host my Hugo-made website.</p>
-<p>In this post I want to share with you what Hugo is, why I like it and those three ways that I learned on how to deploy a Hugo website - with Azure Static Web Apps (preview), Azure Blob storage and GitHub pages.</p>
-<p>For Azure Static Web Apps and Blob storage, I will be using Cloudflare. I am also assuming you will be using your own domain name. It is not a big deal if you do not want to, just ignore details focused on defining custom domains and creating CNAME records.</p>
 <h2 id="what-is-this-hugo-thing">What is this Hugo thing?</h2>
 <p>Hugo is a static site generator.</p>
 <p><em>continues to stare blankly at the screen</em></p>
