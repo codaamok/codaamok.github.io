@@ -18,32 +18,5 @@ In the process not only did I learn about Hugo, but I also looked at three ways 
 In this post I want to share with you what Hugo is, why I like it and those three ways that I learned on how to deploy a Hugo website - with Azure Static Web Apps (preview), Azure Blob storage and GitHub pages.</description>
     </item>
     
-    <item>
-      <title>Post 3</title>
-      <link>https://adamcook.io/p/post-3/</link>
-      <pubDate>Sat, 03 Oct 2020 18:20:05 +0100</pubDate>
-      
-      <guid>https://adamcook.io/p/post-3/</guid>
-      <description>Hello world </description>
-    </item>
-    
-    <item>
-      <title>Post 2</title>
-      <link>https://adamcook.io/p/post-2/</link>
-      <pubDate>Fri, 02 Oct 2020 18:20:05 +0100</pubDate>
-      
-      <guid>https://adamcook.io/p/post-2/</guid>
-      <description>Hello world </description>
-    </item>
-    
-    <item>
-      <title>Post 1</title>
-      <link>https://adamcook.io/p/post-1/</link>
-      <pubDate>Thu, 01 Oct 2020 18:20:05 +0100</pubDate>
-      
-      <guid>https://adamcook.io/p/post-1/</guid>
-      <description>Hello world </description>
-    </item>
-    
   </channel>
 </rss>

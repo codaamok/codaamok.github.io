@@ -377,33 +377,6 @@ PS C:\git\USERNAME.github.io-hugo&amp;gt; $null&amp;gt;&amp;gt;public\.nojekyll
     &gt;WinAdmins Discord&lt;/a&gt; (my handle is @acc)!&lt;/p&gt;
 </description>
         </item>
-        <item>
-        <title>Post 3</title>
-        <link>https://adamcook.io/p/post-3/</link>
-        <pubDate>Sat, 03 Oct 2020 18:20:05 +0100</pubDate>
-        
-        <guid>https://adamcook.io/p/post-3/</guid>
-        <description>&lt;h2 id=&#34;hello-world&#34;&gt;Hello world&lt;/h2&gt;
-</description>
-        </item>
-        <item>
-        <title>Post 2</title>
-        <link>https://adamcook.io/p/post-2/</link>
-        <pubDate>Fri, 02 Oct 2020 18:20:05 +0100</pubDate>
-        
-        <guid>https://adamcook.io/p/post-2/</guid>
-        <description>&lt;h2 id=&#34;hello-world&#34;&gt;Hello world&lt;/h2&gt;
-</description>
-        </item>
-        <item>
-        <title>Post 1</title>
-        <link>https://adamcook.io/p/post-1/</link>
-        <pubDate>Thu, 01 Oct 2020 18:20:05 +0100</pubDate>
-        
-        <guid>https://adamcook.io/p/post-1/</guid>
-        <description>&lt;h2 id=&#34;hello-world&#34;&gt;Hello world&lt;/h2&gt;
-</description>
-        </item>
         
     </channel>
 </rss>
