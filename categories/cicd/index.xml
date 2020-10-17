@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Azure on Adam Cook</title>
-    <link>https://adamcook.io/categories/azure/</link>
-    <description>Recent content in Azure on Adam Cook</description>
+    <title>CI/CD on Adam Cook</title>
+    <link>https://adamcook.io/categories/cicd/</link>
+    <description>Recent content in CI/CD on Adam Cook</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 05 Oct 2020 21:04:10 +0100</lastBuildDate><atom:link href="https://adamcook.io/categories/azure/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 05 Oct 2020 21:04:10 +0100</lastBuildDate><atom:link href="https://adamcook.io/categories/cicd/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Deploying Hugo Websites in Azure for Pennies or Free on GitHub Pages</title>
       <link>https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/</link>

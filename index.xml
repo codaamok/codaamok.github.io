@@ -12,17 +12,18 @@
         <pubDate>Mon, 05 Oct 2020 21:04:10 +0100</pubDate>
         
         <guid>https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/</guid>
-        <description>&lt;img src="https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/cover.jpg" alt="Featured image of post Deploying Hugo Websites in Azure for Pennies or Free on GitHub Pages" /&gt;&lt;p&gt;I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub pages. I am now blogging at no extra cost other than domain renewal!&lt;/p&gt;
+        <description>&lt;img src="https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/cover.jpg" alt="Featured image of post Deploying Hugo Websites in Azure for Pennies or Free on GitHub Pages" /&gt;&lt;p&gt;I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub Pages. I am now blogging at no extra cost other than domain renewal!&lt;/p&gt;
 &lt;p&gt;In the process not only did I learn about Hugo, but I also looked at three ways to deploy / host my Hugo-made website.&lt;/p&gt;
-&lt;p&gt;In this post I want to share with you what Hugo is, why I like it and those three ways that I learned on how to deploy a Hugo website - with Azure Static Web Apps (preview), Azure Blob storage and GitHub pages.&lt;/p&gt;
+&lt;p&gt;In this post I want to share with you what Hugo is, why I like it and those three ways that I learned on how to deploy a Hugo website - with Azure Static Web Apps (preview), Azure Blob storage and GitHub Pages.&lt;/p&gt;
 &lt;p&gt;For Azure Static Web Apps and Blob storage, I will be using Cloudflare. I am also assuming you will be using your own domain name. It is not a big deal if you do not want to, just ignore details focused on defining custom domains and creating CNAME records.&lt;/p&gt;
+&lt;p&gt;There will also be some assumptions that you are somewhat familiar with using GitHub Actions. If you are looking for an introduction to using GitHub Actions, check out my &lt;a class=&#34;link&#34; href=&#34;https://adamcook.io/p/getting-your-powershell-code-into-production-using-github-actions/&#34; &gt;WinAdmins virtual user group event session&lt;/a&gt;.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#what-is-this-hugo-thing&#34; &gt;What is this Hugo thing?&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#prerequisites&#34; &gt;Prerequisites&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#azure-static-web-apps&#34; &gt;Azure Static Web Apps&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#azure-blob-storage&#34; &gt;Azure Blob storage&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#github-pages&#34; &gt;GitHub pages&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#that-is-a-wrap&#34; &gt;That is a wrap&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#github-pages&#34; &gt;GitHub Pages&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#closing-comments&#34; &gt;Closing comments&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;h2 id=&#34;what-is-this-hugo-thing&#34;&gt;What is this Hugo thing?&lt;/h2&gt;
 &lt;p&gt;Hugo is a static site generator.&lt;/p&gt;
@@ -34,8 +35,8 @@
     &gt;Download one&lt;/a&gt;, drop it in the &lt;code&gt;/themes&lt;/code&gt; directory amd update &lt;code&gt;config.toml&lt;/code&gt; a little.&lt;/p&gt;
 &lt;p&gt;With static websites, no runtime is needed to run your website. Not only does this open up your hosting opportunities, performance is also another great benefit. You do not need a hosting package that sit on nginx or Apache, running PHP or whatever. For example, you can host on &lt;a class=&#34;link&#34; href=&#34;https://azure.microsoft.com/en-gb/services/storage/Blobs/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Azure Blob storage&lt;/a&gt; or &lt;a class=&#34;link&#34; href=&#34;https://pages.github.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;GitHub pages&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;GitHub pages is free. It also lets you use your own domain and offers free SSL certificates via LetsEncrypt. Azure Blob Storage isn&amp;rsquo;t quite free but it costs pennies. It is £0.0144 per GB (in UK South) of storage and the first 5GB of bandwidth from this zone is free. You can do this on many more platforms too, such as Amazon S3, Netlify, Heroku, GitLab Pages, Google Cloud Storage and more.&lt;/p&gt;
+    &gt;GitHub Pages&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;GitHub Pages is free. It also lets you use your own domain and offers free SSL certificates via LetsEncrypt. Azure Blob Storage isn&amp;rsquo;t quite free but it costs pennies. It is £0.0144 per GB (in UK South) of storage and the first 5GB of bandwidth from this zone is free. You can do this on many more platforms too, such as Amazon S3, Netlify, Heroku, GitLab Pages, Google Cloud Storage and more.&lt;/p&gt;
 &lt;p&gt;I am all-for ditching WordPress. Over the last few years I have grown more comfortable with Git and working on Azure and GitHub. If you relate to that or are enticed by any of the benefits, I highly recommend you at least give it a go! I would be more than happy to help, too, just get hold of me.&lt;/p&gt;
 &lt;p&gt;Here are some resources I used to learn Hugo:&lt;/p&gt;
 &lt;ul&gt;
@@ -314,22 +315,24 @@
 &lt;/ol&gt;
 &lt;p&gt;Watch the status of the GitHub action at &lt;code&gt;https://github.com/YOUR_USERNAME/YOUR_REPO/actions&lt;/code&gt;. If it ran successfully without any errors, you will see your Hugo website live at your domain!&lt;/p&gt;
 &lt;p&gt;If you want to make any more changes to your website, that&amp;rsquo;s OK! With the above workflow in your repo, every time you commit to master, the workflow will be triggered and it will upload everything that gets created in the &lt;code&gt;public&lt;/code&gt; directory within the runner to your &lt;code&gt;$web&lt;/code&gt; container.&lt;/p&gt;
-&lt;h2 id=&#34;github-pages&#34;&gt;GitHub pages&lt;/h2&gt;
+&lt;h2 id=&#34;github-pages&#34;&gt;GitHub Pages&lt;/h2&gt;
 &lt;p&gt;Last but definitely not least is &lt;a class=&#34;link&#34; href=&#34;https://pages.github.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;GitHub pages&lt;/a&gt;. I think this is probably my favourite because it is &lt;a class=&#34;link&#34; href=&#34;https://docs.github.com/en/free-pro-team@latest/github/working-with-github-pages/creating-a-github-pages-site&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;GitHub Pages&lt;/a&gt;. I think this is probably my favourite because it is &lt;a class=&#34;link&#34; href=&#34;https://docs.github.com/en/free-pro-team@latest/github/working-with-github-pages/creating-a-github-pages-site&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;the simplest to create&lt;/a&gt; and absolutely free.&lt;/p&gt;
-&lt;p&gt;It is worth pointing out some [usage limits associated with GitHub pages}(https://docs.github.com/en/free-pro-team@latest/github/working-with-github-pages/about-github-pages#usage-limits): soft bandwidth limit of 100GB p/month and repositories should ideally not be larger than 1GB.&lt;/p&gt;
+&lt;p&gt;It is worth pointing out some &lt;a class=&#34;link&#34; href=&#34;https://docs.github.com/en/free-pro-team@latest/github/working-with-github-pages/about-github-pages#usage-limits&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;usage limits associated with GitHub Pages&lt;/a&gt;: soft bandwidth limit of 100GB p/month and repositories should ideally not be larger than 1GB.&lt;/p&gt;
 &lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://gohugo.io/hosting-and-deployment/hosting-on-github/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;Hugo also has some excellent docs&lt;/a&gt; on deploying to GitHub pages. They suggest a reasonable idea where we have two repositories for our static website, instead fo one. One contains your Hugo sources, and another - which is added as a Git submodule - holds our Hugo generated HTML content. The former would be a repository named whatever you want, for example &lt;code&gt;&amp;lt;username&amp;gt;.github.io-hugo&lt;/code&gt;, whereas the latter would be named &lt;code&gt;&amp;lt;username&amp;gt;.github.io&lt;/code&gt;.&lt;/p&gt;
+    &gt;Hugo also has some excellent docs&lt;/a&gt; on deploying to GitHub Pages. They suggest a reasonable idea where we have two repositories for our static website, instead of one. One contains your Hugo sources, and another - which is added as a Git submodule - holds our Hugo generated HTML content. The former would be a repository named whatever you want, for example &lt;code&gt;&amp;lt;username&amp;gt;.github.io-hugo&lt;/code&gt;, whereas the latter would be named &lt;code&gt;&amp;lt;username&amp;gt;.github.io&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Instead of that, we are going to keep focused on using GitHub Actions. This will enable to create a pipeline for Hugo to grab content from repository, and use it to publish to another. In other words, we will still have two repositories however we will not create a submodule for the &lt;code&gt;public&lt;/code&gt; directory.&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;Create your repository named &lt;code&gt;&amp;lt;username&amp;gt;.github.io&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;Go to the Settings of your repository&lt;/li&gt;
-&lt;li&gt;Enable GitHub pages by choosing your branch (&lt;code&gt;master&lt;/code&gt;) and folder (&lt;code&gt;/&lt;/code&gt;).&lt;/li&gt;
-&lt;li&gt;Optionally enter your custom domain&lt;/li&gt;
+&lt;li&gt;Enable GitHub Pages by choosing your branch (&lt;code&gt;master&lt;/code&gt;) and folder (&lt;code&gt;/&lt;/code&gt;)&lt;/li&gt;
+&lt;li&gt;Within the same section from the previous step, optionally enter your custom domain&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;If you do enter a custom domain, check out this documentation on &lt;a class=&#34;link&#34; href=&#34;https://docs.github.com/en/free-pro-team@latest/github/working-with-github-pages/managing-a-custom-domain-for-your-github-pages-site&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
-    &gt;Managing a customer domain for your GitHub pages site&lt;/a&gt;.&lt;/p&gt;
-&lt;ol&gt;
+    &gt;Managing a customer domain for your GitHub Pages site&lt;/a&gt;.&lt;/p&gt;
+&lt;ol start=&#34;5&#34;&gt;
 &lt;li&gt;Check the box to &lt;code&gt;Enforce HTTPS&lt;/code&gt; however note that this really does take ~24 hours to generate the certificate.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;&lt;figure&gt;
@@ -345,33 +348,74 @@
 		&lt;a href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-21.jpg&#34; data-size=&#34;1424x892&#34;&gt;
 			&lt;img srcset=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-21_hubf36c5012ab5c09dbe2db0bf298f396d_73874_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-21_hubf36c5012ab5c09dbe2db0bf298f396d_73874_1024x0_resize_q75_box.jpg 1024w&#34;
 				src=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/staticwebapp-21.jpg&#34; width=&#34;1424&#34; height=&#34;892&#34; loading=&#34;lazy&#34;
-				alt=&#34;Configure GitHub repository for GitHub pages&#34;&gt;
+				alt=&#34;Configure GitHub repository for GitHub Pages&#34;&gt;
 		&lt;/a&gt;
 		
-		&lt;figcaption&gt;Configure GitHub repository for GitHub pages&lt;/figcaption&gt;
+		&lt;figcaption&gt;Configure GitHub repository for GitHub Pages&lt;/figcaption&gt;
 		
 	&lt;/figure&gt;&lt;/p&gt;
-&lt;ol start=&#34;5&#34;&gt;
+&lt;ol start=&#34;6&#34;&gt;
+&lt;li&gt;Go to your &lt;a class=&#34;link&#34; href=&#34;https://github.com/settings/tokens&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;GitHub account&amp;rsquo;s developer settings&lt;/a&gt; and &lt;a class=&#34;link&#34; href=&#34;https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/creating-a-personal-access-token&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;create a Personal access token&lt;/a&gt;. Make note of the generated token for use in a couple of steps.&lt;/li&gt;
 &lt;li&gt;Create another repository that will contain our Hugo sources, named something like &lt;code&gt;&amp;lt;username&amp;gt;.github.io-hugo&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Go to the Settings of your newly created repository (with -hugo in the name) and &lt;a class=&#34;link&#34; href=&#34;https://docs.github.com/en/free-pro-team@latest/actions/reference/encrypted-secrets#creating-encrypted-secrets-for-a-repository&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;create a new secret&lt;/a&gt; named something like &lt;code&gt;&amp;lt;username&amp;gt;githubiohugo&lt;/code&gt;. Its value will be the personal access token we created moments ago.&lt;/li&gt;
 &lt;li&gt;Clone your &lt;code&gt;&amp;lt;username&amp;gt;.github.io-hugo&lt;/code&gt; repository to your computer and copy all of your Hugo content in to it, excluding the &lt;code&gt;public&lt;/code&gt; directory&lt;/li&gt;
 &lt;/ol&gt;
 &lt;pre&gt;&lt;code&gt;PS C:\git&amp;gt; git clone https://github.com/USERNAME/USERNAME.github.io-hugo.git
-&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;7&#34;&gt;
-&lt;li&gt;Change directory in to cloned repository and add our &lt;code&gt;&amp;lt;username&amp;gt;.github.io&lt;/code&gt; repository as a submodule in to the &lt;code&gt;public&lt;/code&gt; directory&lt;/li&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;10&#34;&gt;
+&lt;li&gt;Create &lt;code&gt;publish.yml&lt;/code&gt; in &lt;code&gt;.github/workflows&lt;/code&gt; and put the below content inside it, adjusting the necessary values that read &lt;code&gt;&amp;lt;CHANGEME&amp;gt;&lt;/code&gt;:&lt;/li&gt;
 &lt;/ol&gt;
-&lt;pre&gt;&lt;code&gt;PS C:\git&amp;gt; cd USERNAME.github.io-hugo
-PS C:\git\USERNAME.github.io-hugo&amp;gt; git submodule add -b master https://github.com/USERNAME/USERNAME.github.io.git public
-&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;8&#34;&gt;
-&lt;li&gt;Invoke &lt;code&gt;hugo&lt;/code&gt; to generate the static website in the &lt;code&gt;public&lt;/code&gt; directory, create a null file &lt;code&gt;.nojekyll&lt;/code&gt; in the &lt;code&gt;public&lt;/code&gt; directory&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;&lt;code&gt;PS C:\git\USERNAME.github.io-hugo&amp;gt; hugo
-PS C:\git\USERNAME.github.io-hugo&amp;gt; $null&amp;gt;&amp;gt;public\.nojekyll
-&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;9&#34;&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Publish site&lt;/span&gt;
+
+&lt;span style=&#34;color:#f92672&#34;&gt;on&lt;/span&gt;: 
+  &lt;span style=&#34;color:#f92672&#34;&gt;push&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;branch&lt;/span&gt;:
+      - &lt;span style=&#34;color:#ae81ff&#34;&gt;master&lt;/span&gt;
+
+&lt;span style=&#34;color:#f92672&#34;&gt;jobs&lt;/span&gt;:
+  &lt;span style=&#34;color:#f92672&#34;&gt;publish&lt;/span&gt;:
+    &lt;span style=&#34;color:#f92672&#34;&gt;runs-on&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ubuntu-latest&lt;/span&gt;
+    &lt;span style=&#34;color:#f92672&#34;&gt;steps&lt;/span&gt;:
+      - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Git checkout&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;uses&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;actions/checkout@v2&lt;/span&gt;
+
+      - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Update theme&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;run&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;git submodule update --init --recursive # Optional if you have the theme added as submodule, you can pull it and use the most updated version&lt;/span&gt;
+
+      - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Setup hugo&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;uses&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;peaceiris/actions-hugo@v2&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;with&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;hugo-version&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;0.75.1&amp;#34;&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;extended&lt;/span&gt;: &lt;span style=&#34;color:#66d9ef&#34;&gt;true&lt;/span&gt;
+
+      - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Build&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;run&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;hugo&lt;/span&gt;
+
+      - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deploy&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;uses&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;peaceiris/actions-gh-pages@v3&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;with&lt;/span&gt;:
+          &lt;span style=&#34;color:#f92672&#34;&gt;personal_token&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;${{ secrets.&amp;lt;CHANGEME&amp;gt; }} # The name of the secret you created in step 8&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;external_repository&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;CHANGEME&amp;gt; # The name of the GitHub Pages repository, e.g. &amp;lt;username&amp;gt;/&amp;lt;username&amp;gt;.github.io&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;publish_dir&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;./public&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;user_name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;CHANGEME&amp;gt; # The git username used for publishing commits to external_repository&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;user_email&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;CHANGEME&amp;gt; # The git email address used for publishing commits to external_repository&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;publish_branch&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;master&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;cname&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;CHANGEME&amp;gt; # If you configured your own domain, you may want to populate this with it, e.g. mine is adamcook.io.&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://ruddra.com/hugo-deploy-static-page-using-github-actions/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Thank you to Ruddra for inspiration of this YAML!&lt;/a&gt;&lt;/p&gt;
+&lt;ol start=&#34;11&#34;&gt;
 &lt;li&gt;At this point, before we commit and push up to GitHub, issue &lt;code&gt;hugo server&lt;/code&gt; within the &lt;code&gt;C:\git\USERNAME.github.io-hugo&lt;/code&gt; directory and check out how things look locally by browsing to &lt;a class=&#34;link&#34; href=&#34;http://localhost:1313&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;http://localhost:1313&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;If all looks good, commit and push while within both directories &lt;code&gt;C:\git\USERNAME.github.io-hugo&lt;/code&gt; and &lt;code&gt;C:\git\USERNAME.github.io-hugo\public&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;If all looks good, commit and push. The GitHub Actions workflow will take care of the rest of:
+&lt;ol&gt;
+&lt;li&gt;Invoking Hugo to generate content in &lt;code&gt;public&lt;/code&gt; within the runner&lt;/li&gt;
+&lt;li&gt;Publish said content to our GitHub Pages &lt;code&gt;&amp;lt;username&amp;gt;.github.io&lt;/code&gt; repository&lt;/li&gt;
 &lt;/ol&gt;
-&lt;h2 id=&#34;that-is-a-wrap&#34;&gt;That is a wrap&lt;/h2&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;closing-comments&#34;&gt;Closing comments&lt;/h2&gt;
 &lt;p&gt;I hope you found this helpful!&lt;/p&gt;
 &lt;p&gt;If you have any questions or feedback, drop a comment below, ping me on Twitter or find me in the &lt;a class=&#34;link&#34; href=&#34;https://winadmins.io&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;WinAdmins Discord&lt;/a&gt; (my handle is @acc)!&lt;/p&gt;
