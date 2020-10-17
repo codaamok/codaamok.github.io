@@ -6,7 +6,30 @@
         <description>Recent content on Adam Cook</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Mon, 05 Oct 2020 21:04:10 +0100</lastBuildDate><atom:link href="https://adamcook.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sat, 17 Oct 2020 00:00:00 +0100</lastBuildDate><atom:link href="https://adamcook.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Getting Your Powershell Code Into Production Using Github Actions</title>
+        <link>https://adamcook.io/p/getting-your-powershell-code-into-production-using-github-actions/</link>
+        <pubDate>Sat, 17 Oct 2020 00:00:00 +0100</pubDate>
+        
+        <guid>https://adamcook.io/p/getting-your-powershell-code-into-production-using-github-actions/</guid>
+        <description>&lt;img src="https://adamcook.io/p/getting-your-powershell-code-into-production-using-github-actions/images/Getting-Your-PowerShell-Code-Into-Production-Using-GitHub-Actions-00.jpg" alt="Featured image of post Getting Your Powershell Code Into Production Using Github Actions" /&gt;&lt;p&gt;Earlier in the week I presented at a &lt;a class=&#34;link&#34; href=&#34;https://winadmins.io&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;WinAdmins&lt;/a&gt; virtual user group session. At the bottom of this post you can watch the recording.&lt;/p&gt;
+&lt;p&gt;The session covered the below topics:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Introduction to CI/CD pipeline, i.e. what it means with practical explanations&lt;/li&gt;
+&lt;li&gt;A walk through on the YAML structure/syntax of GitHub Actions&lt;/li&gt;
+&lt;li&gt;Demonstrate on how to use Actions by uploading content to Azure Blob storage&lt;/li&gt;
+&lt;li&gt;Demonstrate a self hosted runner&lt;/li&gt;
+&lt;li&gt;Demonstrate how to deploy a PowerShell module to: the PowerShell Gallery, create a new GitHub release, a shared folder within my home lab (which failed because I messed with the runner&amp;rsquo;s service log-on credential) and to a self hosted NuGet feed (which also failed, thanks demo gods)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe loading=&#34;lazy&#34; src=&#34;https://www.youtube.com/embed/RDQkqxrJUeU&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+</description>
+        </item>
+        <item>
         <title>Deploying Hugo Websites in Azure for Pennies or Free on GitHub Pages</title>
         <link>https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/</link>
         <pubDate>Mon, 05 Oct 2020 21:04:10 +0100</pubDate>

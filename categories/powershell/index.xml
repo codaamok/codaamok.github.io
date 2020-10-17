@@ -5,6 +5,18 @@
     <link>https://adamcook.io/categories/powershell/</link>
     <description>Recent content in PowerShell on Adam Cook</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://adamcook.io/categories/powershell/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language>
+    <lastBuildDate>Sat, 17 Oct 2020 00:00:00 +0100</lastBuildDate><atom:link href="https://adamcook.io/categories/powershell/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Getting Your Powershell Code Into Production Using Github Actions</title>
+      <link>https://adamcook.io/p/getting-your-powershell-code-into-production-using-github-actions/</link>
+      <pubDate>Sat, 17 Oct 2020 00:00:00 +0100</pubDate>
+      
+      <guid>https://adamcook.io/p/getting-your-powershell-code-into-production-using-github-actions/</guid>
+      <description>Earlier in the week I presented at a WinAdmins virtual user group session. At the bottom of this post you can watch the recording.
+The session covered the below topics:
+ Introduction to CI/CD pipeline, i.e. what it means with practical explanations A walk through on the YAML structure/syntax of GitHub Actions Demonstrate on how to use Actions by uploading content to Azure Blob storage Demonstrate a self hosted runner Demonstrate how to deploy a PowerShell module to: the PowerShell Gallery, create a new GitHub release, a shared folder within my home lab (which failed because I messed with the runner&amp;rsquo;s service log-on credential) and to a self hosted NuGet feed (which also failed, thanks demo gods)    </description>
+    </item>
+    
   </channel>
 </rss>

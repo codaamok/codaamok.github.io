@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>CI/CD on Adam Cook</title>
-    <link>https://adamcook.io/categories/cicd/</link>
-    <description>Recent content in CI/CD on Adam Cook</description>
+    <title>Presentations on Adam Cook</title>
+    <link>https://adamcook.io/categories/presentations/</link>
+    <description>Recent content in Presentations on Adam Cook</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 17 Oct 2020 00:00:00 +0100</lastBuildDate><atom:link href="https://adamcook.io/categories/cicd/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 17 Oct 2020 00:00:00 +0100</lastBuildDate><atom:link href="https://adamcook.io/categories/presentations/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Getting Your Powershell Code Into Production Using Github Actions</title>
       <link>https://adamcook.io/p/getting-your-powershell-code-into-production-using-github-actions/</link>
@@ -16,17 +16,6 @@
       <description>Earlier in the week I presented at a WinAdmins virtual user group session. At the bottom of this post you can watch the recording.
 The session covered the below topics:
  Introduction to CI/CD pipeline, i.e. what it means with practical explanations A walk through on the YAML structure/syntax of GitHub Actions Demonstrate on how to use Actions by uploading content to Azure Blob storage Demonstrate a self hosted runner Demonstrate how to deploy a PowerShell module to: the PowerShell Gallery, create a new GitHub release, a shared folder within my home lab (which failed because I messed with the runner&amp;rsquo;s service log-on credential) and to a self hosted NuGet feed (which also failed, thanks demo gods)    </description>
-    </item>
-    
-    <item>
-      <title>Deploying Hugo Websites in Azure for Pennies or Free on GitHub Pages</title>
-      <link>https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/</link>
-      <pubDate>Mon, 05 Oct 2020 21:04:10 +0100</pubDate>
-      
-      <guid>https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/</guid>
-      <description>I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub Pages. I am now blogging at no extra cost other than domain renewal!
-In the process not only did I learn about Hugo, but I also looked at three ways to deploy / host my Hugo-made website.
-In this post I want to share with you what Hugo is, why I like it and those three ways that I learned on how to deploy a Hugo website - with Azure Static Web Apps (preview), Azure Blob storage and GitHub Pages.</description>
     </item>
     
   </channel>

@@ -4,7 +4,37 @@
   
   <url>
     <loc>https://adamcook.io/</loc>
-    <lastmod>2020-10-05T21:04:10+01:00</lastmod>
+    <lastmod>2020-10-17T00:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://adamcook.io/categories/</loc>
+    <lastmod>2020-10-17T00:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://adamcook.io/categories/cicd/</loc>
+    <lastmod>2020-10-17T00:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://adamcook.io/p/getting-your-powershell-code-into-production-using-github-actions/</loc>
+    <lastmod>2020-10-17T00:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://adamcook.io/post/</loc>
+    <lastmod>2020-10-17T00:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://adamcook.io/categories/powershell/</loc>
+    <lastmod>2020-10-17T00:00:00+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://adamcook.io/categories/presentations/</loc>
+    <lastmod>2020-10-17T00:00:00+01:00</lastmod>
   </url>
   
   <url>
@@ -13,22 +43,7 @@
   </url>
   
   <url>
-    <loc>https://adamcook.io/categories/</loc>
-    <lastmod>2020-10-05T21:04:10+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://adamcook.io/categories/cicd/</loc>
-    <lastmod>2020-10-05T21:04:10+01:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/</loc>
-    <lastmod>2020-10-05T21:04:10+01:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://adamcook.io/post/</loc>
     <lastmod>2020-10-05T21:04:10+01:00</lastmod>
   </url>
   
@@ -49,10 +64,6 @@
   
   <url>
     <loc>https://adamcook.io/archives/</loc>
-  </url>
-  
-  <url>
-    <loc>https://adamcook.io/categories/powershell/</loc>
   </url>
   
   <url>
