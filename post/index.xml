@@ -30,6 +30,17 @@ In this post I want to share with you what Hugo is, why I like it and those thre
     </item>
     
     <item>
+      <title>Creating Dynamic Azure ARM Templates</title>
+      <link>https://adamcook.io/p/creating-dynamic-azure-arm-templates/</link>
+      <pubDate>Sun, 05 Jul 2020 00:00:00 +0100</pubDate>
+      
+      <guid>https://adamcook.io/p/creating-dynamic-azure-arm-templates/</guid>
+      <description>In this post I&amp;rsquo;ll demonstrate how you can dynamically create resources or set properties for resources in your Azure ARM templates.
+For example, you might have a template which accepts an array. For each element in that array, you want to create resources, or set properties for a resource.
+The first objective will demonstrate how to create a dynamic number of properties associated with a resource. The second object will show you how to dynamically create a number of resources.</description>
+    </item>
+    
+    <item>
       <title>Get CMUnusedSources</title>
       <link>https://adamcook.io/p/get-cmunusedsources/</link>
       <pubDate>Sun, 07 Jul 2019 00:00:00 +0100</pubDate>

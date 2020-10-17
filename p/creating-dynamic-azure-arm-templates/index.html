@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='In this post I&amp;rsquo;ll demonstrate how you can dynamically create resources or set properties for resources in your Azure ARM templates.
+For example, you might have a template which accepts an array. For each element in that array, you want to create resources, or set properties for a resource.
+The first objective will demonstrate how to create a dynamic number of properties associated with a resource. The second object will show you how to dynamically create a number of resources.'><title>Creating Dynamic Azure ARM Templates</title>
+    
+    <link rel='canonical' href='https://adamcook.io/p/creating-dynamic-azure-arm-templates/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Creating Dynamic Azure ARM Templates'>
+<meta property='og:description' content='In this post I&amp;rsquo;ll demonstrate how you can dynamically create resources or set properties for resources in your Azure ARM templates.
+For example, you might have a template which accepts an array. For each element in that array, you want to create resources, or set properties for a resource.
+The first objective will demonstrate how to create a dynamic number of properties associated with a resource. The second object will show you how to dynamically create a number of resources.'>
+<meta property='og:url' content='https://adamcook.io/p/creating-dynamic-azure-arm-templates/'>
+<meta property='og:site_name' content='Adam Cook'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2020-07-05T00:00:00&#43;01:00'/><meta property='article:modified_time' content='2020-07-05T00:00:00&#43;01:00'/><meta property='og:image' content='https://adamcook.io/p/creating-dynamic-azure-arm-templates/images/cover.jpg' />
+<meta name="twitter:site" content="codaamok"><meta name="twitter:title" content="Creating Dynamic Azure ARM Templates">
+<meta name="twitter:description" content="In this post I&amp;rsquo;ll demonstrate how you can dynamically create resources or set properties for resources in your Azure ARM templates.
+For example, you might have a template which accepts an array. For each element in that array, you want to create resources, or set properties for a resource.
+The first objective will demonstrate how to create a dynamic number of properties associated with a resource. The second object will show you how to dynamically create a number of resources."><meta name="twitter:card" content="summary">
+	<meta name="twitter:image" content='https://adamcook.io/p/creating-dynamic-azure-arm-templates/images/cover.jpg' /></head><body class="">
+        <div class="container flex on-phone--column align-items--flex-start extended article-page with-toolbar">
+            <aside class="sidebar left-sidebar sticky">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header class="site-info">
+        
+            <figure class="site-avatar">
+                
+
+                
+                    
+                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_2.png" width="300"
+                        height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+
+                <span class="emoji">🙃</span>
+            </figure>
+        
+        <h1 class="site-name"><a href="https://adamcook.io/">Adam Cook</a></h1>
+        <h2 class="site-description">Passionate about helping people. #PowerShell, #ConfigMgr and #Azure. Misses #Linux.</h2>
+    </header>
+
+    <ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='https://adamcook.io/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://adamcook.io/archives'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://twitter.com/codaamok'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84 0 0 0 .497 -3.753C20.18 7.773 21.692 5.25 22 4.009z" />
+</svg>
+                
+                <span>Twitter</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://github.com/codaamok'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+                
+                <span>GitHub</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://linkedin.com/in/adamcharlescook'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-linkedin" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="4" width="16" height="16" rx="2" />
+  <line x1="8" y1="11" x2="8" y2="16" />
+  <line x1="8" y1="8" x2="8" y2="8.01" />
+  <line x1="12" y1="16" x2="12" y2="11" />
+  <path d="M16 16v-3a2 2 0 0 0 -4 0" />
+</svg>
+                
+                <span>LinkedIn</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://www.youtube.com/channel/UCjv4o4ToaauMNKP4wfIhP0A'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-youtube" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="3" y="5" width="18" height="14" rx="4" />
+  <path d="M10 9l5 3l-5 3z" />
+</svg>
+                
+                <span>YouTube</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://pssouth.co.uk'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-prompt" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <polyline points="5 7 10 12 5 17" />
+  <line x1="13" y1="17" x2="19" y2="17" />
+</svg>
+                
+                <span>PowerShell Southampton</span>
+            </a>
+        </li>
+        
+    </ol>
+</aside>
+            <main class="main full-width">
+    <div id="article-toolbar">
+        <a href="https://adamcook.io/" class="back-home">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+            <span>Back</span>
+        </a>
+    </div>
+
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <img srcset="/p/creating-dynamic-azure-arm-templates/images/cover_hu4fe4f3e0d2c694ba260e9f0f361ac295_242239_1024x0_resize_q75_box.jpg 1024w, /p/creating-dynamic-azure-arm-templates/images/cover_hu4fe4f3e0d2c694ba260e9f0f361ac295_242239_2000x0_resize_q75_box.jpg 2000w"
+                    src="/p/creating-dynamic-azure-arm-templates/images/cover_hu4fe4f3e0d2c694ba260e9f0f361ac295_242239_2000x0_resize_q75_box.jpg" width="1920" height="1440" loading="lazy"
+                    alt="Featured image of post Creating Dynamic Azure ARM Templates" />
+            
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="https://adamcook.io/categories/azure/" 
+                    class="color-tag"
+                    data-image="/p/creating-dynamic-azure-arm-templates/images/cover_hu4fe4f3e0d2c694ba260e9f0f361ac295_242239_20x20_fill_q75_box_smart1.jpg" 
+                    data-key="" 
+                    data-hash="md5-NHnsOHElZR4ZXcQiBIKdbQ==">
+                    Azure
+                </a>
+            
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="https://adamcook.io/p/creating-dynamic-azure-arm-templates/">Creating Dynamic Azure ARM Templates</a>
+    </h2>
+
+    <table>
+        <tr>
+            <td width="25%">
+                <footer class="article-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="5" width="16" height="16" rx="2" />
+  <line x1="16" y1="3" x2="16" y2="7" />
+  <line x1="8" y1="3" x2="8" y2="7" />
+  <line x1="4" y1="11" x2="20" y2="11" />
+  <line x1="11" y1="15" x2="12" y2="15" />
+  <line x1="12" y1="15" x2="12" y2="18" />
+</svg>
+                    <time class="article-time--published">5 July 2020</time>
+                </footer>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <footer class="article-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--published">
+                        Reading time: 6 minutes.
+                    </time>
+                </footer>
+            </td>
+        </tr>
+    </table></div>
+</header>
+
+    <section class="article-content">
+    <p>In this post I&rsquo;ll demonstrate how you can dynamically create resources or set properties for resources in your Azure ARM templates.</p>
+<p>For example, you might have a template which accepts an array. For each element in that array, you want to create resources, or set properties for a resource.</p>
+<p>The first objective will demonstrate how to create a dynamic number of properties associated with a resource. The second object will show you how to dynamically create a number of resources. The examples will revolve around creating virtual networks and subnets.</p>
+<h2 id="arm-template-functions">ARM template functions</h2>
+<p>There&rsquo;s a bunch of <a class="link" href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-functions"  target="_blank" rel="noopener"
+    >ARM template functions</a> available that you do all kinds of things within your templates: logical operators and conditional actions, string manipulation, array conversions or iteration, arithmetic. All kinds of things.</p>
+<p>Using functions within ARM templates make the json files more than just declarative build documents. They enable you to get creative and implement some programmable logic in to your templates. This can help with making your templates being more versatile.</p>
+<p>For this demo I&rsquo;ll focus on the functions <code>[length()]</code>, <code>[concat()]</code> and <code>[copyIndex()]</code>.</p>
+<h2 id="objective-1">Objective 1</h2>
+<p>Take the scenario where your current template contains a single virtual network resource and you hardcode the virtual network&rsquo;s address space properties and all the subnets too.</p>
+<p>Maybe you decide to create some logic in your scripts where you dynamically create x many subnets. To do this, we are going to dynamically add x many properties to the <code>Microsoft.Network/VirtualNetworks</code> resource.</p>
+<p>Let&rsquo;s start with the below example using those hardcoded properties and subnets.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-JSON" data-lang="JSON"><span style="color:#960050;background-color:#1e0010">...</span>
+{
+	<span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;vnet01&#34;</span>,
+	<span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Network/VirtualNetworks&#34;</span>,
+	<span style="color:#f92672">&#34;apiVersion&#34;</span>: <span style="color:#e6db74">&#34;2019-09-01&#34;</span>,
+	<span style="color:#f92672">&#34;location&#34;</span>: <span style="color:#e6db74">&#34;uksouth&#34;</span>,
+	<span style="color:#f92672">&#34;properties&#34;</span>: {
+		<span style="color:#f92672">&#34;addressSpace&#34;</span>: {
+			<span style="color:#f92672">&#34;addressPrefixes&#34;</span>: [
+				<span style="color:#e6db74">&#34;192.168.0.0/16&#34;</span>
+			]
+		},
+		<span style="color:#f92672">&#34;subnets&#34;</span>: [
+			{
+				<span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;subnet-1&#34;</span>,
+				<span style="color:#f92672">&#34;properties&#34;</span>: {
+					<span style="color:#f92672">&#34;addressPrefix&#34;</span>: <span style="color:#e6db74">&#34;192.168.1.0/24&#34;</span>
+				}
+			},
+			{
+				<span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;subnet-2&#34;</span>,
+				<span style="color:#f92672">&#34;properties&#34;</span>: {
+					<span style="color:#f92672">&#34;addressPrefix&#34;</span>: <span style="color:#e6db74">&#34;192.168.2.0/24&#34;</span>
+				}
+			},
+			{
+				<span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;subnet-3&#34;</span>,
+				<span style="color:#f92672">&#34;properties&#34;</span>: {
+					<span style="color:#f92672">&#34;addressPrefix&#34;</span>: <span style="color:#e6db74">&#34;192.168.3.0/24&#34;</span>
+				}
+			}
+		]
+	}
+}
+<span style="color:#960050;background-color:#1e0010">...</span>
+</code></pre></div><p>Our objective is to dynamically create as many subnets as many there are elements in the parameter value named <code>subnets</code>, which is an array of just address prefixes, e.g. <code>192.168.1.0/24</code>, <code>192.168.2.0/24</code> and <code>192.168.3.0/24</code>.</p>
+<p>For the <code>properties</code> object we&rsquo;re going to heavily modify the <code>subnets</code> array and replace it with the <code>copy</code> element. This element enables us to create a dynamic number of resources or properties. The <code>copy</code> element is effectively what allows us to create a loop within our template. It accepts an array of three objects: <code>name</code>, <code>count</code> and <code>input</code>.</p>
+<ul>
+<li><code>name</code>: the name of our loop. We use this name to reference an iterable.</li>
+<li><code>count</code>:  the number of times we want to iterate over our loop.<!-- raw HTML omitted --><!-- raw HTML omitted --><code>input</code>: this is where we specify values for our resource&rsquo;s properties.</li>
+</ul>
+<p>An example of the <code>copy</code> element looks like the below.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-JSON" data-lang="JSON"><span style="color:#960050;background-color:#1e0010">...</span>
+{
+	<span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;vnet01&#34;</span>,
+	<span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Network/VirtualNetworks&#34;</span>,
+	<span style="color:#f92672">&#34;apiVersion&#34;</span>: <span style="color:#e6db74">&#34;2019-09-01&#34;</span>,
+	<span style="color:#f92672">&#34;location&#34;</span>: <span style="color:#e6db74">&#34;uksouth&#34;</span>,
+	<span style="color:#f92672">&#34;properties&#34;</span>: {
+		<span style="color:#f92672">&#34;addressSpace&#34;</span>: {
+			<span style="color:#f92672">&#34;addressPrefixes&#34;</span>: [
+				<span style="color:#e6db74">&#34;192.168.0.0/16&#34;</span>
+			]
+		},
+		<span style="color:#f92672">&#34;copy&#34;</span>: [
+			{
+				<span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;subnets&#34;</span>,
+				<span style="color:#f92672">&#34;count&#34;</span>: <span style="color:#ae81ff">3</span>,
+				<span style="color:#f92672">&#34;input&#34;</span>: {
+					<span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;[concat(&#39;subnet-&#39;, copyIndex(&#39;subnets&#39;, 1))]&#34;</span>,
+					<span style="color:#f92672">&#34;properties&#34;</span>: {
+						<span style="color:#f92672">&#34;addressPrefix&#34;</span>: <span style="color:#e6db74">&#34;[concat(&#39;192.168.&#39;, copyIndex(&#39;subnets&#39;, 1), &#39;0/24&#39;)&#34;</span>
+					}
+				}
+			}
+		]
+	}
+}
+<span style="color:#960050;background-color:#1e0010">...</span>
+</code></pre></div><p>The above simply creates 3 subnet with far fewer lines. You&rsquo;ll notice two functions I haven&rsquo;t explained yet: <code>[concat()]</code> and <code>[copyIndex()]</code>. The Microsoft docs do a good job on explaining these, but&hellip;</p>
+<ul>
+<li><code>[concat()]</code> allows you to concatenate arrays or strings. It accepts at a minimum of 1 argument and any number of additional arguments. You can see this is used to define a unique name for each subnet.</li>
+<li><code>[copyIndex()]</code> allows you to access the position/index of the current iterable in the loop. We pass two parameters: the name of the loop &ldquo;subnets&rdquo; and an offset. Using the offset is what enables us to start with creating subnet names from &ldquo;subnets-1&rdquo; rather than &ldquo;subnets-0&rdquo;.</li>
+</ul>
+<p>You notice I use both <code>[concat()]</code> and <code>[copyIndex()]</code> for the <code>addressPrefix</code> property. This enables me to bump the subnet by 1 and correlate the subnet name with the 3rd subnet octet.</p>
+<p>There&rsquo;s definitely room for improvement here. The <code>count</code> object of the <code>copy</code> element is hardcoded at the value of 3. What we could do is leverage a parameter of our json value, which contains an array of strings for all the subnets we want in our virtual network.</p>
+<p>The below is what an ideal could look like that creates subnets based on all the items in a given array:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-JSON" data-lang="JSON">{
+	<span style="color:#f92672">&#34;$schema&#34;</span>: <span style="color:#e6db74">&#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#&#34;</span>,
+    <span style="color:#f92672">&#34;contentVersion&#34;</span>: <span style="color:#e6db74">&#34;1.0.0.0&#34;</span>,
+	<span style="color:#f92672">&#34;parameters&#34;</span>: {
+		<span style="color:#f92672">&#34;subnetAddressSpaces&#34;</span>: {
+			<span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;array&#34;</span>,
+			<span style="color:#f92672">&#34;defaultValue&#34;</span>: [
+				<span style="color:#e6db74">&#34;192.168.1.0/24&#34;</span>,
+				<span style="color:#e6db74">&#34;192.168.2.0/24&#34;</span>,
+				<span style="color:#e6db74">&#34;192.168.3.0/24&#34;</span>
+			]
+		}
+	},
+	<span style="color:#f92672">&#34;variables&#34;</span>: {},
+	<span style="color:#f92672">&#34;resources&#34;</span>: [
+		{
+			<span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;vnet01&#34;</span>,
+			<span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Network/VirtualNetworks&#34;</span>,
+			<span style="color:#f92672">&#34;apiVersion&#34;</span>: <span style="color:#e6db74">&#34;2019-09-01&#34;</span>,
+			<span style="color:#f92672">&#34;location&#34;</span>: <span style="color:#e6db74">&#34;uksouth&#34;</span>,
+			<span style="color:#f92672">&#34;properties&#34;</span>: {
+				<span style="color:#f92672">&#34;addressSpace&#34;</span>: {
+					<span style="color:#f92672">&#34;addressPrefixes&#34;</span>: [
+						<span style="color:#e6db74">&#34;192.168.0.0/16&#34;</span>
+					]
+				},
+				<span style="color:#f92672">&#34;copy&#34;</span>: [
+					{
+						<span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;subnets&#34;</span>,
+						<span style="color:#f92672">&#34;count&#34;</span>: <span style="color:#e6db74">&#34;[length(parameters(&#39;subnetAddressSpaces&#39;))]&#34;</span>,
+						<span style="color:#f92672">&#34;input&#34;</span>: {
+							<span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;[concat(&#39;subnet-&#39;, copyIndex(&#39;subnets&#39;, 1))]&#34;</span>,
+							<span style="color:#f92672">&#34;properties&#34;</span>: {
+								<span style="color:#f92672">&#34;addressPrefix&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;subnetAddressSpaces&#39;)[copyIndex(&#39;subnets&#39;)]]&#34;</span>
+							}
+						}
+					}
+				]
+			}
+		}
+	]
+}
+</code></pre></div><p>In the above you can see I&rsquo;ve included what the parameter definition this time, and defining the array of subset address spaces by specifying <code>defaultValue</code>.</p>
+<p>What I&rsquo;m doing differently here is using two different functions <code>[length()]</code> and <code>[parameters()]</code>.</p>
+<ul>
+<li><code>[length()]</code> is what enables us to gather the number of elements within an array. In this case the value will be 3. This function can also be used to get the number of characters in a string or number of root-level properties in a given object.</li>
+<li><code>[parameters()]</code> is hopefully obvious, but if not it&rsquo;s how we can access the value of a parameter by passing one of the template&rsquo;s parameter names.</li>
+</ul>
+<p>What the above in mind, you can see for the <code>count</code> object we now have a means to loop for x many iterations for y many elements in the <code>subnetAddressSpaces</code> array. You&rsquo;ll also notice, we&rsquo;re no longer concatenating a string to create our subnets' address space. Instead we&rsquo;re directly accessing the value in the array by referencing the index position of the returned by <code>[copyIndex()]</code>. In other words, we&rsquo;re grabbing the current value of the iterable in the loop.</p>
+<p>Hopefully now you get the sense that this whole combination of the <code>copy</code> element, with functions <code>[length()]</code> and <code>[copyIndex()]</code> is pretty much a for in-range loop interpreted by Azure within our json.</p>
+<h2 id="objective-2">Objective 2</h2>
+<p>As for the second objective (dynamically creating resources, instead of dynamically setting properties of a resource&rsquo;s properties&hellip; wait, what?!), there&rsquo;s hardly any difference, except there&rsquo;s no need to use the <code>input</code> object within the <code>copy</code> element.</p>
+<p>Below I&rsquo;ll share a complete working example of the template and a short PowerShell snippet to create the deployment.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-JSON" data-lang="JSON">{
+    <span style="color:#f92672">&#34;$schema&#34;</span>: <span style="color:#e6db74">&#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#&#34;</span>,
+    <span style="color:#f92672">&#34;contentVersion&#34;</span>: <span style="color:#e6db74">&#34;1.0.0.0&#34;</span>,
+    <span style="color:#f92672">&#34;parameters&#34;</span>: {
+        <span style="color:#f92672">&#34;virtualNetworkAddressSpaces&#34;</span>: {
+            <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;array&#34;</span>
+        }
+    },
+    <span style="color:#f92672">&#34;variables&#34;</span>: {},
+    <span style="color:#f92672">&#34;resources&#34;</span>: [
+        {
+            <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;[concat(&#39;vnet-&#39;, copyIndex(&#39;vnetloop&#39;, 1))]&#34;</span>,
+            <span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Network/VirtualNetworks&#34;</span>,
+            <span style="color:#f92672">&#34;apiVersion&#34;</span>: <span style="color:#e6db74">&#34;2019-09-01&#34;</span>,
+            <span style="color:#f92672">&#34;location&#34;</span>: <span style="color:#e6db74">&#34;uksouth&#34;</span>,
+            <span style="color:#f92672">&#34;dependsOn&#34;</span>: [],
+            <span style="color:#f92672">&#34;tags&#34;</span>: {},
+            <span style="color:#f92672">&#34;copy&#34;</span>: {
+                <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;vnetloop&#34;</span>,
+                <span style="color:#f92672">&#34;count&#34;</span>: <span style="color:#e6db74">&#34;[length(parameters(&#39;virtualNetworkAddressSpaces&#39;))]&#34;</span>
+            },
+            <span style="color:#f92672">&#34;properties&#34;</span>: {
+                <span style="color:#f92672">&#34;addressSpace&#34;</span>: {
+                    <span style="color:#f92672">&#34;addressPrefixes&#34;</span>: [
+                        <span style="color:#e6db74">&#34;[parameters(&#39;virtualNetworkAddressSpaces&#39;)[copyIndex(&#39;vnetloop&#39;)]]&#34;</span>
+                    ]
+                },
+                <span style="color:#f92672">&#34;subnets&#34;</span>: [
+                    {
+                        <span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;subnet0&#34;</span>,
+                        <span style="color:#f92672">&#34;properties&#34;</span>: {
+                            <span style="color:#f92672">&#34;addressPrefix&#34;</span>: <span style="color:#e6db74">&#34;[parameters(&#39;virtualNetworkAddressSpaces&#39;)[copyIndex(&#39;vnetloop&#39;)]]&#34;</span>
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
+</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$TemplateParameters = @{
+    <span style="color:#e6db74">&#34;virtualNetworkAddressSpaces&#34;</span> = @(
+        <span style="color:#e6db74">&#34;192.168.1.0/24&#34;</span>,
+        <span style="color:#e6db74">&#34;192.168.2.0/24&#34;</span>,
+        <span style="color:#e6db74">&#34;192.168.3.0/24&#34;</span>
+    )
+}
+
+New-AzResourceGroupDeployment -Name <span style="color:#e6db74">&#34;mytestdeployment&#34;</span> -ResourceGroupName <span style="color:#e6db74">&#34;rg-mytest&#34;</span> -TemplateFile <span style="color:#e6db74">&#34;.\vnet-template-2.json&#34;</span> -TemplateParameterObject $TemplateParameters
+</code></pre></div><p>With the above we&rsquo;re still making use of the [length()] function for the count property of the copy element. This still enables us to loop over the number of elements within the given array. You&rsquo;ll also notice we&rsquo;re just creating 1 subnet for each virtual network. Each subnet&rsquo;s width is the entire width virtual network&rsquo;s address space.</p>
+<h2 id="summary">Summary</h2>
+<p>I know these examples are really short. You&rsquo;re really unlikely to want to <em>just</em> dynamically create subnets or virtual networks, but hopefully this is offers you insightful examples to get you a working syntax for whatever it is you&rsquo;re trying to do!</p>
+<p>The below Microsoft doc links may be helpful for you, if not ping me and I&rsquo;ll be happy to help!</p>
+<ul>
+<li><a class="link" href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-functions"  target="_blank" rel="noopener"
+    >ARM Template Functions</a></li>
+<li><a class="link" href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/copy-properties"  target="_blank" rel="noopener"
+    >Property iteration in ARM templates</a></li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+    
+</article>
+
+    <aside class="widget related-contents--wrapper">
+    
+    
+</aside>
+
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "adam-cook" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">&copy; 2020 Adam Cook</section>
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.0.5">Stack</a></b> designed by
+        <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true" style="display:none">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+            </main>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"
+    integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g=" crossorigin="anonymous"></script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<link rel="stylesheet" href="/css/highlight/light.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="/css/highlight/dark.min.css" media="(prefers-color-scheme: dark)">
+
+    </body>
+</html>

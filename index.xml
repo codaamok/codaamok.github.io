@@ -445,6 +445,214 @@
 </description>
         </item>
         <item>
+        <title>Creating Dynamic Azure ARM Templates</title>
+        <link>https://adamcook.io/p/creating-dynamic-azure-arm-templates/</link>
+        <pubDate>Sun, 05 Jul 2020 00:00:00 +0100</pubDate>
+        
+        <guid>https://adamcook.io/p/creating-dynamic-azure-arm-templates/</guid>
+        <description>&lt;img src="https://adamcook.io/p/creating-dynamic-azure-arm-templates/images/cover.jpg" alt="Featured image of post Creating Dynamic Azure ARM Templates" /&gt;&lt;p&gt;In this post I&amp;rsquo;ll demonstrate how you can dynamically create resources or set properties for resources in your Azure ARM templates.&lt;/p&gt;
+&lt;p&gt;For example, you might have a template which accepts an array. For each element in that array, you want to create resources, or set properties for a resource.&lt;/p&gt;
+&lt;p&gt;The first objective will demonstrate how to create a dynamic number of properties associated with a resource. The second object will show you how to dynamically create a number of resources. The examples will revolve around creating virtual networks and subnets.&lt;/p&gt;
+&lt;h2 id=&#34;arm-template-functions&#34;&gt;ARM template functions&lt;/h2&gt;
+&lt;p&gt;There&amp;rsquo;s a bunch of &lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-functions&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;ARM template functions&lt;/a&gt; available that you do all kinds of things within your templates: logical operators and conditional actions, string manipulation, array conversions or iteration, arithmetic. All kinds of things.&lt;/p&gt;
+&lt;p&gt;Using functions within ARM templates make the json files more than just declarative build documents. They enable you to get creative and implement some programmable logic in to your templates. This can help with making your templates being more versatile.&lt;/p&gt;
+&lt;p&gt;For this demo I&amp;rsquo;ll focus on the functions &lt;code&gt;[length()]&lt;/code&gt;, &lt;code&gt;[concat()]&lt;/code&gt; and &lt;code&gt;[copyIndex()]&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;objective-1&#34;&gt;Objective 1&lt;/h2&gt;
+&lt;p&gt;Take the scenario where your current template contains a single virtual network resource and you hardcode the virtual network&amp;rsquo;s address space properties and all the subnets too.&lt;/p&gt;
+&lt;p&gt;Maybe you decide to create some logic in your scripts where you dynamically create x many subnets. To do this, we are going to dynamically add x many properties to the &lt;code&gt;Microsoft.Network/VirtualNetworks&lt;/code&gt; resource.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s start with the below example using those hardcoded properties and subnets.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-JSON&#34; data-lang=&#34;JSON&#34;&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;...&lt;/span&gt;
+{
+	&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;vnet01&amp;#34;&lt;/span&gt;,
+	&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Microsoft.Network/VirtualNetworks&amp;#34;&lt;/span&gt;,
+	&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;apiVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;2019-09-01&amp;#34;&lt;/span&gt;,
+	&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;location&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;uksouth&amp;#34;&lt;/span&gt;,
+	&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;properties&amp;#34;&lt;/span&gt;: {
+		&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;addressSpace&amp;#34;&lt;/span&gt;: {
+			&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;addressPrefixes&amp;#34;&lt;/span&gt;: [
+				&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;192.168.0.0/16&amp;#34;&lt;/span&gt;
+			]
+		},
+		&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;subnets&amp;#34;&lt;/span&gt;: [
+			{
+				&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;subnet-1&amp;#34;&lt;/span&gt;,
+				&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;properties&amp;#34;&lt;/span&gt;: {
+					&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;addressPrefix&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;192.168.1.0/24&amp;#34;&lt;/span&gt;
+				}
+			},
+			{
+				&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;subnet-2&amp;#34;&lt;/span&gt;,
+				&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;properties&amp;#34;&lt;/span&gt;: {
+					&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;addressPrefix&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;192.168.2.0/24&amp;#34;&lt;/span&gt;
+				}
+			},
+			{
+				&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;subnet-3&amp;#34;&lt;/span&gt;,
+				&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;properties&amp;#34;&lt;/span&gt;: {
+					&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;addressPrefix&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;192.168.3.0/24&amp;#34;&lt;/span&gt;
+				}
+			}
+		]
+	}
+}
+&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;...&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Our objective is to dynamically create as many subnets as many there are elements in the parameter value named &lt;code&gt;subnets&lt;/code&gt;, which is an array of just address prefixes, e.g. &lt;code&gt;192.168.1.0/24&lt;/code&gt;, &lt;code&gt;192.168.2.0/24&lt;/code&gt; and &lt;code&gt;192.168.3.0/24&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;For the &lt;code&gt;properties&lt;/code&gt; object we&amp;rsquo;re going to heavily modify the &lt;code&gt;subnets&lt;/code&gt; array and replace it with the &lt;code&gt;copy&lt;/code&gt; element. This element enables us to create a dynamic number of resources or properties. The &lt;code&gt;copy&lt;/code&gt; element is effectively what allows us to create a loop within our template. It accepts an array of three objects: &lt;code&gt;name&lt;/code&gt;, &lt;code&gt;count&lt;/code&gt; and &lt;code&gt;input&lt;/code&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;name&lt;/code&gt;: the name of our loop. We use this name to reference an iterable.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;count&lt;/code&gt;:  the number of times we want to iterate over our loop.&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;code&gt;input&lt;/code&gt;: this is where we specify values for our resource&amp;rsquo;s properties.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;An example of the &lt;code&gt;copy&lt;/code&gt; element looks like the below.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-JSON&#34; data-lang=&#34;JSON&#34;&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;...&lt;/span&gt;
+{
+	&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;vnet01&amp;#34;&lt;/span&gt;,
+	&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Microsoft.Network/VirtualNetworks&amp;#34;&lt;/span&gt;,
+	&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;apiVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;2019-09-01&amp;#34;&lt;/span&gt;,
+	&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;location&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;uksouth&amp;#34;&lt;/span&gt;,
+	&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;properties&amp;#34;&lt;/span&gt;: {
+		&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;addressSpace&amp;#34;&lt;/span&gt;: {
+			&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;addressPrefixes&amp;#34;&lt;/span&gt;: [
+				&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;192.168.0.0/16&amp;#34;&lt;/span&gt;
+			]
+		},
+		&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;copy&amp;#34;&lt;/span&gt;: [
+			{
+				&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;subnets&amp;#34;&lt;/span&gt;,
+				&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;count&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;,
+				&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;input&amp;#34;&lt;/span&gt;: {
+					&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[concat(&amp;#39;subnet-&amp;#39;, copyIndex(&amp;#39;subnets&amp;#39;, 1))]&amp;#34;&lt;/span&gt;,
+					&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;properties&amp;#34;&lt;/span&gt;: {
+						&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;addressPrefix&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[concat(&amp;#39;192.168.&amp;#39;, copyIndex(&amp;#39;subnets&amp;#39;, 1), &amp;#39;0/24&amp;#39;)&amp;#34;&lt;/span&gt;
+					}
+				}
+			}
+		]
+	}
+}
+&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;...&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The above simply creates 3 subnet with far fewer lines. You&amp;rsquo;ll notice two functions I haven&amp;rsquo;t explained yet: &lt;code&gt;[concat()]&lt;/code&gt; and &lt;code&gt;[copyIndex()]&lt;/code&gt;. The Microsoft docs do a good job on explaining these, but&amp;hellip;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;[concat()]&lt;/code&gt; allows you to concatenate arrays or strings. It accepts at a minimum of 1 argument and any number of additional arguments. You can see this is used to define a unique name for each subnet.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;[copyIndex()]&lt;/code&gt; allows you to access the position/index of the current iterable in the loop. We pass two parameters: the name of the loop &amp;ldquo;subnets&amp;rdquo; and an offset. Using the offset is what enables us to start with creating subnet names from &amp;ldquo;subnets-1&amp;rdquo; rather than &amp;ldquo;subnets-0&amp;rdquo;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You notice I use both &lt;code&gt;[concat()]&lt;/code&gt; and &lt;code&gt;[copyIndex()]&lt;/code&gt; for the &lt;code&gt;addressPrefix&lt;/code&gt; property. This enables me to bump the subnet by 1 and correlate the subnet name with the 3rd subnet octet.&lt;/p&gt;
+&lt;p&gt;There&amp;rsquo;s definitely room for improvement here. The &lt;code&gt;count&lt;/code&gt; object of the &lt;code&gt;copy&lt;/code&gt; element is hardcoded at the value of 3. What we could do is leverage a parameter of our json value, which contains an array of strings for all the subnets we want in our virtual network.&lt;/p&gt;
+&lt;p&gt;The below is what an ideal could look like that creates subnets based on all the items in a given array:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-JSON&#34; data-lang=&#34;JSON&#34;&gt;{
+	&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;$schema&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;contentVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1.0.0.0&amp;#34;&lt;/span&gt;,
+	&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;parameters&amp;#34;&lt;/span&gt;: {
+		&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;subnetAddressSpaces&amp;#34;&lt;/span&gt;: {
+			&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;array&amp;#34;&lt;/span&gt;,
+			&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;defaultValue&amp;#34;&lt;/span&gt;: [
+				&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;192.168.1.0/24&amp;#34;&lt;/span&gt;,
+				&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;192.168.2.0/24&amp;#34;&lt;/span&gt;,
+				&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;192.168.3.0/24&amp;#34;&lt;/span&gt;
+			]
+		}
+	},
+	&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;variables&amp;#34;&lt;/span&gt;: {},
+	&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;resources&amp;#34;&lt;/span&gt;: [
+		{
+			&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;vnet01&amp;#34;&lt;/span&gt;,
+			&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Microsoft.Network/VirtualNetworks&amp;#34;&lt;/span&gt;,
+			&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;apiVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;2019-09-01&amp;#34;&lt;/span&gt;,
+			&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;location&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;uksouth&amp;#34;&lt;/span&gt;,
+			&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;properties&amp;#34;&lt;/span&gt;: {
+				&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;addressSpace&amp;#34;&lt;/span&gt;: {
+					&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;addressPrefixes&amp;#34;&lt;/span&gt;: [
+						&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;192.168.0.0/16&amp;#34;&lt;/span&gt;
+					]
+				},
+				&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;copy&amp;#34;&lt;/span&gt;: [
+					{
+						&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;subnets&amp;#34;&lt;/span&gt;,
+						&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;count&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[length(parameters(&amp;#39;subnetAddressSpaces&amp;#39;))]&amp;#34;&lt;/span&gt;,
+						&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;input&amp;#34;&lt;/span&gt;: {
+							&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[concat(&amp;#39;subnet-&amp;#39;, copyIndex(&amp;#39;subnets&amp;#39;, 1))]&amp;#34;&lt;/span&gt;,
+							&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;properties&amp;#34;&lt;/span&gt;: {
+								&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;addressPrefix&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[parameters(&amp;#39;subnetAddressSpaces&amp;#39;)[copyIndex(&amp;#39;subnets&amp;#39;)]]&amp;#34;&lt;/span&gt;
+							}
+						}
+					}
+				]
+			}
+		}
+	]
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;In the above you can see I&amp;rsquo;ve included what the parameter definition this time, and defining the array of subset address spaces by specifying &lt;code&gt;defaultValue&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;What I&amp;rsquo;m doing differently here is using two different functions &lt;code&gt;[length()]&lt;/code&gt; and &lt;code&gt;[parameters()]&lt;/code&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;[length()]&lt;/code&gt; is what enables us to gather the number of elements within an array. In this case the value will be 3. This function can also be used to get the number of characters in a string or number of root-level properties in a given object.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;[parameters()]&lt;/code&gt; is hopefully obvious, but if not it&amp;rsquo;s how we can access the value of a parameter by passing one of the template&amp;rsquo;s parameter names.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;What the above in mind, you can see for the &lt;code&gt;count&lt;/code&gt; object we now have a means to loop for x many iterations for y many elements in the &lt;code&gt;subnetAddressSpaces&lt;/code&gt; array. You&amp;rsquo;ll also notice, we&amp;rsquo;re no longer concatenating a string to create our subnets&#39; address space. Instead we&amp;rsquo;re directly accessing the value in the array by referencing the index position of the returned by &lt;code&gt;[copyIndex()]&lt;/code&gt;. In other words, we&amp;rsquo;re grabbing the current value of the iterable in the loop.&lt;/p&gt;
+&lt;p&gt;Hopefully now you get the sense that this whole combination of the &lt;code&gt;copy&lt;/code&gt; element, with functions &lt;code&gt;[length()]&lt;/code&gt; and &lt;code&gt;[copyIndex()]&lt;/code&gt; is pretty much a for in-range loop interpreted by Azure within our json.&lt;/p&gt;
+&lt;h2 id=&#34;objective-2&#34;&gt;Objective 2&lt;/h2&gt;
+&lt;p&gt;As for the second objective (dynamically creating resources, instead of dynamically setting properties of a resource&amp;rsquo;s properties&amp;hellip; wait, what?!), there&amp;rsquo;s hardly any difference, except there&amp;rsquo;s no need to use the &lt;code&gt;input&lt;/code&gt; object within the &lt;code&gt;copy&lt;/code&gt; element.&lt;/p&gt;
+&lt;p&gt;Below I&amp;rsquo;ll share a complete working example of the template and a short PowerShell snippet to create the deployment.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-JSON&#34; data-lang=&#34;JSON&#34;&gt;{
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;$schema&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;contentVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1.0.0.0&amp;#34;&lt;/span&gt;,
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;parameters&amp;#34;&lt;/span&gt;: {
+        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;virtualNetworkAddressSpaces&amp;#34;&lt;/span&gt;: {
+            &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;array&amp;#34;&lt;/span&gt;
+        }
+    },
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;variables&amp;#34;&lt;/span&gt;: {},
+    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;resources&amp;#34;&lt;/span&gt;: [
+        {
+            &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[concat(&amp;#39;vnet-&amp;#39;, copyIndex(&amp;#39;vnetloop&amp;#39;, 1))]&amp;#34;&lt;/span&gt;,
+            &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Microsoft.Network/VirtualNetworks&amp;#34;&lt;/span&gt;,
+            &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;apiVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;2019-09-01&amp;#34;&lt;/span&gt;,
+            &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;location&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;uksouth&amp;#34;&lt;/span&gt;,
+            &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;dependsOn&amp;#34;&lt;/span&gt;: [],
+            &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;tags&amp;#34;&lt;/span&gt;: {},
+            &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;copy&amp;#34;&lt;/span&gt;: {
+                &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;vnetloop&amp;#34;&lt;/span&gt;,
+                &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;count&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[length(parameters(&amp;#39;virtualNetworkAddressSpaces&amp;#39;))]&amp;#34;&lt;/span&gt;
+            },
+            &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;properties&amp;#34;&lt;/span&gt;: {
+                &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;addressSpace&amp;#34;&lt;/span&gt;: {
+                    &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;addressPrefixes&amp;#34;&lt;/span&gt;: [
+                        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[parameters(&amp;#39;virtualNetworkAddressSpaces&amp;#39;)[copyIndex(&amp;#39;vnetloop&amp;#39;)]]&amp;#34;&lt;/span&gt;
+                    ]
+                },
+                &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;subnets&amp;#34;&lt;/span&gt;: [
+                    {
+                        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;subnet0&amp;#34;&lt;/span&gt;,
+                        &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;properties&amp;#34;&lt;/span&gt;: {
+                            &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;addressPrefix&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;[parameters(&amp;#39;virtualNetworkAddressSpaces&amp;#39;)[copyIndex(&amp;#39;vnetloop&amp;#39;)]]&amp;#34;&lt;/span&gt;
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$TemplateParameters = @{
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;virtualNetworkAddressSpaces&amp;#34;&lt;/span&gt; = @(
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;192.168.1.0/24&amp;#34;&lt;/span&gt;,
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;192.168.2.0/24&amp;#34;&lt;/span&gt;,
+        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;192.168.3.0/24&amp;#34;&lt;/span&gt;
+    )
+}
+
+New-AzResourceGroupDeployment -Name &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;mytestdeployment&amp;#34;&lt;/span&gt; -ResourceGroupName &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;rg-mytest&amp;#34;&lt;/span&gt; -TemplateFile &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.\vnet-template-2.json&amp;#34;&lt;/span&gt; -TemplateParameterObject $TemplateParameters
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;With the above we&amp;rsquo;re still making use of the [length()] function for the count property of the copy element. This still enables us to loop over the number of elements within the given array. You&amp;rsquo;ll also notice we&amp;rsquo;re just creating 1 subnet for each virtual network. Each subnet&amp;rsquo;s width is the entire width virtual network&amp;rsquo;s address space.&lt;/p&gt;
+&lt;h2 id=&#34;summary&#34;&gt;Summary&lt;/h2&gt;
+&lt;p&gt;I know these examples are really short. You&amp;rsquo;re really unlikely to want to &lt;em&gt;just&lt;/em&gt; dynamically create subnets or virtual networks, but hopefully this is offers you insightful examples to get you a working syntax for whatever it is you&amp;rsquo;re trying to do!&lt;/p&gt;
+&lt;p&gt;The below Microsoft doc links may be helpful for you, if not ping me and I&amp;rsquo;ll be happy to help!&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/template-functions&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;ARM Template Functions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/azure/azure-resource-manager/templates/copy-properties&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Property iteration in ARM templates&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
         <title>Get CMUnusedSources</title>
         <link>https://adamcook.io/p/get-cmunusedsources/</link>
         <pubDate>Sun, 07 Jul 2019 00:00:00 +0100</pubDate>
