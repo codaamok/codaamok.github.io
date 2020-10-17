@@ -6,7 +6,20 @@
     <description>Recent content in ConfigMgr on Adam Cook</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 17 Feb 2019 00:00:00 +0100</lastBuildDate><atom:link href="https://adamcook.io/categories/configmgr/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 07 Jul 2019 00:00:00 +0100</lastBuildDate><atom:link href="https://adamcook.io/categories/configmgr/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Get CMUnusedSources</title>
+      <link>https://adamcook.io/p/get-cmunusedsources/</link>
+      <pubDate>Sun, 07 Jul 2019 00:00:00 +0100</pubDate>
+      
+      <guid>https://adamcook.io/p/get-cmunusedsources/</guid>
+      <description>I recently wrote a PowerShell script that reports on what folders are used or unused by System Center Configuration Manager.
+You can find it here on GitHub.
+I demoed the script at the London Windows Manager User Group, you can watch the recording below on YouTube.
+  Among a bunch of technical topics, I also learned a huge amount of valuable soft/personal things too.
+Enough is enough I started writing in February and since then I have refactored the script and the idea itself many times.</description>
+    </item>
+    
     <item>
       <title>ConfigMgr Throttling Distribution Point Bandwidth</title>
       <link>https://adamcook.io/p/configmgr-throttling-distribution-point-bandwidth/</link>

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='I recently wrote a PowerShell script that reports on what folders are used or unused by System Center Configuration Manager.
+You can find it here on GitHub.
+I demoed the script at the London Windows Manager User Group, you can watch the recording below on YouTube.
+  Among a bunch of technical topics, I also learned a huge amount of valuable soft/personal things too.
+Enough is enough I started writing in February and since then I have refactored the script and the idea itself many times.'><title>Get CMUnusedSources</title>
+    
+    <link rel='canonical' href='https://adamcook.io/p/get-cmunusedsources/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Get CMUnusedSources'>
+<meta property='og:description' content='I recently wrote a PowerShell script that reports on what folders are used or unused by System Center Configuration Manager.
+You can find it here on GitHub.
+I demoed the script at the London Windows Manager User Group, you can watch the recording below on YouTube.
+  Among a bunch of technical topics, I also learned a huge amount of valuable soft/personal things too.
+Enough is enough I started writing in February and since then I have refactored the script and the idea itself many times.'>
+<meta property='og:url' content='https://adamcook.io/p/get-cmunusedsources/'>
+<meta property='og:site_name' content='Adam Cook'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2019-07-07T00:00:00&#43;01:00'/><meta property='article:modified_time' content='2019-07-07T00:00:00&#43;01:00'/>
+<meta name="twitter:site" content="codaamok"><meta name="twitter:title" content="Get CMUnusedSources">
+<meta name="twitter:description" content="I recently wrote a PowerShell script that reports on what folders are used or unused by System Center Configuration Manager.
+You can find it here on GitHub.
+I demoed the script at the London Windows Manager User Group, you can watch the recording below on YouTube.
+  Among a bunch of technical topics, I also learned a huge amount of valuable soft/personal things too.
+Enough is enough I started writing in February and since then I have refactored the script and the idea itself many times."></head><body class="">
+        <div class="container flex on-phone--column align-items--flex-start extended article-page with-toolbar">
+            <aside class="sidebar left-sidebar sticky">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header class="site-info">
+        
+            <figure class="site-avatar">
+                
+
+                
+                    
+                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_2.png" width="300"
+                        height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+
+                <span class="emoji">🙃</span>
+            </figure>
+        
+        <h1 class="site-name"><a href="https://adamcook.io/">Adam Cook</a></h1>
+        <h2 class="site-description">Passionate about helping people. #PowerShell, #ConfigMgr and #Azure. Misses #Linux.</h2>
+    </header>
+
+    <ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='https://adamcook.io/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://adamcook.io/archives'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://twitter.com/codaamok'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84 0 0 0 .497 -3.753C20.18 7.773 21.692 5.25 22 4.009z" />
+</svg>
+                
+                <span>Twitter</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://github.com/codaamok'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+                
+                <span>GitHub</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://linkedin.com/in/adamcharlescook'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-linkedin" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="4" width="16" height="16" rx="2" />
+  <line x1="8" y1="11" x2="8" y2="16" />
+  <line x1="8" y1="8" x2="8" y2="8.01" />
+  <line x1="12" y1="16" x2="12" y2="11" />
+  <path d="M16 16v-3a2 2 0 0 0 -4 0" />
+</svg>
+                
+                <span>LinkedIn</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://www.youtube.com/channel/UCjv4o4ToaauMNKP4wfIhP0A'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-youtube" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="3" y="5" width="18" height="14" rx="4" />
+  <path d="M10 9l5 3l-5 3z" />
+</svg>
+                
+                <span>YouTube</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://pssouth.co.uk'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-prompt" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <polyline points="5 7 10 12 5 17" />
+  <line x1="13" y1="17" x2="19" y2="17" />
+</svg>
+                
+                <span>PowerShell Southampton</span>
+            </a>
+        </li>
+        
+    </ol>
+</aside>
+            <main class="main full-width">
+    <div id="article-toolbar">
+        <a href="https://adamcook.io/" class="back-home">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+            <span>Back</span>
+        </a>
+    </div>
+
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            
+                <a href="https://adamcook.io/categories/configmgr/">ConfigMgr</a>
+            
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="https://adamcook.io/p/get-cmunusedsources/">Get CMUnusedSources</a>
+    </h2>
+
+    <table>
+        <tr>
+            <td width="25%">
+                <footer class="article-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="5" width="16" height="16" rx="2" />
+  <line x1="16" y1="3" x2="16" y2="7" />
+  <line x1="8" y1="3" x2="8" y2="7" />
+  <line x1="4" y1="11" x2="20" y2="11" />
+  <line x1="11" y1="15" x2="12" y2="15" />
+  <line x1="12" y1="15" x2="12" y2="18" />
+</svg>
+                    <time class="article-time--published">7 July 2019</time>
+                </footer>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <footer class="article-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--published">
+                        Reading time: 10 minutes.
+                    </time>
+                </footer>
+            </td>
+        </tr>
+    </table></div>
+</header>
+
+    <section class="article-content">
+    <p>I recently wrote a PowerShell script that reports on what folders are used or unused by System Center Configuration Manager.</p>
+<p><a class="link" href="https://github.com/codaamok/Get-CMUnusedSources"  target="_blank" rel="noopener"
+    >You can find it here on GitHub</a>.</p>
+<p>I demoed the script at the <a class="link" href="https://wmug.co.uk/"  target="_blank" rel="noopener"
+    >London Windows Manager User Group</a>, you can watch the recording below on YouTube.</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe loading="lazy" src="https://www.youtube.com/embed/YGwQIUhYJsY" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p>Among a bunch of technical topics, I also learned a huge amount of valuable soft/personal things too.</p>
+<h2 id="enough-is-enough">Enough is enough</h2>
+<p>I started writing in February and since then I have refactored the script and the idea itself many times. It&rsquo;s now start of July and my girlfriend and I want to do fun summer things.</p>
+<p>I first &ldquo;finished&rdquo; it in April but it was only good if you stored your content sources on a local file system to a site server. I realised that a lot of admins store their sources on a remote file server. I tried to &ldquo;drop in&rdquo; accommodations for that but quickly accepted that I was creating fragile flows and hard to read solutions. This is one of the few times I did a &ldquo;sod it, let&rsquo;s start again&rdquo;.</p>
+<p>Around end of May I had a working script that worked with local and remote storage but it was slow. Because it iterates over all gathered folders, and for each folder, iterates over all ConfigMgr content objects, this meant in an environment with 10k content objects and 70k folders it took over 10 hours. I did my best to create efficiencies, such as to skip sub folders of folders already marked as &ldquo;Not used&rdquo; but 10 hours really wasn&rsquo;t good.</p>
+<p>I was almost at a cross roads because I thought performance shouldn&rsquo;t matter too much because this would be something that you would run once in a blue moon. Then I had that fear of posting online and being bombarded with &ldquo;you should have done x instead of y&rdquo;. I&rsquo;m still at risk of that now (which I welcome by the way, especially for something I&rsquo;m not aware of). It was that thought which pushed me to strive for better because I knew I could improve, and the improvement would be significant enough.</p>
+<p>Then I discovered runspaces! Sure, I could have used jobs or set a dependency to use the PoshRSJobs module, but I just wanted to learn runspaces, how to use them and not have a dependency on another module. So of course doing that added more time and testing. It was worth it though.</p>
+<p>Throughout the entire time I kept tricking myself in to thinking &ldquo;I&rsquo;m almost done&rdquo;, &ldquo;it&rsquo;ll be done next week&rdquo;, &ldquo;it&rsquo;s pretty much there&rdquo;. Constant ideas and learning new techniques for readability / performance was another time killer.</p>
+<p>I once read that managers hate dealing with sysadmins because when tasked to create something they don&rsquo;t lay the foundations first and get too hung up on the features. I sometimes saw myself as that guy.</p>
+<p>With that said, I also felt like I had a short fuse with it and had a <em>just want to get it done</em> mindset. While working on this I started reading (and still yet to finish) <a class="link" href="https://www.goodreads.com/book/show/629.Zen_and_the_Art_of_Motorcycle_Maintenance"  target="_blank" rel="noopener"
+    >Zen and the Art of Motorcycle Maintenance</a>. In the early chapters there was emphasis on people rushing their day-to-day and the work they do. I related to this and was guilty of that at times with this script. So then I decided if I&rsquo;m not taking my time to do it carefully then there&rsquo;s no point doing it at all.</p>
+<p>At this point, summer had started, and for me that means cricket season was on and while working during the week, that meant every Saturday was spent all day playing cricket. I just wanted to spend every free hour I had finishing this but conscious of not wanting to rush it.</p>
+<p>I had to draw a line in the sand and make my primary goal to finish it with what I had. I wanted to spend time with my girlfriend, finish that book, learn something else, fix that broken window motor on my car I&rsquo;ve had for over a year, play a few nights of CS:GO.</p>
+<p>I really enjoyed the brain teasers though. I would be drawing what the flow of some loops looked like in my head while in the shower or driving. Realistically, I know I&rsquo;m never finished. No doubt if someone found an issue with it I&rsquo;ll be curious and want to fix it.</p>
+<p>I think next time I have some idea that I think will consume any amount of time, I should first spend time thinking about what the end product looks like. Then I should be able to know at what point I would want to bring the idea/project to a close.</p>
+<h2 id="asking-for-help">Asking for help</h2>
+<p>A buddy <a class="link" href="http://www.christopherkibble.com"  target="_blank" rel="noopener"
+    >Chris Kibble</a> shared with me <a class="link" href="http://www.catb.org/~esr/faqs/smart-questions.html"  target="_blank" rel="noopener"
+    >How to ask questions the smart way</a>. Looks like this is a link from the <a class="link" href="http://xyproblem.info/"  target="_blank" rel="noopener"
+    >The XY Problem</a>.</p>
+<p>These two resources are huge and you may not yet appreciate why. I&rsquo;ve been on the Internet for as long as I can remember and have been posting stupid questions for most of my life.</p>
+<p>When I became mindful of the XY problem and how to ask for help from people who are insanely good, I became much more effective. A part of asking for help is about first having a bloody good stab at it yourself. This often pushed me to not necessarily find the answers but to help me think more inquisitively. I found as a result of asking myself more questions, it enabled me to understand problems better and sometimes find the answer.</p>
+<p>I&rsquo;m in the <a class="link" href="https://winadmins.io"  target="_blank" rel="noopener"
+    >Windows Admins</a> Discord and some people in there are not only clever but incredibly helpful. Just to say thanks to people who helped me:</p>
+<ul>
+<li>Cody Mathis (<a class="link" href="https://github.com/codymathis123"  target="_blank" rel="noopener"
+    >@codymathis123</a>)</li>
+<li>Chris Kibble (<a class="link" href="https://github.com/ChrisKibble"  target="_blank" rel="noopener"
+    >@ChrisKibble</a>)</li>
+<li>Chris Dent (<a class="link" href="https://github.com/idented-automation"  target="_blank" rel="noopener"
+    >@idented-automation</a>)</li>
+<li>Kevin Crouch (<a class="link" href="httos://github.com/PsychoData" >@PsychoData</a>)</li>
+<li>Patrick (the guy who wrote <a class="link" href="https://github.com/pseymour/MakeMeAdmin/wiki"  target="_blank" rel="noopener"
+    >MakeMeAdmin</a>)</li>
+</ul>
+<h2 id="powershell">PowerShell</h2>
+<p>So I wrote a PowerShell script and I learnt some PowerShell. Of course. Well here&rsquo;s what I learnt.</p>
+<h2 id="debugger">Debugger</h2>
+<p>VSCode is my go-to editor. One of the many reasons why I like it, is because of the debugger with the integrated console. Once I read <a class="link" href="https://foxdeploy.com/2019/02/07/life-after-write-debug/"  target="_blank" rel="noopener"
+    >Life after Write-Debug</a> by Stephen Owen I became much more efficient at troubleshooting my dodgy code.</p>
+<p>My first manager as an IT professional told me what the <a class="link" href="https://en.wikipedia.org/wiki/Rubber_duck_debugging"  target="_blank" rel="noopener"
+    >rubber duck debugging technique was</a>. So when you discover something like debugging for PowerShell in ISE or VSCode, it&rsquo;s a huge sense of relief. The days of intensely reading line by line or including a bunch of print / Write-Host commands are long gone.</p>
+<p><a class="link" href="https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/debugging-other-powershell-processes"  target="_blank" rel="noopener"
+    >You can also debug other running PowerShell processes!!</a></p>
+<h2 id="standards-and-formatting">Standards and formatting</h2>
+<p>For quick scripts with limited audience, I make some effort to format and make it at least somewhat presentable for next the guy. However taking on something fairly big that might be used and read by the Internet, I appreciated the need for not necessarily pretty looking code because that&rsquo;s always subjective but at least adopt a standard.</p>
+<p>Again, kind of tapping in to that fear of posting online and being scrutinized.</p>
+<h2 id="net">.NET</h2>
+<p>I had always known you could do .NET stuff within PowerShell and whenever I saw it in conversation it was always in the context of scale or performance. I figured with what I was trying to achieve, this would fall under the scale category. I&rsquo;ve seen environments with tens of thousands of ConfigMgr content objects and hundreds of thousands of folders.</p>
+<p>There&rsquo;s a need here as well to determine when to draw the line. You could spend a long time looking up .NET classes and methods when you could save yourself a lot of time just using PowerShell cmdlets. Sure, there&rsquo;s a performance gain, but as a sysadmin I think readability and time is more valuable. So I won&rsquo;t make a habit of using them at every opportunity, purely because I&rsquo;m not fluent enough. Being mindful of them and how or when to use them is good enough.</p>
+<h2 id="enumeratedirectories">EnumerateDirectories()</h2>
+<p>On the topic of .NET, I did really want to use the <a class="link" href="https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.enumeratedirectories"  target="_blank" rel="noopener"
+    >EnumerateDirectories method from the Directory class</a>. But it falls short where you can&rsquo;t control its on-error preference. No matter what, on error, it&rsquo;s a terminating error. Which sucked because it sounded perfect for what I wanted and crazy fast too.</p>
+<p>In situations where it encountered a folder with access denied, it wouldn&rsquo;t continue.</p>
+<h2 id="runspaces">Runspaces</h2>
+<p>As I mentioned already I wanted concurrent processing so I had several options already available like jobs or the PoSHRSJobs module that gives you runspaces but with the familiar syntax as jobs. I opted to use runspaces and spend extra time learning more about how they work for two reasons mainly:</p>
+<ul>
+<li>To use something and make a good effort at actually trying to understand it.</li>
+<li>Not set too many dependencies on modules. I had a train of thought that not all ConfigMgr admins are full time admins, no doubt they juggle other stuff too. What if they really wanted to just clean up their storage but wasn&rsquo;t 100% sure how to install a third party module just to get the basics working?</li>
+</ul>
+<h2 id="collections-the--operator">Collections the += operator</h2>
+<p>I saw <a class="link" href="https://twitter.com/AndySvints/status/1130135528815439874"  target="_blank" rel="noopener"
+    >this thread on Twitter</a> and my mind was blown how much quicker it was to not use the += operator when adding new elements to an array.</p>
+<h2 id="join-path">Join-Path</h2>
+<p>I guess I saw some quirks of PowerShell along the way but the biggest for me that sticks out in memory was Join-Path. Check out this madness:</p>
+<pre><code>PS C:\&gt; Test-Path &quot;\\fakeserver\fakeshare\fakefolder&quot;
+False
+PS C:\&gt; Join-Path -Path &quot;\\fakeserver&quot; -ChildPath &quot;fakeshare&quot; | Join-Path -ChildPath &quot;fakefolder&quot;
+\\fakeserver\fakeshare\fakefolder
+</code></pre><p>Join-Path copes well with paths that don&rsquo;t exist. Awesome.</p>
+<pre><code>PS C:\&gt; Test-Path &quot;K:\I\Do\Not\Have\K\Drive\Mapped&quot;
+False
+PS C:\&gt; Join-Path -Path &quot;K:\&quot; -ChildPath &quot;I\Do\Not\Have\K\Drive\Mapped&quot;
+Join-Path : Cannot find drive. A drive with the name 'K' does not exist.
+At line:1 char:1
++ Join-Path -Path &quot;K:\&quot; -ChildPath &quot;I\Do\Not\Have\K\Drive\Mapped&quot;
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (K:String) [Join-Path], DriveNotFoundException
+    + FullyQualifiedErrorId : DriveNotFound,Microsoft.PowerShell.Commands.JoinPathCommand
+</code></pre><p>&hellip;unless it&rsquo;s a local path on a drive letter that doesn&rsquo;t exist. Worth remembering. You can&rsquo;t really say Join-Path validates path as it joins them, because it doesn&rsquo;t, nor can you say its sole purpose is to verify just &ldquo;syntax&rdquo; or &ldquo;validity&rdquo; of path structure, because it isn&rsquo;t.</p>
+<p>Looks like there&rsquo;s <a class="link" href="https://github.com/PowerShell/PowerShell/issues/4386"  target="_blank" rel="noopener"
+    >an open issue on this</a>.</p>
+<h2 id="regex">Regex</h2>
+<p>Early doors I was trying to grab the server, share and remainder share from a string: <code>\\server\share\folder\folder</code>.</p>
+<p><a class="link" href="https://twitter.com/CodyMathis123"  target="_blank" rel="noopener"
+    >Cody Mathis</a> threw me a little snippet of regex and from then on my eyes were opened. I&rsquo;m even thinking of going back to a previous project <a class="link" href="https://github.com/codaamok/PoSHHyperCloud"  target="_blank" rel="noopener"
+    >PoSH Hyper Cloud</a> to use more regex and maybe even jobs! <a class="link" href="http://regex101.com"  target="_blank" rel="noopener"
+    >regex101.com</a> is my go to for testing expressions.</p>
+<h2 id="enumerations">Enumerations</h2>
+<p>Patrick Seymour recently wrote Test-FileSystemAccess and I enhanced it a little to return exit codes and determine if elevation is required. Some feedback by Chris Dent taught me about enums! They&rsquo;re awesome. An excellent way to create a relationship between numbers and strings. I used the below resources to implement an enum in to Test-FileSystemAccess:</p>
+<ul>
+<li><a class="link" href="https://blog.pauby.com/post/working-with-enums-in-powershell"  target="_blank" rel="noopener"
+    >Working with enums in PowerShell</a></li>
+<li><a class="link" href="https://blog.pauby.com/post/creating-enums-in-powershell/"  target="_blank" rel="noopener"
+    >Creating enums in PowerShell</a></li>
+</ul>
+<p>Tip! If you want to get the full Parameter Type of a parameter that&rsquo;s an enum, so you can use GetNames:: on it, the below will help:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">(Get-Command Set-ExecutionPolicy).Parameters[<span style="color:#e6db74">&#39;ExecutionPolicy&#39;</span>] | Select -ExpandProperty ParameterType
+</code></pre></div><h2 id="datatables-and-filtering">DataTables and filtering</h2>
+<p>I recently tackled an issue with the script where collections of large scale and filtering them was an issue. Chris Kibble once showed me DataTables and I remember a remark about them being quick. He wasn&rsquo;t joking! Checkout the below!</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$winFiles = Get-ChildItem c:\windows -Recurse -ErrorAction SilentlyContinue
+
+$commands = @{
+    <span style="color:#e6db74">&#39;Where-Object&#39;</span> = {
+        $exeFiles = $winFiles | Where-Object { $_.Extension <span style="color:#f92672">-eq</span> <span style="color:#e6db74">&#34;.exe&#34;</span> }
+    }
+    <span style="color:#e6db74">&#39;Where-Object (no script block)&#39;</span> = {
+        $exeFiles = $winFiles | Where-Object Extension <span style="color:#f92672">-eq</span> <span style="color:#e6db74">&#34;.exe&#34;</span>
+    }
+    <span style="color:#e6db74">&#39;.Where&#39;</span> = {
+        $exeFiles = $winFiles.Where{ $_.Extension <span style="color:#f92672">-eq</span> <span style="color:#e6db74">&#34;.exe&#34;</span> }
+    }
+    <span style="color:#e6db74">&#39;DataTable&#39;</span> = {
+        $fileTable = New-Object System.Data.DataTable
+        $fileTable.TableName = <span style="color:#e6db74">&#34;AllMuhFiles&#34;</span>
+
+        <span style="color:#66d9ef">[void]</span>$fileTable.Columns.Add(<span style="color:#e6db74">&#34;FileName&#34;</span>)
+        <span style="color:#66d9ef">[void]</span>$fileTable.Columns.Add(<span style="color:#e6db74">&#34;Parent&#34;</span>)
+        <span style="color:#66d9ef">[void]</span>$fileTable.Columns.Add(<span style="color:#e6db74">&#34;Extension&#34;</span>)
+        <span style="color:#66d9ef">[void]</span>$fileTable.Columns.Add(<span style="color:#e6db74">&#34;IsInf&#34;</span>)
+
+        <span style="color:#66d9ef">ForEach</span>($file <span style="color:#66d9ef">in</span> $winFiles) {
+            <span style="color:#66d9ef">[void]</span>$fileTable.Rows.Add($file.Name, $file.Parent, $file.Extension)
+        }
+
+        $exeFiles = $fileTable.Select(<span style="color:#e6db74">&#34;Extension like &#39;.exe&#39;&#34;</span>)
+    }
+    <span style="color:#e6db74">&#39;foreach&#39;</span> = {
+        $exefiles = <span style="color:#66d9ef">foreach</span> ($file <span style="color:#66d9ef">in</span> $winFiles) {
+            <span style="color:#66d9ef">if</span> ($file.Extension <span style="color:#f92672">-eq</span> <span style="color:#e6db74">&#39;.exe&#39;</span>) {
+                $file
+            }
+        }
+    }
+}
+
+$commands.Keys | <span style="color:#66d9ef">ForEach</span>-Object {
+    $testName = $_
+    1..3 | <span style="color:#66d9ef">ForEach</span>-Object {
+        <span style="color:#66d9ef">[PSCustomObject]</span>@{
+            TestName  = $testName
+            Attempt   = $_
+            ElapsedMS = (Measure-Command -Expression $commands[$testName]).TotalMilliseconds
+        }
+    }
+}
+</code></pre></div><p>Results:</p>
+<pre><code>Testing Where-Object
+2849.362
+2926.2761
+2876.9806
+
+Testing .Where
+1045.712
+1037.4888
+1031.191
+
+Testing DataTable select
+280.6466
+272.8503
+272.5341
+</code></pre><p>I started looking in to DataTables because on large collections (hundreds of thousands sort of size) <code>Where-Object</code> was slow. While the <code>Where()</code> method was faster, both were nothing compared to DataTables.</p>
+<p>With that said, if a cmdlet has a -Filter parameter available to let you work directly with a provider, then use that. &ldquo;Keep left&rdquo; or &ldquo;filter left, format right&rdquo; are phrases I learnt and try to keep in mind when filtering.</p>
+<p>I abandoned the use of DataTables in the end as I didn&rsquo;t need it. Even though they need additional set up, as you can see from the previous snippet, the results might be worth it in some cases.</p>
+<p>Resources I used to learn about filtering and the performance impact</p>
+<ul>
+<li><a class="link" href="https://4sysops.com/archives/where-object-vs-the-where-method-array-filtering-in-powershell/"  target="_blank" rel="noopener"
+    >Explains where-object and where, and the -filter for provider specific stuff</a></li>
+<li><a class="link" href="https://stackoverflow.com/questions/50956909/powershell-where-object-vs-where-method"  target="_blank" rel="noopener"
+    >Explains the object type returned by where-object and where</a></li>
+<li><a class="link" href="https://www.jonathanmedd.net/2017/05/powershell-where-where-or-where.html"  target="_blank" rel="noopener"
+    >Talks about &ldquo;keeping left&rdquo; for best performance. -Filter is king if available but only if you don&rsquo;t want all the objects in an array for later consumption</a></li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+    
+</article>
+
+    <aside class="widget related-contents--wrapper">
+    
+    
+</aside>
+
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "adam-cook" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">&copy; 2020 Adam Cook</section>
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.0.5">Stack</a></b> designed by
+        <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true" style="display:none">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+            </main>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"
+    integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g=" crossorigin="anonymous"></script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<link rel="stylesheet" href="/css/highlight/light.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="/css/highlight/dark.min.css" media="(prefers-color-scheme: dark)">
+
+    </body>
+</html>

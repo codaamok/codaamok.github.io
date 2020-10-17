@@ -445,6 +445,197 @@
 </description>
         </item>
         <item>
+        <title>Get CMUnusedSources</title>
+        <link>https://adamcook.io/p/get-cmunusedsources/</link>
+        <pubDate>Sun, 07 Jul 2019 00:00:00 +0100</pubDate>
+        
+        <guid>https://adamcook.io/p/get-cmunusedsources/</guid>
+        <description>&lt;p&gt;I recently wrote a PowerShell script that reports on what folders are used or unused by System Center Configuration Manager.&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/codaamok/Get-CMUnusedSources&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;You can find it here on GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I demoed the script at the &lt;a class=&#34;link&#34; href=&#34;https://wmug.co.uk/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;London Windows Manager User Group&lt;/a&gt;, you can watch the recording below on YouTube.&lt;/p&gt;
+
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe loading=&#34;lazy&#34; src=&#34;https://www.youtube.com/embed/YGwQIUhYJsY&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Among a bunch of technical topics, I also learned a huge amount of valuable soft/personal things too.&lt;/p&gt;
+&lt;h2 id=&#34;enough-is-enough&#34;&gt;Enough is enough&lt;/h2&gt;
+&lt;p&gt;I started writing in February and since then I have refactored the script and the idea itself many times. It&amp;rsquo;s now start of July and my girlfriend and I want to do fun summer things.&lt;/p&gt;
+&lt;p&gt;I first &amp;ldquo;finished&amp;rdquo; it in April but it was only good if you stored your content sources on a local file system to a site server. I realised that a lot of admins store their sources on a remote file server. I tried to &amp;ldquo;drop in&amp;rdquo; accommodations for that but quickly accepted that I was creating fragile flows and hard to read solutions. This is one of the few times I did a &amp;ldquo;sod it, let&amp;rsquo;s start again&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;Around end of May I had a working script that worked with local and remote storage but it was slow. Because it iterates over all gathered folders, and for each folder, iterates over all ConfigMgr content objects, this meant in an environment with 10k content objects and 70k folders it took over 10 hours. I did my best to create efficiencies, such as to skip sub folders of folders already marked as &amp;ldquo;Not used&amp;rdquo; but 10 hours really wasn&amp;rsquo;t good.&lt;/p&gt;
+&lt;p&gt;I was almost at a cross roads because I thought performance shouldn&amp;rsquo;t matter too much because this would be something that you would run once in a blue moon. Then I had that fear of posting online and being bombarded with &amp;ldquo;you should have done x instead of y&amp;rdquo;. I&amp;rsquo;m still at risk of that now (which I welcome by the way, especially for something I&amp;rsquo;m not aware of). It was that thought which pushed me to strive for better because I knew I could improve, and the improvement would be significant enough.&lt;/p&gt;
+&lt;p&gt;Then I discovered runspaces! Sure, I could have used jobs or set a dependency to use the PoshRSJobs module, but I just wanted to learn runspaces, how to use them and not have a dependency on another module. So of course doing that added more time and testing. It was worth it though.&lt;/p&gt;
+&lt;p&gt;Throughout the entire time I kept tricking myself in to thinking &amp;ldquo;I&amp;rsquo;m almost done&amp;rdquo;, &amp;ldquo;it&amp;rsquo;ll be done next week&amp;rdquo;, &amp;ldquo;it&amp;rsquo;s pretty much there&amp;rdquo;. Constant ideas and learning new techniques for readability / performance was another time killer.&lt;/p&gt;
+&lt;p&gt;I once read that managers hate dealing with sysadmins because when tasked to create something they don&amp;rsquo;t lay the foundations first and get too hung up on the features. I sometimes saw myself as that guy.&lt;/p&gt;
+&lt;p&gt;With that said, I also felt like I had a short fuse with it and had a &lt;em&gt;just want to get it done&lt;/em&gt; mindset. While working on this I started reading (and still yet to finish) &lt;a class=&#34;link&#34; href=&#34;https://www.goodreads.com/book/show/629.Zen_and_the_Art_of_Motorcycle_Maintenance&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Zen and the Art of Motorcycle Maintenance&lt;/a&gt;. In the early chapters there was emphasis on people rushing their day-to-day and the work they do. I related to this and was guilty of that at times with this script. So then I decided if I&amp;rsquo;m not taking my time to do it carefully then there&amp;rsquo;s no point doing it at all.&lt;/p&gt;
+&lt;p&gt;At this point, summer had started, and for me that means cricket season was on and while working during the week, that meant every Saturday was spent all day playing cricket. I just wanted to spend every free hour I had finishing this but conscious of not wanting to rush it.&lt;/p&gt;
+&lt;p&gt;I had to draw a line in the sand and make my primary goal to finish it with what I had. I wanted to spend time with my girlfriend, finish that book, learn something else, fix that broken window motor on my car I&amp;rsquo;ve had for over a year, play a few nights of CS:GO.&lt;/p&gt;
+&lt;p&gt;I really enjoyed the brain teasers though. I would be drawing what the flow of some loops looked like in my head while in the shower or driving. Realistically, I know I&amp;rsquo;m never finished. No doubt if someone found an issue with it I&amp;rsquo;ll be curious and want to fix it.&lt;/p&gt;
+&lt;p&gt;I think next time I have some idea that I think will consume any amount of time, I should first spend time thinking about what the end product looks like. Then I should be able to know at what point I would want to bring the idea/project to a close.&lt;/p&gt;
+&lt;h2 id=&#34;asking-for-help&#34;&gt;Asking for help&lt;/h2&gt;
+&lt;p&gt;A buddy &lt;a class=&#34;link&#34; href=&#34;http://www.christopherkibble.com&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Chris Kibble&lt;/a&gt; shared with me &lt;a class=&#34;link&#34; href=&#34;http://www.catb.org/~esr/faqs/smart-questions.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;How to ask questions the smart way&lt;/a&gt;. Looks like this is a link from the &lt;a class=&#34;link&#34; href=&#34;http://xyproblem.info/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;The XY Problem&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;These two resources are huge and you may not yet appreciate why. I&amp;rsquo;ve been on the Internet for as long as I can remember and have been posting stupid questions for most of my life.&lt;/p&gt;
+&lt;p&gt;When I became mindful of the XY problem and how to ask for help from people who are insanely good, I became much more effective. A part of asking for help is about first having a bloody good stab at it yourself. This often pushed me to not necessarily find the answers but to help me think more inquisitively. I found as a result of asking myself more questions, it enabled me to understand problems better and sometimes find the answer.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;m in the &lt;a class=&#34;link&#34; href=&#34;https://winadmins.io&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Windows Admins&lt;/a&gt; Discord and some people in there are not only clever but incredibly helpful. Just to say thanks to people who helped me:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Cody Mathis (&lt;a class=&#34;link&#34; href=&#34;https://github.com/codymathis123&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;@codymathis123&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Chris Kibble (&lt;a class=&#34;link&#34; href=&#34;https://github.com/ChrisKibble&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;@ChrisKibble&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Chris Dent (&lt;a class=&#34;link&#34; href=&#34;https://github.com/idented-automation&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;@idented-automation&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Kevin Crouch (&lt;a class=&#34;link&#34; href=&#34;httos://github.com/PsychoData&#34; &gt;@PsychoData&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Patrick (the guy who wrote &lt;a class=&#34;link&#34; href=&#34;https://github.com/pseymour/MakeMeAdmin/wiki&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;MakeMeAdmin&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;powershell&#34;&gt;PowerShell&lt;/h2&gt;
+&lt;p&gt;So I wrote a PowerShell script and I learnt some PowerShell. Of course. Well here&amp;rsquo;s what I learnt.&lt;/p&gt;
+&lt;h2 id=&#34;debugger&#34;&gt;Debugger&lt;/h2&gt;
+&lt;p&gt;VSCode is my go-to editor. One of the many reasons why I like it, is because of the debugger with the integrated console. Once I read &lt;a class=&#34;link&#34; href=&#34;https://foxdeploy.com/2019/02/07/life-after-write-debug/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Life after Write-Debug&lt;/a&gt; by Stephen Owen I became much more efficient at troubleshooting my dodgy code.&lt;/p&gt;
+&lt;p&gt;My first manager as an IT professional told me what the &lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Rubber_duck_debugging&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;rubber duck debugging technique was&lt;/a&gt;. So when you discover something like debugging for PowerShell in ISE or VSCode, it&amp;rsquo;s a huge sense of relief. The days of intensely reading line by line or including a bunch of print / Write-Host commands are long gone.&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/debugging-other-powershell-processes&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;You can also debug other running PowerShell processes!!&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;standards-and-formatting&#34;&gt;Standards and formatting&lt;/h2&gt;
+&lt;p&gt;For quick scripts with limited audience, I make some effort to format and make it at least somewhat presentable for next the guy. However taking on something fairly big that might be used and read by the Internet, I appreciated the need for not necessarily pretty looking code because that&amp;rsquo;s always subjective but at least adopt a standard.&lt;/p&gt;
+&lt;p&gt;Again, kind of tapping in to that fear of posting online and being scrutinized.&lt;/p&gt;
+&lt;h2 id=&#34;net&#34;&gt;.NET&lt;/h2&gt;
+&lt;p&gt;I had always known you could do .NET stuff within PowerShell and whenever I saw it in conversation it was always in the context of scale or performance. I figured with what I was trying to achieve, this would fall under the scale category. I&amp;rsquo;ve seen environments with tens of thousands of ConfigMgr content objects and hundreds of thousands of folders.&lt;/p&gt;
+&lt;p&gt;There&amp;rsquo;s a need here as well to determine when to draw the line. You could spend a long time looking up .NET classes and methods when you could save yourself a lot of time just using PowerShell cmdlets. Sure, there&amp;rsquo;s a performance gain, but as a sysadmin I think readability and time is more valuable. So I won&amp;rsquo;t make a habit of using them at every opportunity, purely because I&amp;rsquo;m not fluent enough. Being mindful of them and how or when to use them is good enough.&lt;/p&gt;
+&lt;h2 id=&#34;enumeratedirectories&#34;&gt;EnumerateDirectories()&lt;/h2&gt;
+&lt;p&gt;On the topic of .NET, I did really want to use the &lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.enumeratedirectories&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;EnumerateDirectories method from the Directory class&lt;/a&gt;. But it falls short where you can&amp;rsquo;t control its on-error preference. No matter what, on error, it&amp;rsquo;s a terminating error. Which sucked because it sounded perfect for what I wanted and crazy fast too.&lt;/p&gt;
+&lt;p&gt;In situations where it encountered a folder with access denied, it wouldn&amp;rsquo;t continue.&lt;/p&gt;
+&lt;h2 id=&#34;runspaces&#34;&gt;Runspaces&lt;/h2&gt;
+&lt;p&gt;As I mentioned already I wanted concurrent processing so I had several options already available like jobs or the PoSHRSJobs module that gives you runspaces but with the familiar syntax as jobs. I opted to use runspaces and spend extra time learning more about how they work for two reasons mainly:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;To use something and make a good effort at actually trying to understand it.&lt;/li&gt;
+&lt;li&gt;Not set too many dependencies on modules. I had a train of thought that not all ConfigMgr admins are full time admins, no doubt they juggle other stuff too. What if they really wanted to just clean up their storage but wasn&amp;rsquo;t 100% sure how to install a third party module just to get the basics working?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;collections-the--operator&#34;&gt;Collections the += operator&lt;/h2&gt;
+&lt;p&gt;I saw &lt;a class=&#34;link&#34; href=&#34;https://twitter.com/AndySvints/status/1130135528815439874&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;this thread on Twitter&lt;/a&gt; and my mind was blown how much quicker it was to not use the += operator when adding new elements to an array.&lt;/p&gt;
+&lt;h2 id=&#34;join-path&#34;&gt;Join-Path&lt;/h2&gt;
+&lt;p&gt;I guess I saw some quirks of PowerShell along the way but the biggest for me that sticks out in memory was Join-Path. Check out this madness:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;PS C:\&amp;gt; Test-Path &amp;quot;\\fakeserver\fakeshare\fakefolder&amp;quot;
+False
+PS C:\&amp;gt; Join-Path -Path &amp;quot;\\fakeserver&amp;quot; -ChildPath &amp;quot;fakeshare&amp;quot; | Join-Path -ChildPath &amp;quot;fakefolder&amp;quot;
+\\fakeserver\fakeshare\fakefolder
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Join-Path copes well with paths that don&amp;rsquo;t exist. Awesome.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;PS C:\&amp;gt; Test-Path &amp;quot;K:\I\Do\Not\Have\K\Drive\Mapped&amp;quot;
+False
+PS C:\&amp;gt; Join-Path -Path &amp;quot;K:\&amp;quot; -ChildPath &amp;quot;I\Do\Not\Have\K\Drive\Mapped&amp;quot;
+Join-Path : Cannot find drive. A drive with the name &#39;K&#39; does not exist.
+At line:1 char:1
++ Join-Path -Path &amp;quot;K:\&amp;quot; -ChildPath &amp;quot;I\Do\Not\Have\K\Drive\Mapped&amp;quot;
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (K:String) [Join-Path], DriveNotFoundException
+    + FullyQualifiedErrorId : DriveNotFound,Microsoft.PowerShell.Commands.JoinPathCommand
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&amp;hellip;unless it&amp;rsquo;s a local path on a drive letter that doesn&amp;rsquo;t exist. Worth remembering. You can&amp;rsquo;t really say Join-Path validates path as it joins them, because it doesn&amp;rsquo;t, nor can you say its sole purpose is to verify just &amp;ldquo;syntax&amp;rdquo; or &amp;ldquo;validity&amp;rdquo; of path structure, because it isn&amp;rsquo;t.&lt;/p&gt;
+&lt;p&gt;Looks like there&amp;rsquo;s &lt;a class=&#34;link&#34; href=&#34;https://github.com/PowerShell/PowerShell/issues/4386&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;an open issue on this&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;regex&#34;&gt;Regex&lt;/h2&gt;
+&lt;p&gt;Early doors I was trying to grab the server, share and remainder share from a string: &lt;code&gt;\\server\share\folder\folder&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://twitter.com/CodyMathis123&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Cody Mathis&lt;/a&gt; threw me a little snippet of regex and from then on my eyes were opened. I&amp;rsquo;m even thinking of going back to a previous project &lt;a class=&#34;link&#34; href=&#34;https://github.com/codaamok/PoSHHyperCloud&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;PoSH Hyper Cloud&lt;/a&gt; to use more regex and maybe even jobs! &lt;a class=&#34;link&#34; href=&#34;http://regex101.com&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;regex101.com&lt;/a&gt; is my go to for testing expressions.&lt;/p&gt;
+&lt;h2 id=&#34;enumerations&#34;&gt;Enumerations&lt;/h2&gt;
+&lt;p&gt;Patrick Seymour recently wrote Test-FileSystemAccess and I enhanced it a little to return exit codes and determine if elevation is required. Some feedback by Chris Dent taught me about enums! They&amp;rsquo;re awesome. An excellent way to create a relationship between numbers and strings. I used the below resources to implement an enum in to Test-FileSystemAccess:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://blog.pauby.com/post/working-with-enums-in-powershell&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Working with enums in PowerShell&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://blog.pauby.com/post/creating-enums-in-powershell/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Creating enums in PowerShell&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Tip! If you want to get the full Parameter Type of a parameter that&amp;rsquo;s an enum, so you can use GetNames:: on it, the below will help:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;(Get-Command Set-ExecutionPolicy).Parameters[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;ExecutionPolicy&amp;#39;&lt;/span&gt;] | Select -ExpandProperty ParameterType
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;datatables-and-filtering&#34;&gt;DataTables and filtering&lt;/h2&gt;
+&lt;p&gt;I recently tackled an issue with the script where collections of large scale and filtering them was an issue. Chris Kibble once showed me DataTables and I remember a remark about them being quick. He wasn&amp;rsquo;t joking! Checkout the below!&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$winFiles = Get-ChildItem c:\windows -Recurse -ErrorAction SilentlyContinue
+
+$commands = @{
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Where-Object&amp;#39;&lt;/span&gt; = {
+        $exeFiles = $winFiles | Where-Object { $_.Extension &lt;span style=&#34;color:#f92672&#34;&gt;-eq&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.exe&amp;#34;&lt;/span&gt; }
+    }
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Where-Object (no script block)&amp;#39;&lt;/span&gt; = {
+        $exeFiles = $winFiles | Where-Object Extension &lt;span style=&#34;color:#f92672&#34;&gt;-eq&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.exe&amp;#34;&lt;/span&gt;
+    }
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;.Where&amp;#39;&lt;/span&gt; = {
+        $exeFiles = $winFiles.Where{ $_.Extension &lt;span style=&#34;color:#f92672&#34;&gt;-eq&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.exe&amp;#34;&lt;/span&gt; }
+    }
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;DataTable&amp;#39;&lt;/span&gt; = {
+        $fileTable = New-Object System.Data.DataTable
+        $fileTable.TableName = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;AllMuhFiles&amp;#34;&lt;/span&gt;
+
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;[void]&lt;/span&gt;$fileTable.Columns.Add(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;FileName&amp;#34;&lt;/span&gt;)
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;[void]&lt;/span&gt;$fileTable.Columns.Add(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Parent&amp;#34;&lt;/span&gt;)
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;[void]&lt;/span&gt;$fileTable.Columns.Add(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Extension&amp;#34;&lt;/span&gt;)
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;[void]&lt;/span&gt;$fileTable.Columns.Add(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;IsInf&amp;#34;&lt;/span&gt;)
+
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;ForEach&lt;/span&gt;($file &lt;span style=&#34;color:#66d9ef&#34;&gt;in&lt;/span&gt; $winFiles) {
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;[void]&lt;/span&gt;$fileTable.Rows.Add($file.Name, $file.Parent, $file.Extension)
+        }
+
+        $exeFiles = $fileTable.Select(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Extension like &amp;#39;.exe&amp;#39;&amp;#34;&lt;/span&gt;)
+    }
+    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;foreach&amp;#39;&lt;/span&gt; = {
+        $exefiles = &lt;span style=&#34;color:#66d9ef&#34;&gt;foreach&lt;/span&gt; ($file &lt;span style=&#34;color:#66d9ef&#34;&gt;in&lt;/span&gt; $winFiles) {
+            &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; ($file.Extension &lt;span style=&#34;color:#f92672&#34;&gt;-eq&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;.exe&amp;#39;&lt;/span&gt;) {
+                $file
+            }
+        }
+    }
+}
+
+$commands.Keys | &lt;span style=&#34;color:#66d9ef&#34;&gt;ForEach&lt;/span&gt;-Object {
+    $testName = $_
+    1..3 | &lt;span style=&#34;color:#66d9ef&#34;&gt;ForEach&lt;/span&gt;-Object {
+        &lt;span style=&#34;color:#66d9ef&#34;&gt;[PSCustomObject]&lt;/span&gt;@{
+            TestName  = $testName
+            Attempt   = $_
+            ElapsedMS = (Measure-Command -Expression $commands[$testName]).TotalMilliseconds
+        }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Results:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Testing Where-Object
+2849.362
+2926.2761
+2876.9806
+
+Testing .Where
+1045.712
+1037.4888
+1031.191
+
+Testing DataTable select
+280.6466
+272.8503
+272.5341
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;I started looking in to DataTables because on large collections (hundreds of thousands sort of size) &lt;code&gt;Where-Object&lt;/code&gt; was slow. While the &lt;code&gt;Where()&lt;/code&gt; method was faster, both were nothing compared to DataTables.&lt;/p&gt;
+&lt;p&gt;With that said, if a cmdlet has a -Filter parameter available to let you work directly with a provider, then use that. &amp;ldquo;Keep left&amp;rdquo; or &amp;ldquo;filter left, format right&amp;rdquo; are phrases I learnt and try to keep in mind when filtering.&lt;/p&gt;
+&lt;p&gt;I abandoned the use of DataTables in the end as I didn&amp;rsquo;t need it. Even though they need additional set up, as you can see from the previous snippet, the results might be worth it in some cases.&lt;/p&gt;
+&lt;p&gt;Resources I used to learn about filtering and the performance impact&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://4sysops.com/archives/where-object-vs-the-where-method-array-filtering-in-powershell/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Explains where-object and where, and the -filter for provider specific stuff&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://stackoverflow.com/questions/50956909/powershell-where-object-vs-where-method&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Explains the object type returned by where-object and where&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.jonathanmedd.net/2017/05/powershell-where-where-or-where.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Talks about &amp;ldquo;keeping left&amp;rdquo; for best performance. -Filter is king if available but only if you don&amp;rsquo;t want all the objects in an array for later consumption&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
         <title>ConfigMgr Throttling Distribution Point Bandwidth</title>
         <link>https://adamcook.io/p/configmgr-throttling-distribution-point-bandwidth/</link>
         <pubDate>Sun, 17 Feb 2019 00:00:00 +0100</pubDate>
