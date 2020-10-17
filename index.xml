@@ -7,12 +7,12 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
         <lastBuildDate>Mon, 05 Oct 2020 21:04:10 +0100</lastBuildDate><atom:link href="https://adamcook.io/index.xml" rel="self" type="application/rss+xml" /><item>
-        <title>Deploying Hugo websites in Azure for pennies or free on GitHub pages</title>
+        <title>Deploying Hugo Websites in Azure for Pennies or Free on GitHub Pages</title>
         <link>https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/</link>
         <pubDate>Mon, 05 Oct 2020 21:04:10 +0100</pubDate>
         
         <guid>https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/</guid>
-        <description>&lt;img src="https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/cover.jpg" alt="Featured image of post Deploying Hugo websites in Azure for pennies or free on GitHub pages" /&gt;&lt;p&gt;I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub pages. I am now blogging at no extra cost other than domain renewal!&lt;/p&gt;
+        <description>&lt;img src="https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/images/cover.jpg" alt="Featured image of post Deploying Hugo Websites in Azure for Pennies or Free on GitHub Pages" /&gt;&lt;p&gt;I recently migrated my WordPress blogging platform to generating static content with Hugo. I no longer pay for hosting. I exclusively use GitHub pages. I am now blogging at no extra cost other than domain renewal!&lt;/p&gt;
 &lt;p&gt;In the process not only did I learn about Hugo, but I also looked at three ways to deploy / host my Hugo-made website.&lt;/p&gt;
 &lt;p&gt;In this post I want to share with you what Hugo is, why I like it and those three ways that I learned on how to deploy a Hugo website - with Azure Static Web Apps (preview), Azure Blob storage and GitHub pages.&lt;/p&gt;
 &lt;p&gt;For Azure Static Web Apps and Blob storage, I will be using Cloudflare. I am also assuming you will be using your own domain name. It is not a big deal if you do not want to, just ignore details focused on defining custom domains and creating CNAME records.&lt;/p&gt;
@@ -378,15 +378,15 @@ PS C:\git\USERNAME.github.io-hugo&amp;gt; $null&amp;gt;&amp;gt;public\.nojekyll
 </description>
         </item>
         <item>
-        <title>ConfigMgr throttling distribution point bandwidth</title>
+        <title>ConfigMgr Throttling Distribution Point Bandwidth</title>
         <link>https://adamcook.io/p/configmgr-throttling-distribution-point-bandwidth/</link>
         <pubDate>Sun, 17 Feb 2019 00:00:00 +0100</pubDate>
         
         <guid>https://adamcook.io/p/configmgr-throttling-distribution-point-bandwidth/</guid>
-        <description>&lt;img src="https://adamcook.io/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-04.jpg" alt="Featured image of post ConfigMgr throttling distribution point bandwidth" /&gt;&lt;blockquote&gt;
+        <description>&lt;img src="https://adamcook.io/p/configmgr-throttling-distribution-point-bandwidth/images/configmgr-throttling-distribution-point-bandwidth-04.jpg" alt="Featured image of post ConfigMgr Throttling Distribution Point Bandwidth" /&gt;&lt;blockquote&gt;
 &lt;p&gt;ℹ️ It looks like as I was writing this Microsoft have just publicly released a former internal document detailing some things that I had claimed to be undocumented (&lt;a class=&#34;link&#34; href=&#34;https://support.microsoft.com/en-us/help/4482728/understand-troubleshoot-content-distribution-in-configuration-manager&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;click here&lt;/a&gt;):
-&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;Deep, deep, DEEP dive into content distribution in &lt;a href=&#34;https://twitter.com/hashtag/SCCM?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#SCCM&lt;/a&gt; by the great @vinay_pamnani   Internal-only content originally, now free for public use! &lt;a href=&#34;https://t.co/oUPTSzrTmt&#34;&gt;https://t.co/oUPTSzrTmt&lt;/a&gt;&lt;/p&gt;&amp;mdash; Matt Toto (@_contoto) &lt;a href=&#34;https://twitter.com/_contoto/status/1092469116349440003?ref_src=twsrc%5Etfw&#34;&gt;February 4, 2019&lt;/a&gt;&lt;/blockquote&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;Deep, deep, DEEP dive into content distribution in &lt;a href=&#34;https://twitter.com/hashtag/SCCM?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#SCCM&lt;/a&gt; by the great &lt;a href=&#34;https://twitter.com/vinay_pamnani?ref_src=twsrc%5Etfw&#34;&gt;@vinay_pamnani&lt;/a&gt;   Internal-only content originally, now free for public use! &lt;a href=&#34;https://t.co/oUPTSzrTmt&#34;&gt;https://t.co/oUPTSzrTmt&lt;/a&gt;&lt;/p&gt;&amp;mdash; Matt Toto (@_contoto) &lt;a href=&#34;https://twitter.com/_contoto/status/1092469116349440003?ref_src=twsrc%5Etfw&#34;&gt;February 4, 2019&lt;/a&gt;&lt;/blockquote&gt;
 &lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
 &lt;/p&gt;
 &lt;/blockquote&gt;
@@ -485,12 +485,12 @@ SMS_PACKAGE_TRANSFER_MANAGER seemed to be perfectly time so perfmon could not pl
 </description>
         </item>
         <item>
-        <title>ConfigMgr hardware inventory troubleshooting</title>
+        <title>ConfigMgr Hardware Inventory Troubleshooting</title>
         <link>https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/</link>
         <pubDate>Sun, 28 Oct 2018 00:00:00 +0100</pubDate>
         
         <guid>https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/</guid>
-        <description>&lt;img src="https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/configmgr-hardware-inventory-troubleshooting-01.jpg" alt="Featured image of post ConfigMgr hardware inventory troubleshooting" /&gt;&lt;p&gt;I&amp;rsquo;ve recently updated a site to 1806 and was keen to get all clients up to date too. Some machines targeted for the pre-production client were not upgrading. When I looked closer at one client I suspected client health because a hardware inventory had not been submitted in months.&lt;/p&gt;
+        <description>&lt;img src="https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/images/configmgr-hardware-inventory-troubleshooting-01.jpg" alt="Featured image of post ConfigMgr Hardware Inventory Troubleshooting" /&gt;&lt;p&gt;I&amp;rsquo;ve recently updated a site to 1806 and was keen to get all clients up to date too. Some machines targeted for the pre-production client were not upgrading. When I looked closer at one client I suspected client health because a hardware inventory had not been submitted in months.&lt;/p&gt;
 &lt;p&gt;Little did I know until recently, a lack of recent hardware inventory data could be a result of other things and client health is least likely to be the root cause. Instead of blindly reinstalling or manually upgrading the client, I wanted to try and understand what&amp;rsquo;s going on.&lt;/p&gt;
 &lt;p&gt;If you&amp;rsquo;re concerned about client health look at &lt;a class=&#34;link&#34; href=&#34;https://www.andersrodland.com/configmgr-client-health/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Anders Rodland&amp;rsquo;s ConfigMgr Client Health script&lt;/a&gt;.&lt;/p&gt;
