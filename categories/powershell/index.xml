@@ -31,5 +31,16 @@ I demoed the script at the London Windows Manager User Group, you can watch the 
 Enough is enough I started writing in February and since then I have refactored the script and the idea itself many times.</description>
     </item>
     
+    <item>
+      <title>Blank InstalledOn Property for Get-HotFix and Win32_QuickFixEngineering</title>
+      <link>https://adamcook.io/p/blank-installedon-property-for-get-hotfix-and-win32_quickfixengineering/</link>
+      <pubDate>Mon, 18 Feb 2019 00:00:00 +0100</pubDate>
+      
+      <guid>https://adamcook.io/p/blank-installedon-property-for-get-hotfix-and-win32_quickfixengineering/</guid>
+      <description>Want to get Windows Update status on a bunch of machines, only to discover the InstalledOn property is blank for lots of updates when you&amp;rsquo;re using Get-HotFix or querying Win32_QuickFixEngineering class with Get-WmiObject?
+Turns out it&amp;rsquo;s related to PowerShell parsing the date as string to datetime object incorrectly, depending what your system locale is.
+$Updates = Get-HotFix | Select-Object description,hotfixid,installedby,@{l=&amp;#34;InstalledOn&amp;#34;;e={[DateTime]::Parse($_.psbase.properties[&amp;#34;installedon&amp;#34;].value,$([System.Globalization.CultureInfo]::GetCultureInfo(&amp;#34;en-US&amp;#34;)))}} $Updates | Sort InstalledOn -Descending | Select -First 10 I like the above approach, as posted by user pyro3113, because the select expression lets you easily query remote systems using Get-HotFix or Get-WmiObject.</description>
+    </item>
+    
   </channel>
 </rss>
