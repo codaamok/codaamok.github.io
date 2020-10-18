@@ -1847,6 +1847,30 @@ net start BITS
 </description>
         </item>
         <item>
+        <title>Compare DD-WRT WAN IP to a Host public IP</title>
+        <link>https://adamcook.io/p/compare-dd-wrt-wan-ip-to-a-host-public-ip/</link>
+        <pubDate>Sat, 27 Oct 2018 00:00:00 +0100</pubDate>
+        
+        <guid>https://adamcook.io/p/compare-dd-wrt-wan-ip-to-a-host-public-ip/</guid>
+        <description>&lt;img src="https://adamcook.io/p/compare-dd-wrt-wan-ip-to-a-host-public-ip/images/cover.jpg" alt="Featured image of post Compare DD-WRT WAN IP to a Host public IP" /&gt;&lt;p&gt;For my home lab on a particular VM that runs Ubuntu Server, I&amp;rsquo;m interested to know the public IP of my LAN&amp;rsquo;s gateway and the VM&amp;rsquo;s gateway (as it&amp;rsquo;s always connected to VPN). Below is a script I wrote to pull the WAN IP from my DD-WRT router and compare that to VM&amp;rsquo;s gateway public IP.&lt;/p&gt;
+&lt;p&gt;My copy does other things like start/stop services, configure local applications in my home lab as well as use Pushbullet to notify me if certain conditions are met. This should get you going, hopefully it helps someone.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/bin/bash
+&lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
+x&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;wget &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;http://192.168.0.1/Status_Internet.live.asp&amp;#34;&lt;/span&gt; --user&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;USERNAME&amp;#34;&lt;/span&gt; --password&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;PASSWORD&amp;#34;&lt;/span&gt; -q -O - | sed -e &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;s/}/\n/g&amp;#39;&lt;/span&gt; -e &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;s/{//g&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;
+declare -A results
+&lt;span style=&#34;color:#66d9ef&#34;&gt;while&lt;/span&gt; read line; &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt;
+        IFS&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;::&amp;#39;&lt;/span&gt; read -ra array &lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&amp;lt;&amp;lt;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$line&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
+        results&lt;span style=&#34;color:#f92672&#34;&gt;[&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;array[0]&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;]=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;array[2]&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;done&lt;/span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;&amp;lt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$x&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
+
+wanip&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;results[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;wan_ipaddr&amp;#34;&lt;/span&gt;]&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;
+vmip&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;wget -q -O - https://checkip.amazonaws.com&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;
+
+echo $0&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;: WAN IP: &amp;#39;&lt;/span&gt;$wanip
+echo $0&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;: VM IP: &amp;#39;&lt;/span&gt;$vmip
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</description>
+        </item>
+        <item>
         <title>ConfigMgr Database Move: Failed to Create/Backup SQL SSB Certificate</title>
         <link>https://adamcook.io/p/configmgr-database-move-failed-to-create/backup-sql-ssb-certificate/</link>
         <pubDate>Mon, 15 Oct 2018 00:00:00 +0100</pubDate>
