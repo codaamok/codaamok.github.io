@@ -1442,6 +1442,82 @@ Testing DataTable select
 </description>
         </item>
         <item>
+        <title>Upgrading to PHP 7.2 on Ubuntu</title>
+        <link>https://adamcook.io/p/upgrading-to-php-7.2-on-ubuntu/</link>
+        <pubDate>Sat, 16 Mar 2019 00:00:00 +0100</pubDate>
+        
+        <guid>https://adamcook.io/p/upgrading-to-php-7.2-on-ubuntu/</guid>
+        <description>&lt;p&gt;I run &lt;a class=&#34;link&#34; href=&#34;https://www.librenms.org/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;LibreNMS&lt;/a&gt; in my homelab on a Ubuntu Server VM and it&amp;rsquo;s awesome.&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/upgrading-to-php-7.2-on-ubuntu/images/upgrading-to-php-7-2-on-ubuntu-01.jpg&#34; data-size=&#34;2560x1297&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/upgrading-to-php-7.2-on-ubuntu/images/upgrading-to-php-7-2-on-ubuntu-01_hu2a8f7f6b3c42b002f1727b2f015d7fee_578248_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/upgrading-to-php-7.2-on-ubuntu/images/upgrading-to-php-7-2-on-ubuntu-01_hu2a8f7f6b3c42b002f1727b2f015d7fee_578248_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/upgrading-to-php-7.2-on-ubuntu/images/upgrading-to-php-7-2-on-ubuntu-01.jpg&#34; width=&#34;2560&#34; height=&#34;1297&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;For a while I&amp;rsquo;ve been getting notifications for needing to bump from PHP 7.0 to 7.2 minimum.&lt;/p&gt;
+&lt;p&gt;I &lt;a class=&#34;link&#34; href=&#34;https://ayesh.me/Ubuntu-PHP-7.2&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;mostly followed this post&lt;/a&gt; but I&amp;rsquo;ll detail a step that helped me automate installing and uninstalling all the extra modules which the last two steps seem to miss. I&amp;rsquo;ll also detail a snag I hit with nginx slapping me with 500 after updating to PHP 7.2.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Add PPA&lt;/li&gt;
+&lt;li&gt;Get current packages/modules&lt;/li&gt;
+&lt;li&gt;Install 7.2&lt;/li&gt;
+&lt;li&gt;Install additional packages/modules&lt;/li&gt;
+&lt;li&gt;Remove old packages/modules&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;add-ppa&#34;&gt;Add PPA&lt;/h2&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://launchpad.net/~ondrej/&amp;#43;archive/ubuntu/php&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Yet another PPA&lt;/a&gt;, sorry. However it does look like Ondřej Surý is a reputable Debian developer:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://twitter.com/oerdnj&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://twitter.com/oerdnj&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://deb.sury.org&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://deb.sury.org&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/oerdnj&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://github.com/oerdnj&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;sudo add-apt-repository ppa:ondrej/php
+sudo apt update
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;[su_note note_color=&amp;quot;#FFFCCC&amp;quot; radius=&amp;ldquo;10&amp;rdquo;]&lt;strong&gt;Important:&lt;/strong&gt; Make sure you read the caveats on the PPA archive webpage, you&amp;rsquo;re recommended to add seperate archives depending whether you&amp;rsquo;re running apache2 or nginx.[/su_note]&lt;/p&gt;
+&lt;h2 id=&#34;get-current-packagesmodules&#34;&gt;Get current packages/modules&lt;/h2&gt;
+&lt;p&gt;This is helpful to identify what additional PHP packages you currently have installed so you can install the 7.2 equivilant too.&lt;/p&gt;
+&lt;p&gt;Worth pointing out I noticed the mcrypt package was no longer a thing in 7.2 however LibreNMS did not moan at all without it. Their &lt;a class=&#34;link&#34; href=&#34;https://docs.librenms.org/Installation/Installation-Ubuntu-1804-Nginx/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;current installation docs&lt;/a&gt; does not install mcrypt package so that tells me it&amp;rsquo;s no longer a depedency.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;dpkg -l | grep php
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;install-72&#34;&gt;Install 7.2&lt;/h2&gt;
+&lt;pre&gt;&lt;code&gt;apt install php7.2 php7.2-common php7.2-cli php7.2-fpm
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;install-additional-packagesmodules&#34;&gt;Install additional packages/modules&lt;/h2&gt;
+&lt;p&gt;This bit was where I wanted to flesh it out a bit. I wanted the same modules I had for 7.0 in 7.2.&lt;/p&gt;
+&lt;p&gt;I already got the stdout stream of what&amp;rsquo;s installed from &lt;code&gt;dpkg -l | grep php&lt;/code&gt; and I really didn&amp;rsquo;t want to re-write the results to &lt;code&gt;apt install&lt;/code&gt; or any sort of copy and pasting. I wanted to make the effort to manipulate the stdout and this is what I came up with:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;dpkg -l | grep php | cut -d&#39; &#39; -f3 | grep 7.0 | sed &#39;s/7.0/7.2/g&#39; | awk &#39;{print &amp;quot;apt install &amp;quot; $1 &amp;quot; -y&amp;quot;}&#39; | xargs -0 bash -c
+&lt;/code&gt;&lt;/pre&gt;&lt;ul&gt;
+&lt;li&gt;Grab all that&amp;rsquo;s installed&lt;/li&gt;
+&lt;li&gt;Keyword search for results with &amp;ldquo;php&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;Seperate each line with a space as delimiter and grab the third field&lt;/li&gt;
+&lt;li&gt;Search for only packages with &amp;ldquo;7.0&amp;rdquo; in string&lt;/li&gt;
+&lt;li&gt;Substitute strings containing &amp;ldquo;7.0&amp;rdquo; with &amp;ldquo;7.2&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;For each result create a custom string that I will then execute as a command using xargs&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;remove-old-packagemodules&#34;&gt;Remove old package/modules&lt;/h2&gt;
+&lt;p&gt;More or less the same as the last. I now wanted to remove PHP 7.0.&lt;/p&gt;
+&lt;p&gt;With most things, you can achieve the same result using other methods. I made the below for no reason other than laziness. All I had to do was hit UP to get the previous command and tweak it slightly to &lt;code&gt;remove --purge&lt;/code&gt; rather than &lt;code&gt;install&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;dpkg -l | grep php | cut -d&#39; &#39; -f3 | grep 7.0 | awk &#39;{print &amp;quot;apt remove --purge &amp;quot; $1 &amp;quot; -y&amp;quot;}&#39; | xargs -0 bash -c
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;the-500-snag&#34;&gt;The 500 snag&lt;/h2&gt;
+&lt;p&gt;So after updating, rebooting and running &lt;code&gt;./daily.sh&lt;/code&gt; and &lt;code&gt;./validate.php&lt;/code&gt; all appeared well in the results. However the web server was failing with status code &lt;code&gt;500&lt;/code&gt;. A good place to start, if I&amp;rsquo;ve learnt anything with ConfigMgr over the last 3 years, is always the log &lt;code&gt;/var/log/nginx/error.log&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;2019/03/16 13:17:16 [crit] 1103#1103: *1 connect() to unix:/var/run/php/php7.0-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 192.168.0.129, server: librenms.domain.com, request: &amp;quot;GET / HTTP/1.1&amp;quot;, upstream: &amp;quot;fastcgi://unix:/var/run/php/php7.0-fpm.sock:&amp;quot;, host: &amp;quot;192.168.0.104&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Looked like the web service was still trying to grab a socket file but it didn&amp;rsquo;t exist. I poked around a little in &lt;code&gt;/etc/nginx&lt;/code&gt; and within &lt;code&gt;/etc/nginx/conf.d/librenms.conf&lt;/code&gt; sure enough there was a hardcoded reference using the offended path. I simply updated it to 7.2 instead.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;...
+ location ~ \.php {
+  include fastcgi.conf;
+  fastcgi_split_path_info ^(.+\.php)(/.+)$;
+  fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+ }
+...
+&lt;/code&gt;&lt;/pre&gt;</description>
+        </item>
+        <item>
         <title>ConfigMgr Throttling Distribution Point Bandwidth</title>
         <link>https://adamcook.io/p/configmgr-throttling-distribution-point-bandwidth/</link>
         <pubDate>Sun, 17 Feb 2019 00:00:00 +0100</pubDate>

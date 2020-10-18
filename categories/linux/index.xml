@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Linux on Adam Cook</title>
+    <link>https://adamcook.io/categories/linux/</link>
+    <description>Recent content in Linux on Adam Cook</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 16 Mar 2019 00:00:00 +0100</lastBuildDate><atom:link href="https://adamcook.io/categories/linux/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Upgrading to PHP 7.2 on Ubuntu</title>
+      <link>https://adamcook.io/p/upgrading-to-php-7.2-on-ubuntu/</link>
+      <pubDate>Sat, 16 Mar 2019 00:00:00 +0100</pubDate>
+      
+      <guid>https://adamcook.io/p/upgrading-to-php-7.2-on-ubuntu/</guid>
+      <description>I run LibreNMS in my homelab on a Ubuntu Server VM and it&amp;rsquo;s awesome.
+  
+For a while I&amp;rsquo;ve been getting notifications for needing to bump from PHP 7.0 to 7.2 minimum.
+I mostly followed this post but I&amp;rsquo;ll detail a step that helped me automate installing and uninstalling all the extra modules which the last two steps seem to miss. I&amp;rsquo;ll also detail a snag I hit with nginx slapping me with 500 after updating to PHP 7.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='I run LibreNMS in my homelab on a Ubuntu Server VM and it&amp;rsquo;s awesome.
+  
+For a while I&amp;rsquo;ve been getting notifications for needing to bump from PHP 7.0 to 7.2 minimum.
+I mostly followed this post but I&amp;rsquo;ll detail a step that helped me automate installing and uninstalling all the extra modules which the last two steps seem to miss. I&amp;rsquo;ll also detail a snag I hit with nginx slapping me with 500 after updating to PHP 7.'><title>Upgrading to PHP 7.2 on Ubuntu</title>
+    
+    <link rel='canonical' href='https://adamcook.io/p/upgrading-to-php-7.2-on-ubuntu/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Upgrading to PHP 7.2 on Ubuntu'>
+<meta property='og:description' content='I run LibreNMS in my homelab on a Ubuntu Server VM and it&amp;rsquo;s awesome.
+  
+For a while I&amp;rsquo;ve been getting notifications for needing to bump from PHP 7.0 to 7.2 minimum.
+I mostly followed this post but I&amp;rsquo;ll detail a step that helped me automate installing and uninstalling all the extra modules which the last two steps seem to miss. I&amp;rsquo;ll also detail a snag I hit with nginx slapping me with 500 after updating to PHP 7.'>
+<meta property='og:url' content='https://adamcook.io/p/upgrading-to-php-7.2-on-ubuntu/'>
+<meta property='og:site_name' content='Adam Cook'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2019-03-16T00:00:00&#43;01:00'/><meta property='article:modified_time' content='2019-03-16T00:00:00&#43;01:00'/>
+<meta name="twitter:site" content="codaamok"><meta name="twitter:title" content="Upgrading to PHP 7.2 on Ubuntu">
+<meta name="twitter:description" content="I run LibreNMS in my homelab on a Ubuntu Server VM and it&amp;rsquo;s awesome.
+  
+For a while I&amp;rsquo;ve been getting notifications for needing to bump from PHP 7.0 to 7.2 minimum.
+I mostly followed this post but I&amp;rsquo;ll detail a step that helped me automate installing and uninstalling all the extra modules which the last two steps seem to miss. I&amp;rsquo;ll also detail a snag I hit with nginx slapping me with 500 after updating to PHP 7."></head><body class="">
+        <div class="container flex on-phone--column align-items--flex-start extended article-page with-toolbar">
+            <aside class="sidebar left-sidebar sticky">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header class="site-info">
+        
+            <figure class="site-avatar">
+                
+
+                
+                    
+                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_2.png" width="300"
+                        height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+
+                <span class="emoji">🙃</span>
+            </figure>
+        
+        <h1 class="site-name"><a href="https://adamcook.io/">Adam Cook</a></h1>
+        <h2 class="site-description">Passionate about helping people. #PowerShell, #ConfigMgr and #Azure. Misses #Linux.</h2>
+    </header>
+
+    <ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='https://adamcook.io/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://adamcook.io/archives'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://twitter.com/codaamok'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84 0 0 0 .497 -3.753C20.18 7.773 21.692 5.25 22 4.009z" />
+</svg>
+                
+                <span>Twitter</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://github.com/codaamok'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+                
+                <span>GitHub</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://linkedin.com/in/adamcharlescook'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-linkedin" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="4" width="16" height="16" rx="2" />
+  <line x1="8" y1="11" x2="8" y2="16" />
+  <line x1="8" y1="8" x2="8" y2="8.01" />
+  <line x1="12" y1="16" x2="12" y2="11" />
+  <path d="M16 16v-3a2 2 0 0 0 -4 0" />
+</svg>
+                
+                <span>LinkedIn</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://www.youracclaim.com/users/adam-cook.e3a67a21/badges'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-award" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <circle cx="12" cy="9" r="6" />
+  <polyline points="9 14.2 9 21 12 19 15 21 15 14.2" transform="rotate(-30 12 9)" />
+  <polyline points="9 14.2 9 21 12 19 15 21 15 14.2" transform="rotate(30 12 9)" />
+</svg>
+                
+                <span>My Acclaims</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://sysmansquad.com/author/codaamok/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-notebook" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M6 4h11a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-11a1 1 0 0 1 -1 -1v-14a1 1 0 0 1 1 -1m3 0v18" />
+  <line x1="13" y1="8" x2="15" y2="8" />
+  <line x1="13" y1="12" x2="15" y2="12" />
+</svg>
+                
+                <span>SysManSquad</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://pssouth.co.uk'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-prompt" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <polyline points="5 7 10 12 5 17" />
+  <line x1="13" y1="17" x2="19" y2="17" />
+</svg>
+                
+                <span>PowerShell Southampton</span>
+            </a>
+        </li>
+        
+    </ol>
+</aside>
+            <main class="main full-width">
+    <div id="article-toolbar">
+        <a href="https://adamcook.io/" class="back-home">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+            <span>Back</span>
+        </a>
+    </div>
+
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            
+                <a href="https://adamcook.io/categories/linux/">Linux</a>
+            
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="https://adamcook.io/p/upgrading-to-php-7.2-on-ubuntu/">Upgrading to PHP 7.2 on Ubuntu</a>
+    </h2>
+
+    <table>
+        <tr>
+            <td width="25%">
+                <footer class="article-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="5" width="16" height="16" rx="2" />
+  <line x1="16" y1="3" x2="16" y2="7" />
+  <line x1="8" y1="3" x2="8" y2="7" />
+  <line x1="4" y1="11" x2="20" y2="11" />
+  <line x1="11" y1="15" x2="12" y2="15" />
+  <line x1="12" y1="15" x2="12" y2="18" />
+</svg>
+                    <time class="article-time--published">16 March 2019</time>
+                </footer>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <footer class="article-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--published">
+                        Reading time: 3 minutes.
+                    </time>
+                </footer>
+            </td>
+        </tr>
+    </table></div>
+</header>
+
+    <section class="article-content">
+    <p>I run <a class="link" href="https://www.librenms.org/"  target="_blank" rel="noopener"
+    >LibreNMS</a> in my homelab on a Ubuntu Server VM and it&rsquo;s awesome.</p>
+<p><figure>
+		<a href="/p/upgrading-to-php-7.2-on-ubuntu/images/upgrading-to-php-7-2-on-ubuntu-01.jpg" data-size="2560x1297">
+			<img srcset="/p/upgrading-to-php-7.2-on-ubuntu/images/upgrading-to-php-7-2-on-ubuntu-01_hu2a8f7f6b3c42b002f1727b2f015d7fee_578248_480x0_resize_q75_box.jpg 480w, /p/upgrading-to-php-7.2-on-ubuntu/images/upgrading-to-php-7-2-on-ubuntu-01_hu2a8f7f6b3c42b002f1727b2f015d7fee_578248_1024x0_resize_q75_box.jpg 1024w"
+				src="/p/upgrading-to-php-7.2-on-ubuntu/images/upgrading-to-php-7-2-on-ubuntu-01.jpg" width="2560" height="1297" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure></p>
+<p>For a while I&rsquo;ve been getting notifications for needing to bump from PHP 7.0 to 7.2 minimum.</p>
+<p>I <a class="link" href="https://ayesh.me/Ubuntu-PHP-7.2"  target="_blank" rel="noopener"
+    >mostly followed this post</a> but I&rsquo;ll detail a step that helped me automate installing and uninstalling all the extra modules which the last two steps seem to miss. I&rsquo;ll also detail a snag I hit with nginx slapping me with 500 after updating to PHP 7.2.</p>
+<ol>
+<li>Add PPA</li>
+<li>Get current packages/modules</li>
+<li>Install 7.2</li>
+<li>Install additional packages/modules</li>
+<li>Remove old packages/modules</li>
+</ol>
+<h2 id="add-ppa">Add PPA</h2>
+<p><a class="link" href="https://launchpad.net/~ondrej/&#43;archive/ubuntu/php"  target="_blank" rel="noopener"
+    >Yet another PPA</a>, sorry. However it does look like Ondřej Surý is a reputable Debian developer:</p>
+<ul>
+<li><a class="link" href="https://twitter.com/oerdnj"  target="_blank" rel="noopener"
+    >https://twitter.com/oerdnj</a></li>
+<li><a class="link" href="https://deb.sury.org"  target="_blank" rel="noopener"
+    >https://deb.sury.org</a></li>
+<li><a class="link" href="https://github.com/oerdnj"  target="_blank" rel="noopener"
+    >https://github.com/oerdnj</a></li>
+</ul>
+<pre><code>sudo add-apt-repository ppa:ondrej/php
+sudo apt update
+</code></pre><p>[su_note note_color=&quot;#FFFCCC&quot; radius=&ldquo;10&rdquo;]<strong>Important:</strong> Make sure you read the caveats on the PPA archive webpage, you&rsquo;re recommended to add seperate archives depending whether you&rsquo;re running apache2 or nginx.[/su_note]</p>
+<h2 id="get-current-packagesmodules">Get current packages/modules</h2>
+<p>This is helpful to identify what additional PHP packages you currently have installed so you can install the 7.2 equivilant too.</p>
+<p>Worth pointing out I noticed the mcrypt package was no longer a thing in 7.2 however LibreNMS did not moan at all without it. Their <a class="link" href="https://docs.librenms.org/Installation/Installation-Ubuntu-1804-Nginx/"  target="_blank" rel="noopener"
+    >current installation docs</a> does not install mcrypt package so that tells me it&rsquo;s no longer a depedency.</p>
+<pre><code>dpkg -l | grep php
+</code></pre><h2 id="install-72">Install 7.2</h2>
+<pre><code>apt install php7.2 php7.2-common php7.2-cli php7.2-fpm
+</code></pre><h2 id="install-additional-packagesmodules">Install additional packages/modules</h2>
+<p>This bit was where I wanted to flesh it out a bit. I wanted the same modules I had for 7.0 in 7.2.</p>
+<p>I already got the stdout stream of what&rsquo;s installed from <code>dpkg -l | grep php</code> and I really didn&rsquo;t want to re-write the results to <code>apt install</code> or any sort of copy and pasting. I wanted to make the effort to manipulate the stdout and this is what I came up with:</p>
+<pre><code>dpkg -l | grep php | cut -d' ' -f3 | grep 7.0 | sed 's/7.0/7.2/g' | awk '{print &quot;apt install &quot; $1 &quot; -y&quot;}' | xargs -0 bash -c
+</code></pre><ul>
+<li>Grab all that&rsquo;s installed</li>
+<li>Keyword search for results with &ldquo;php&rdquo;</li>
+<li>Seperate each line with a space as delimiter and grab the third field</li>
+<li>Search for only packages with &ldquo;7.0&rdquo; in string</li>
+<li>Substitute strings containing &ldquo;7.0&rdquo; with &ldquo;7.2&rdquo;</li>
+<li>For each result create a custom string that I will then execute as a command using xargs</li>
+</ul>
+<h2 id="remove-old-packagemodules">Remove old package/modules</h2>
+<p>More or less the same as the last. I now wanted to remove PHP 7.0.</p>
+<p>With most things, you can achieve the same result using other methods. I made the below for no reason other than laziness. All I had to do was hit UP to get the previous command and tweak it slightly to <code>remove --purge</code> rather than <code>install</code>.</p>
+<pre><code>dpkg -l | grep php | cut -d' ' -f3 | grep 7.0 | awk '{print &quot;apt remove --purge &quot; $1 &quot; -y&quot;}' | xargs -0 bash -c
+</code></pre><h2 id="the-500-snag">The 500 snag</h2>
+<p>So after updating, rebooting and running <code>./daily.sh</code> and <code>./validate.php</code> all appeared well in the results. However the web server was failing with status code <code>500</code>. A good place to start, if I&rsquo;ve learnt anything with ConfigMgr over the last 3 years, is always the log <code>/var/log/nginx/error.log</code>:</p>
+<pre><code>2019/03/16 13:17:16 [crit] 1103#1103: *1 connect() to unix:/var/run/php/php7.0-fpm.sock failed (2: No such file or directory) while connecting to upstream, client: 192.168.0.129, server: librenms.domain.com, request: &quot;GET / HTTP/1.1&quot;, upstream: &quot;fastcgi://unix:/var/run/php/php7.0-fpm.sock:&quot;, host: &quot;192.168.0.104&quot;
+</code></pre><p>Looked like the web service was still trying to grab a socket file but it didn&rsquo;t exist. I poked around a little in <code>/etc/nginx</code> and within <code>/etc/nginx/conf.d/librenms.conf</code> sure enough there was a hardcoded reference using the offended path. I simply updated it to 7.2 instead.</p>
+<pre><code>...
+ location ~ \.php {
+  include fastcgi.conf;
+  fastcgi_split_path_info ^(.+\.php)(/.+)$;
+  fastcgi_pass unix:/var/run/php/php7.0-fpm.sock;
+ }
+...
+</code></pre>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+    
+</article>
+
+    <aside class="widget related-contents--wrapper">
+    
+    
+</aside>
+
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "adam-cook" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">&copy; 2020 Adam Cook</section>
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.0.5">Stack</a></b> designed by
+        <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true" style="display:none">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+            </main>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"
+    integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g=" crossorigin="anonymous"></script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<link rel="stylesheet" href="/css/highlight/light.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="/css/highlight/dark.min.css" media="(prefers-color-scheme: dark)">
+
+    </body>
+</html>
