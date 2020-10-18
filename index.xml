@@ -653,6 +653,109 @@ New-AzResourceGroupDeployment -Name &lt;span style=&#34;color:#e6db74&#34;&gt;&a
 </description>
         </item>
         <item>
+        <title>ConfigMgr WSUS woes, WSUSCtrl.log &#34;Cannot open database &#34;SUSDB&#34; requested by the login. The login failed.~~Login failed for user &#39;DOMAIN\SERVER$&#39;&#34;</title>
+        <link>https://adamcook.io/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.~~login-failed-for-user-domain%5Cserver/</link>
+        <pubDate>Thu, 12 Dec 2019 00:00:00 +0100</pubDate>
+        
+        <guid>https://adamcook.io/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.~~login-failed-for-user-domain%5Cserver/</guid>
+        <description>&lt;img src="https://adamcook.io/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.~~login-failed-for-user-domain%5Cserver/images/cover.jpg" alt="Featured image of post ConfigMgr WSUS woes, WSUSCtrl.log &#34;Cannot open database &#34;SUSDB&#34; requested by the login. The login failed.~~Login failed for user &#39;DOMAIN\SERVER$&#39;&#34;" /&gt;&lt;p&gt;First post as MEMCM rather than SCCM. I think since my last post in July I&amp;rsquo;ve accumulated a dozen unfinished drafts but you know, I&amp;rsquo;ve been having too much fun.. working.&lt;/p&gt;
+&lt;p&gt;I recently stood up a remote SUP with its own WSUS role and SQL database. What I didn&amp;rsquo;t realise was, even though it was still syncing updates from the upstream SUP/WSUS server just fine, the status messages for the SMS_WSUS_CONTROL_MANAGER component on the new SUP/WSUS box was coughing up a bunch of errors ever since I installed the roles and configured them:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Failures were reported on WSUS Server &amp;quot;server.domain.com&amp;quot; while trying to make WSUS database connection with SQL Server Exception error code -2146232060.
+
+Possible cause: SQL Server service is not running or cannot be accessed.
+Solution: Verify that the SQL Server and SQL Server Agent services are running and can be contacted.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;WSUSCtrl.log on the new remote SUP/WSUS box was thankfully giving me more juice:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;System.Data.SqlClient.SqlException (0x80131904): Cannot open database &amp;quot;SUSDB&amp;quot; requested by the login. The login failed.~~Login failed for user &#39;DOMAIN\SERVER$&#39;.~~  ...
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.~~login-failed-for-user-domain%5Cserver/images/image-01.jpg&#34; data-size=&#34;1456x756&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.~~login-failed-for-user-domain%5Cserver/images/image-01_hua16cf076b1bf5c2a1c7c7cd77ece239d_717269_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.~~login-failed-for-user-domain%5Cserver/images/image-01_hua16cf076b1bf5c2a1c7c7cd77ece239d_717269_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.~~login-failed-for-user-domain%5Cserver/images/image-01.jpg&#34; width=&#34;1456&#34; height=&#34;756&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;And again in Event Viewer under the Application log:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Log Name:      Application
+Source:        MSSQLSERVER
+Date:          12/12/2019 11:59:34
+Event ID:      18456
+Task Category: Logon
+Level:         Information
+Keywords:      Classic,Audit Failure
+User:          SYSTEM
+Computer:      SERVER.domain.com
+Description:
+Login failed for user &#39;DOMAIN\SERVER$&#39;. Reason: Failed to open the explicitly specified database &#39;SUSDB&#39;. [CLIENT: fe80::442f:d8a1:6d2e:757%3]
+Event Xml:
+&amp;lt;Event xmlns=&amp;quot;http://schemas.microsoft.com/win/2004/08/events/event&amp;quot;&amp;gt;
+  &amp;lt;System&amp;gt;
+    &amp;lt;Provider Name=&amp;quot;MSSQLSERVER&amp;quot; /&amp;gt;
+    &amp;lt;EventID Qualifiers=&amp;quot;49152&amp;quot;&amp;gt;18456&amp;lt;/EventID&amp;gt;
+    &amp;lt;Level&amp;gt;0&amp;lt;/Level&amp;gt;
+    &amp;lt;Task&amp;gt;4&amp;lt;/Task&amp;gt;
+    &amp;lt;Keywords&amp;gt;0x90000000000000&amp;lt;/Keywords&amp;gt;
+    &amp;lt;TimeCreated SystemTime=&amp;quot;2019-12-12T11:59:34.450122600Z&amp;quot; /&amp;gt;
+    &amp;lt;EventRecordID&amp;gt;10164&amp;lt;/EventRecordID&amp;gt;
+    &amp;lt;Channel&amp;gt;Application&amp;lt;/Channel&amp;gt;
+    &amp;lt;Computer&amp;gt;SERVER.domain.com&amp;lt;/Computer&amp;gt;
+    &amp;lt;Security UserID=&amp;quot;S-1-5-18&amp;quot; /&amp;gt;
+  &amp;lt;/System&amp;gt;
+  &amp;lt;EventData&amp;gt;
+    &amp;lt;Data&amp;gt;DOMAIN\SERVER$&amp;lt;/Data&amp;gt;
+    &amp;lt;Data&amp;gt; Reason: Failed to open the explicitly specified database &#39;SUSDB&#39;.&amp;lt;/Data&amp;gt;
+    &amp;lt;Data&amp;gt; [CLIENT: 0000::0000:0000:0000:000$0]&amp;lt;/Data&amp;gt;
+    &amp;lt;Binary&amp;gt;184800000E000000090000004400430045002D0043004D00300032000000070000006D00610073007400650072000000&amp;lt;/Binary&amp;gt;
+  &amp;lt;/EventData&amp;gt;
+&amp;lt;/Event&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;pre&gt;&lt;code&gt;Log Name:      Application
+Source:        SMS Server
+Date:          12/12/2019 11:59:34
+Event ID:      7002
+Task Category: SMS_WSUS_CONTROL_MANAGER
+Level:         Error
+Keywords:      Classic
+User:          N/A
+Computer:      SERVER.DOMAIN.com
+Description:
+On 12/12/2019 11:59:34, component SMS_WSUS_CONTROL_MANAGER on computer SERVER.DOMAIN.com reported:  Failures were reported on WSUS Server &amp;quot;SERVER.DOMAIN.com&amp;quot; while trying to make WSUS database connection with SQL Server Exception error code -2146232060.
+
+Possible cause: SQL Server service is not running or cannot be accessed.
+Solution: Verify that the SQL Server and SQL Server Agent services are running and can be contacted.
+Event Xml:
+&amp;lt;Event xmlns=&amp;quot;http://schemas.microsoft.com/win/2004/08/events/event&amp;quot;&amp;gt;
+  &amp;lt;System&amp;gt;
+    &amp;lt;Provider Name=&amp;quot;SMS Server&amp;quot; /&amp;gt;
+    &amp;lt;EventID Qualifiers=&amp;quot;49152&amp;quot;&amp;gt;7002&amp;lt;/EventID&amp;gt;
+    &amp;lt;Level&amp;gt;2&amp;lt;/Level&amp;gt;
+    &amp;lt;Task&amp;gt;78&amp;lt;/Task&amp;gt;
+    &amp;lt;Keywords&amp;gt;0x80000000000000&amp;lt;/Keywords&amp;gt;
+    &amp;lt;TimeCreated SystemTime=&amp;quot;2019-12-12T11:59:34.450122600Z&amp;quot; /&amp;gt;
+    &amp;lt;EventRecordID&amp;gt;10165&amp;lt;/EventRecordID&amp;gt;
+    &amp;lt;Channel&amp;gt;Application&amp;lt;/Channel&amp;gt;
+    &amp;lt;Computer&amp;gt;SERVER.DOMAIN.com&amp;lt;/Computer&amp;gt;
+    &amp;lt;Security /&amp;gt;
+  &amp;lt;/System&amp;gt;
+  &amp;lt;EventData&amp;gt;
+    &amp;lt;Data&amp;gt;SERVER.DOMAIN.com&amp;lt;/Data&amp;gt;
+    &amp;lt;Data&amp;gt;-2146232060&amp;lt;/Data&amp;gt;
+    &amp;lt;Data&amp;gt;On 12/12/2019 11:59:34, component SMS_WSUS_CONTROL_MANAGER on computer SERVER.DOMAIN.com reported:  &amp;lt;/Data&amp;gt;
+  &amp;lt;/EventData&amp;gt;
+&amp;lt;/Event&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;h2 id=&#34;solution&#34;&gt;Solution&lt;/h2&gt;
+&lt;p&gt;I checked out SQL permissions on the instance and on the SUSDB database and it appeared the local group &amp;ldquo;SERVER\WSUS Administrators&amp;rdquo; (which contains NT AUTHORITY\SYSTEM) is present with necessary permissions (at least when comparing with another SUP/WSUS server).&lt;/p&gt;
+&lt;p&gt;On the instance&amp;rsquo;s security logins ( Databases &amp;gt; Security &amp;gt; Logins), I saw NT AUTHORITY\SYSTEM was listed. Out of curiosity, I gave it a mapping to the SUSDB and restarting the SMS_WSUS_CONTROL_MANAGER proved to be successful.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Open SQL Server Management Studio&lt;/li&gt;
+&lt;li&gt;Connect to the SQL instance&lt;/li&gt;
+&lt;li&gt;Expand Databases, Security and then Logins&lt;/li&gt;
+&lt;li&gt;Right click on NT AUTHORITY\SYSTEM and choose Properties&lt;/li&gt;
+&lt;li&gt;Under User Mappings, select the SUSDB database from the central pane and delegate the &amp;ldquo;public&amp;rdquo; and &amp;ldquo;webService&amp;rdquo; role membership.&lt;/li&gt;
+&lt;li&gt;From the ConfigMgr console, open the &lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/configmgr/core/servers/deploy/configure/site-components#BKMK_ServiceMgr&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Configuration Manager Service Manager&lt;/a&gt; and cycle the SUP&amp;rsquo;s SMS_WSUS_CONTROL_MANAGER.&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+        </item>
+        <item>
         <title>Get CMUnusedSources</title>
         <link>https://adamcook.io/p/get-cmunusedsources/</link>
         <pubDate>Sun, 07 Jul 2019 00:00:00 +0100</pubDate>

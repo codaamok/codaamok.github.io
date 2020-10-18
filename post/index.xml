@@ -41,6 +41,16 @@ The first objective will demonstrate how to create a dynamic number of propertie
     </item>
     
     <item>
+      <title>ConfigMgr WSUS woes, WSUSCtrl.log &#34;Cannot open database &#34;SUSDB&#34; requested by the login. The login failed.~~Login failed for user &#39;DOMAIN\SERVER$&#39;&#34;</title>
+      <link>https://adamcook.io/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.~~login-failed-for-user-domain%5Cserver/</link>
+      <pubDate>Thu, 12 Dec 2019 00:00:00 +0100</pubDate>
+      
+      <guid>https://adamcook.io/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.~~login-failed-for-user-domain%5Cserver/</guid>
+      <description>First post as MEMCM rather than SCCM. I think since my last post in July I&amp;rsquo;ve accumulated a dozen unfinished drafts but you know, I&amp;rsquo;ve been having too much fun.. working.
+I recently stood up a remote SUP with its own WSUS role and SQL database. What I didn&amp;rsquo;t realise was, even though it was still syncing updates from the upstream SUP/WSUS server just fine, the status messages for the SMS_WSUS_CONTROL_MANAGER component on the new SUP/WSUS box was coughing up a bunch of errors ever since I installed the roles and configured them:</description>
+    </item>
+    
+    <item>
       <title>Get CMUnusedSources</title>
       <link>https://adamcook.io/p/get-cmunusedsources/</link>
       <pubDate>Sun, 07 Jul 2019 00:00:00 +0100</pubDate>
