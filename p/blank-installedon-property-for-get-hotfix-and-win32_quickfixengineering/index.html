@@ -18,7 +18,20 @@ $Updates = Get-HotFix | Select-Object description,hotfixid,installedby,@{l=&amp;
 <meta name="twitter:description" content="Want to get Windows Update status on a bunch of machines, only to discover the InstalledOn property is blank for lots of updates when you&amp;rsquo;re using Get-HotFix or querying Win32_QuickFixEngineering class with Get-WmiObject?
 Turns out it&amp;rsquo;s related to PowerShell parsing the date as string to datetime object incorrectly, depending what your system locale is.
 $Updates = Get-HotFix | Select-Object description,hotfixid,installedby,@{l=&amp;#34;InstalledOn&amp;#34;;e={[DateTime]::Parse($_.psbase.properties[&amp;#34;installedon&amp;#34;].value,$([System.Globalization.CultureInfo]::GetCultureInfo(&amp;#34;en-US&amp;#34;)))}} $Updates | Sort InstalledOn -Descending | Select -First 10 I like the above approach, as posted by user pyro3113, because the select expression lets you easily query remote systems using Get-HotFix or Get-WmiObject."><meta name="twitter:card" content="summary">
-	<meta name="twitter:image" content='https://adamcook.io/p/blank-installedon-property-for-get-hotfix-and-win32_quickfixengineering/images/cover.jpg' /></head><body class="">
+	<meta name="twitter:image" content='https://adamcook.io/p/blank-installedon-property-for-get-hotfix-and-win32_quickfixengineering/images/cover.jpg' />
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-157232649-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-157232649-3');
+</script>
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest"></head><body class="">
         <div class="container flex on-phone--column align-items--flex-start extended article-page with-toolbar">
             <aside class="sidebar left-sidebar sticky">
     <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
