@@ -18,5 +18,15 @@ The session covered the below topics:
  Introduction to CI/CD pipeline, i.e. what it means with practical explanations A walk through on the YAML structure/syntax of GitHub Actions Demonstrate on how to use Actions by uploading content to Azure Blob storage Demonstrate a self hosted runner Demonstrate how to deploy a PowerShell module to: the PowerShell Gallery, create a new GitHub release, a shared folder within my home lab (which failed because I messed with the runner&amp;rsquo;s service log-on credential) and to a self hosted NuGet feed (which also failed, thanks demo gods)    </description>
     </item>
     
+    <item>
+      <title>Starting to Automate Animated Content for Virtual Events</title>
+      <link>https://adamcook.io/p/starting-to-automate-animated-content-for-virtual-events/</link>
+      <pubDate>Sun, 12 Jul 2020 00:00:00 +0100</pubDate>
+      
+      <guid>https://adamcook.io/p/starting-to-automate-animated-content-for-virtual-events/</guid>
+      <description>I recently took ownership of becoming the organiser for my local PowerShell user group - PowerShell Southampton. With everything going on in the world re the pandemic, I realised I won&amp;rsquo;t be arranging in-person meetups any time soon.
+I got stuck in and learnt ways I could produce a virtual event: looked at the tech available and weighed up the features, pros/cons etc with how I wanted it to look and what I wanted the user experience to be for all involved (organiser, speaker and audience).</description>
+    </item>
+    
   </channel>
 </rss>

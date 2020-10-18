@@ -445,6 +445,52 @@
 </description>
         </item>
         <item>
+        <title>Starting to Automate Animated Content for Virtual Events</title>
+        <link>https://adamcook.io/p/starting-to-automate-animated-content-for-virtual-events/</link>
+        <pubDate>Sun, 12 Jul 2020 00:00:00 +0100</pubDate>
+        
+        <guid>https://adamcook.io/p/starting-to-automate-animated-content-for-virtual-events/</guid>
+        <description>&lt;img src="https://adamcook.io/p/starting-to-automate-animated-content-for-virtual-events/images/cover.jpg" alt="Featured image of post Starting to Automate Animated Content for Virtual Events" /&gt;&lt;p&gt;I recently took ownership of becoming the organiser for my local PowerShell user group - &lt;a class=&#34;link&#34; href=&#34;https://pssouth.co.uk&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;PowerShell Southampton&lt;/a&gt;. With everything going on in the world re the pandemic, I realised I won&amp;rsquo;t be arranging in-person meetups any time soon.&lt;/p&gt;
+&lt;p&gt;I got stuck in and learnt ways I could produce a virtual event: looked at the tech available and weighed up the features, pros/cons etc with how I wanted it to look and what I wanted the user experience to be for all involved (organiser, speaker and audience).&lt;/p&gt;
+&lt;p&gt;The research was short-lived. I quickly landed on using OBS Studio and pushing the stream to YouTube. OBS Studio seems like the de facto choice for screen recording and streaming. After some hours tinkering, reading and doing my owns streams to &lt;a class=&#34;link&#34; href=&#34;https://twitch.tv/codaamok&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Twitch&lt;/a&gt; (archived to my &lt;a class=&#34;link&#34; href=&#34;https://www.youtube.com/channel/UCjv4o4ToaauMNKP4wfIhP0A&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;YouTube channel&lt;/a&gt;), I was more than happy with what it offered.&lt;/p&gt;
+&lt;p&gt;Here is some material I used to help me learn streaming: a bunch of posts by &lt;a class=&#34;link&#34; href=&#34;https://blog.netnerds.net/category/livestreaming/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Chrissy LeMaire&lt;/a&gt; and a small list of resources stored on the &lt;a class=&#34;link&#34; href=&#34;https://github.com/powershelllive/LiveStreamQuickStart/blob/master/README.md&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;PowerShellLive repoitory&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The first event is this Wednesday and I got seriously carried away this weekend with styling some &amp;ldquo;starting soon&amp;rdquo; or &amp;ldquo;be right back&amp;rdquo; animations. Below is what I&amp;rsquo;ve ended up with and I&amp;rsquo;ll quickly walkthrough how to use it if you wanted to do something similar.&lt;/p&gt;
+
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe loading=&#34;lazy&#34; src=&#34;https://www.youtube.com/embed/VAtMaMHLFW8&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;p&gt;As you can see in both scenes there is only 1 single browse source. This immediately makes my OBS setup super simple and easily to recreate if I ever need to.&lt;/p&gt;
+&lt;p&gt;There&amp;rsquo;s just two resources needed to get rolling with this, and &lt;a class=&#34;link&#34; href=&#34;https://gist.github.com/codaamok/b0c1f6b203de03c18ed91268c31520b4&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;they&amp;rsquo;re both in a Gist&lt;/a&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;index.php&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;New-PSSouthamptonVirtualSession.ps1&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The browser source in OBS points to &lt;code&gt;http://127.0.0.1/pssouthampton/index.php?message=We&#39;ll be right back, sorry for the interruption!&lt;/code&gt;. Pass a difference value to the message parameter in the query string of the URL to change the scrolling text.&lt;/p&gt;
+&lt;p&gt;Unfortunately, this does depend on XAMPP (or similar) for at least a local web service and PHP. I was fixed on the idea of reading from a .json file within the HTML which contained properties such as session title, speaker name, Twitter handle, Twitter image path. I tried many ways of doing this with JavaScript but no dice, in the end I gave up and accepted the dependency.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;index.php&lt;/code&gt; hugely depends on the browser&amp;rsquo;s size (or OBS&amp;rsquo;s canvas size) being 1920x1080. You&amp;rsquo;ll also notice that if you opened &lt;code&gt;index.php&lt;/code&gt; in a browser, the positioning of some items might look different. I assume that&amp;rsquo;s either because the display scaling of my 4k display set to 175%, or the browser engine in OBS is different in some way.&lt;/p&gt;
+&lt;p&gt;Accompanying that is a PowerShell script &lt;code&gt;New-PSSouthamptonVirtualSession.ps1&lt;/code&gt;. This is the only thing I intend to use before each new event. I pass parameters for session title, speaker&amp;rsquo;s name and Twitter handle, and it does the rest:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Updates/creates properties.json with said properties, which &lt;code&gt;index.php&lt;/code&gt; reads from&lt;/li&gt;
+&lt;li&gt;Downloads the speaker&amp;rsquo;s Twitter profile and specifies its filename&lt;/li&gt;
+&lt;li&gt;Starts XAMPP&amp;rsquo;s Apache if not already running&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;This workflow makes life very easy moving forward: no need to fiddle with OBS sources and positioning them, or manipulating images in some editor. At most I&amp;rsquo;ll likely only need to fiddle with the session title&amp;rsquo;s text size and positioning in the CSS of &lt;code&gt;index.php&lt;/code&gt; if it gets particularly lengthy.&lt;/p&gt;
+&lt;p&gt;Here&amp;rsquo;s a quick demo of using the &lt;code&gt;New-PSSouthamptonVirtualSession.ps1&lt;/code&gt; and how easily it changes &lt;code&gt;index.php&lt;/code&gt;:&lt;/p&gt;
+
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe loading=&#34;lazy&#34; src=&#34;https://www.youtube.com/embed/1OhdfvRGNyo&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+</description>
+        </item>
+        <item>
         <title>Creating Dynamic Azure ARM Templates</title>
         <link>https://adamcook.io/p/creating-dynamic-azure-arm-templates/</link>
         <pubDate>Sun, 05 Jul 2020 00:00:00 +0100</pubDate>

@@ -1,24 +1,21 @@
 <!DOCTYPE html>
 <html lang="en-us"><head>
     <meta charset='utf-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='In a recent project I had to move the SQL database for a single primary site hierarchy to a different host in order to go beyond version 1610, because support for Windows Server 2008 R2 had ended from 1702 onward.
-Everything was going smoothly up until it came to modifying the SQL configuration of the site. I was getting slapped by ConfigMgrSetup.log with:
- Create_BackupSQLCert : SQL server failed to backup cert.'><title>ConfigMgr Database Move: Failed to Create/Backup SQL SSB Certificate</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='I recently took ownership of becoming the organiser for my local PowerShell user group - PowerShell Southampton. With everything going on in the world re the pandemic, I realised I won&amp;rsquo;t be arranging in-person meetups any time soon.
+I got stuck in and learnt ways I could produce a virtual event: looked at the tech available and weighed up the features, pros/cons etc with how I wanted it to look and what I wanted the user experience to be for all involved (organiser, speaker and audience).'><title>Starting to Automate Animated Content for Virtual Events</title>
     
-    <link rel='canonical' href='https://adamcook.io/p/configmgr-database-move-failed-to-create/backup-sql-ssb-certificate/'>
+    <link rel='canonical' href='https://adamcook.io/p/starting-to-automate-animated-content-for-virtual-events/'>
 
-<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='ConfigMgr Database Move: Failed to Create/Backup SQL SSB Certificate'>
-<meta property='og:description' content='In a recent project I had to move the SQL database for a single primary site hierarchy to a different host in order to go beyond version 1610, because support for Windows Server 2008 R2 had ended from 1702 onward.
-Everything was going smoothly up until it came to modifying the SQL configuration of the site. I was getting slapped by ConfigMgrSetup.log with:
- Create_BackupSQLCert : SQL server failed to backup cert.'>
-<meta property='og:url' content='https://adamcook.io/p/configmgr-database-move-failed-to-create/backup-sql-ssb-certificate/'>
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Starting to Automate Animated Content for Virtual Events'>
+<meta property='og:description' content='I recently took ownership of becoming the organiser for my local PowerShell user group - PowerShell Southampton. With everything going on in the world re the pandemic, I realised I won&amp;rsquo;t be arranging in-person meetups any time soon.
+I got stuck in and learnt ways I could produce a virtual event: looked at the tech available and weighed up the features, pros/cons etc with how I wanted it to look and what I wanted the user experience to be for all involved (organiser, speaker and audience).'>
+<meta property='og:url' content='https://adamcook.io/p/starting-to-automate-animated-content-for-virtual-events/'>
 <meta property='og:site_name' content='Adam Cook'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2018-10-15T00:00:00&#43;01:00'/><meta property='article:modified_time' content='2018-10-15T00:00:00&#43;01:00'/><meta property='og:image' content='https://adamcook.io/p/configmgr-database-move-failed-to-create/backup-sql-ssb-certificate/images/cover.jpg' />
-<meta name="twitter:site" content="codaamok"><meta name="twitter:title" content="ConfigMgr Database Move: Failed to Create/Backup SQL SSB Certificate">
-<meta name="twitter:description" content="In a recent project I had to move the SQL database for a single primary site hierarchy to a different host in order to go beyond version 1610, because support for Windows Server 2008 R2 had ended from 1702 onward.
-Everything was going smoothly up until it came to modifying the SQL configuration of the site. I was getting slapped by ConfigMgrSetup.log with:
- Create_BackupSQLCert : SQL server failed to backup cert."><meta name="twitter:card" content="summary">
-	<meta name="twitter:image" content='https://adamcook.io/p/configmgr-database-move-failed-to-create/backup-sql-ssb-certificate/images/cover.jpg' /></head><body class="">
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2020-07-12T00:00:00&#43;01:00'/><meta property='article:modified_time' content='2020-07-12T00:00:00&#43;01:00'/><meta property='og:image' content='https://adamcook.io/p/starting-to-automate-animated-content-for-virtual-events/images/cover.jpg' />
+<meta name="twitter:site" content="codaamok"><meta name="twitter:title" content="Starting to Automate Animated Content for Virtual Events">
+<meta name="twitter:description" content="I recently took ownership of becoming the organiser for my local PowerShell user group - PowerShell Southampton. With everything going on in the world re the pandemic, I realised I won&amp;rsquo;t be arranging in-person meetups any time soon.
+I got stuck in and learnt ways I could produce a virtual event: looked at the tech available and weighed up the features, pros/cons etc with how I wanted it to look and what I wanted the user experience to be for all involved (organiser, speaker and audience)."><meta name="twitter:card" content="summary">
+	<meta name="twitter:image" content='https://adamcook.io/p/starting-to-automate-animated-content-for-virtual-events/images/cover.jpg' /></head><body class="">
         <div class="container flex on-phone--column align-items--flex-start extended article-page with-toolbar">
             <aside class="sidebar left-sidebar sticky">
     <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
@@ -198,9 +195,9 @@ Everything was going smoothly up until it came to modifying the SQL configuratio
     <article class="has-image main-article">
     <header class="article-header">
         <div class="article-image">
-            <img srcset="/p/configmgr-database-move-failed-to-create/backup-sql-ssb-certificate/images/cover_hu120b4d751b569fbffe1633168a2dc2bc_375329_1024x0_resize_q75_box.jpg 1024w, /p/configmgr-database-move-failed-to-create/backup-sql-ssb-certificate/images/cover_hu120b4d751b569fbffe1633168a2dc2bc_375329_2000x0_resize_q75_box.jpg 2000w"
-                    src="/p/configmgr-database-move-failed-to-create/backup-sql-ssb-certificate/images/cover_hu120b4d751b569fbffe1633168a2dc2bc_375329_2000x0_resize_q75_box.jpg" width="953" height="1271" loading="lazy"
-                    alt="Featured image of post ConfigMgr Database Move: Failed to Create/Backup SQL SSB Certificate" />
+            <img srcset="/p/starting-to-automate-animated-content-for-virtual-events/images/cover_hu7af45c05e7eaab656aeab8d5fe153c59_388839_1024x0_resize_q75_box.jpg 1024w, /p/starting-to-automate-animated-content-for-virtual-events/images/cover_hu7af45c05e7eaab656aeab8d5fe153c59_388839_2000x0_resize_q75_box.jpg 2000w"
+                    src="/p/starting-to-automate-animated-content-for-virtual-events/images/cover_hu7af45c05e7eaab656aeab8d5fe153c59_388839_2000x0_resize_q75_box.jpg" width="1278" height="958" loading="lazy"
+                    alt="Featured image of post Starting to Automate Animated Content for Virtual Events" />
             
         </div>
     
@@ -209,12 +206,12 @@ Everything was going smoothly up until it came to modifying the SQL configuratio
     
     <header class="article-category">
         
-            <a href="https://adamcook.io/categories/configmgr/" 
+            <a href="https://adamcook.io/categories/presentations/" 
                     class="color-tag"
-                    data-image="/p/configmgr-database-move-failed-to-create/backup-sql-ssb-certificate/images/cover_hu120b4d751b569fbffe1633168a2dc2bc_375329_20x20_fill_q75_box_smart1.jpg" 
+                    data-image="/p/starting-to-automate-animated-content-for-virtual-events/images/cover_hu7af45c05e7eaab656aeab8d5fe153c59_388839_20x20_fill_q75_box_smart1.jpg" 
                     data-key="" 
-                    data-hash="md5-c0VC8TDwSbH1ZvNYz9MCmg==">
-                    ConfigMgr
+                    data-hash="md5-gighqqaHX0eTfVeqsCyBxg==">
+                    Presentations
                 </a>
             
         
@@ -222,7 +219,7 @@ Everything was going smoothly up until it came to modifying the SQL configuratio
     
 
     <h2 class="article-title">
-        <a href="https://adamcook.io/p/configmgr-database-move-failed-to-create/backup-sql-ssb-certificate/">ConfigMgr Database Move: Failed to Create/Backup SQL SSB Certificate</a>
+        <a href="https://adamcook.io/p/starting-to-automate-animated-content-for-virtual-events/">Starting to Automate Animated Content for Virtual Events</a>
     </h2>
 
     <table>
@@ -238,7 +235,7 @@ Everything was going smoothly up until it came to modifying the SQL configuratio
   <line x1="11" y1="15" x2="12" y2="15" />
   <line x1="12" y1="15" x2="12" y2="18" />
 </svg>
-                    <time class="article-time--published">15 October 2018</time>
+                    <time class="article-time--published">12 July 2020</time>
                 </footer>
             </td>
         </tr>
@@ -254,7 +251,7 @@ Everything was going smoothly up until it came to modifying the SQL configuratio
 
 
                     <time class="article-time--published">
-                        Reading time: 2 minutes.
+                        Reading time: 3 minutes.
                     </time>
                 </footer>
             </td>
@@ -263,38 +260,44 @@ Everything was going smoothly up until it came to modifying the SQL configuratio
 </header>
 
     <section class="article-content">
-    <p>In a recent project I had to move the SQL database for a single primary site hierarchy to a different host in order to go beyond version 1610, because support for Windows Server 2008 R2 had ended from 1702 onward.</p>
-<p>Everything was going smoothly up until it came to modifying the SQL configuration of the site. I was getting slapped by ConfigMgrSetup.log with:</p>
-<blockquote>
-<p>Create_BackupSQLCert : SQL server failed to backup cert. CSiteControlSetup::SetupCertificateForSSB : Failed to create/backup SQL SSB certificate. ERROR: Failed to set up SQL Server certificate for service broker on &ldquo;sccm.contoso.com&rdquo; .</p>
-</blockquote>
-<p>After a couple of days researching and help from colleagues, I learnt more about MS SQL and SQL certificates.</p>
-<p>I won&rsquo;t overcomplicate this or try to act like I know every minute detail of SQL so I&rsquo;ll cut to the chase.</p>
-<p>During installation of SQL, I set a domain service account for the agent, database engine and reporting service. After installation, I changed the service account used for these services. Then I attempted the database migration and stumbled across said error. During my test run in a lab env (as it was my first attempt at SCCM db move) I did not encounter this issue, because I did not play hot potato with service accounts.</p>
-<p>According to the links below, internal SQL certificates are generated with a dependency on the database&rsquo;s master key. Changing the domain user to run the service meant that its service key could no longer access or decrypt the database&rsquo;s master key.</p>
-<p>There are methods to recreate the database master keys detailed in the links below, however after initially trying (and failing) to use the stored procedure <strong>spCreateandBackupSQLCert,</strong> I figured a reinstall of a new SQL instance using the desired service account would do the trick. The penny dropped when I read the below from <a class="link" href="https://blogs.technet.microsoft.com/umairkhan/2013/12/12/configmgr-2012-drs-and-sql-service-broker-certificate-issues/"  target="_blank" rel="noopener"
-    >here</a>:</p>
-<blockquote>
-<p>The history was the SQL server was installed with the system account and then later changed to a domain user account.</p>
-<p>The problem with doing the above is that when Configuration Manager is installed it creates some internal certificates which are dependent on the master key. When the account being used to run the database server changes the new account is no longer able to &lsquo;unlock&rsquo; the master key and consequently can not read the internal certificates which then cause communication between sites to fail.</p>
-</blockquote>
-<p>In case you didn&rsquo;t know, because I didn&rsquo;t, SQL certificates are different to the certificates you may usually deal with in a user&rsquo;s, computer&rsquo;s or service&rsquo;s personal / trusted root store from the Certificates snap in.</p>
-<p>Resources I used to help me understand SQL certificates:</p>
+    <p>I recently took ownership of becoming the organiser for my local PowerShell user group - <a class="link" href="https://pssouth.co.uk"  target="_blank" rel="noopener"
+    >PowerShell Southampton</a>. With everything going on in the world re the pandemic, I realised I won&rsquo;t be arranging in-person meetups any time soon.</p>
+<p>I got stuck in and learnt ways I could produce a virtual event: looked at the tech available and weighed up the features, pros/cons etc with how I wanted it to look and what I wanted the user experience to be for all involved (organiser, speaker and audience).</p>
+<p>The research was short-lived. I quickly landed on using OBS Studio and pushing the stream to YouTube. OBS Studio seems like the de facto choice for screen recording and streaming. After some hours tinkering, reading and doing my owns streams to <a class="link" href="https://twitch.tv/codaamok"  target="_blank" rel="noopener"
+    >Twitch</a> (archived to my <a class="link" href="https://www.youtube.com/channel/UCjv4o4ToaauMNKP4wfIhP0A"  target="_blank" rel="noopener"
+    >YouTube channel</a>), I was more than happy with what it offered.</p>
+<p>Here is some material I used to help me learn streaming: a bunch of posts by <a class="link" href="https://blog.netnerds.net/category/livestreaming/"  target="_blank" rel="noopener"
+    >Chrissy LeMaire</a> and a small list of resources stored on the <a class="link" href="https://github.com/powershelllive/LiveStreamQuickStart/blob/master/README.md"  target="_blank" rel="noopener"
+    >PowerShellLive repoitory</a>.</p>
+<p>The first event is this Wednesday and I got seriously carried away this weekend with styling some &ldquo;starting soon&rdquo; or &ldquo;be right back&rdquo; animations. Below is what I&rsquo;ve ended up with and I&rsquo;ll quickly walkthrough how to use it if you wanted to do something similar.</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe loading="lazy" src="https://www.youtube.com/embed/VAtMaMHLFW8" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
+<p>As you can see in both scenes there is only 1 single browse source. This immediately makes my OBS setup super simple and easily to recreate if I ever need to.</p>
+<p>There&rsquo;s just two resources needed to get rolling with this, and <a class="link" href="https://gist.github.com/codaamok/b0c1f6b203de03c18ed91268c31520b4"  target="_blank" rel="noopener"
+    >they&rsquo;re both in a Gist</a>:</p>
 <ul>
-<li><a class="link" href="https://blogs.technet.microsoft.com/umairkhan/2013/12/12/configmgr-2012-drs-and-sql-service-broker-certificate-issues/"  target="_blank" rel="noopener"
-    >https://blogs.technet.microsoft.com/umairkhan/2013/12/12/configmgr-2012-drs-and-sql-service-broker-certificate-issues/</a></li>
-<li><a class="link" href="http://www.sqlservercentral.com/articles/Encryption/108693/"  target="_blank" rel="noopener"
-    >http://www.sqlservercentral.com/articles/Encryption/108693/</a></li>
-<li><a class="link" href="https://docs.microsoft.com/en-us/sql/relational-databases/security/encryption/encryption-hierarchy?view=sql-server-2017"  target="_blank" rel="noopener"
-    >https://docs.microsoft.com/en-us/sql/relational-databases/security/encryption/encryption-hierarchy?view=sql-server-2017</a></li>
+<li><code>index.php</code></li>
+<li><code>New-PSSouthamptonVirtualSession.ps1</code></li>
 </ul>
-<p>Resources I used to help me with the database move:</p>
+<p>The browser source in OBS points to <code>http://127.0.0.1/pssouthampton/index.php?message=We'll be right back, sorry for the interruption!</code>. Pass a difference value to the message parameter in the query string of the URL to change the scrolling text.</p>
+<p>Unfortunately, this does depend on XAMPP (or similar) for at least a local web service and PHP. I was fixed on the idea of reading from a .json file within the HTML which contained properties such as session title, speaker name, Twitter handle, Twitter image path. I tried many ways of doing this with JavaScript but no dice, in the end I gave up and accepted the dependency.</p>
+<p><code>index.php</code> hugely depends on the browser&rsquo;s size (or OBS&rsquo;s canvas size) being 1920x1080. You&rsquo;ll also notice that if you opened <code>index.php</code> in a browser, the positioning of some items might look different. I assume that&rsquo;s either because the display scaling of my 4k display set to 175%, or the browser engine in OBS is different in some way.</p>
+<p>Accompanying that is a PowerShell script <code>New-PSSouthamptonVirtualSession.ps1</code>. This is the only thing I intend to use before each new event. I pass parameters for session title, speaker&rsquo;s name and Twitter handle, and it does the rest:</p>
 <ul>
-<li><a class="link" href="https://blogs.technet.microsoft.com/configurationmgr/2013/04/02/how-to-move-the-configmgr-2012-site-database-to-a-new-sql-server/"  target="_blank" rel="noopener"
-    >https://blogs.technet.microsoft.com/configurationmgr/2013/04/02/how-to-move-the-configmgr-2012-site-database-to-a-new-sql-server/</a></li>
-<li><a class="link" href="https://deploymentresearch.com/Research/Post/646/Moving-the-ConfigMgr-Current-Branch-database-to-another-server-as-in-back-to-the-primary-site-server"  target="_blank" rel="noopener"
-    >https://deploymentresearch.com/Research/Post/646/Moving-the-ConfigMgr-Current-Branch-database-to-another-server-as-in-back-to-the-primary-site-server</a></li>
+<li>Updates/creates properties.json with said properties, which <code>index.php</code> reads from</li>
+<li>Downloads the speaker&rsquo;s Twitter profile and specifies its filename</li>
+<li>Starts XAMPP&rsquo;s Apache if not already running</li>
 </ul>
+<p>This workflow makes life very easy moving forward: no need to fiddle with OBS sources and positioning them, or manipulating images in some editor. At most I&rsquo;ll likely only need to fiddle with the session title&rsquo;s text size and positioning in the CSS of <code>index.php</code> if it gets particularly lengthy.</p>
+<p>Here&rsquo;s a quick demo of using the <code>New-PSSouthamptonVirtualSession.ps1</code> and how easily it changes <code>index.php</code>:</p>
+
+<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+  <iframe loading="lazy" src="https://www.youtube.com/embed/1OhdfvRGNyo" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" allowfullscreen title="YouTube Video"></iframe>
+</div>
+
 
 </section>
 
