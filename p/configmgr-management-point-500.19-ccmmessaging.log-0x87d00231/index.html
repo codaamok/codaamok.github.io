@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='My lab recently started playing up when I noticed clients weren&amp;rsquo;t receiving any new policies.
+TDLR (it&amp;rsquo;s not even that long!): a while ago I moved my SUP/WSUS off host from the site server that also hosted a MP. As a result it seemed to have triggered this known issue: Management points stop responding to HTTP requests with error 500.19.
+First port of call was CcmMessaging.log to see it was at least talking to MP OK, and it wasn&amp;rsquo;t:'><title>ConfigMgr Management Point 500.19 CcmMessaging.log 0x87d00231</title>
+    
+    <link rel='canonical' href='https://adamcook.io/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='ConfigMgr Management Point 500.19 CcmMessaging.log 0x87d00231'>
+<meta property='og:description' content='My lab recently started playing up when I noticed clients weren&amp;rsquo;t receiving any new policies.
+TDLR (it&amp;rsquo;s not even that long!): a while ago I moved my SUP/WSUS off host from the site server that also hosted a MP. As a result it seemed to have triggered this known issue: Management points stop responding to HTTP requests with error 500.19.
+First port of call was CcmMessaging.log to see it was at least talking to MP OK, and it wasn&amp;rsquo;t:'>
+<meta property='og:url' content='https://adamcook.io/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/'>
+<meta property='og:site_name' content='Adam Cook'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2019-07-22T00:00:00&#43;01:00'/><meta property='article:modified_time' content='2019-07-22T00:00:00&#43;01:00'/><meta property='og:image' content='https://adamcook.io/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/cover.jpg' />
+<meta name="twitter:site" content="codaamok"><meta name="twitter:title" content="ConfigMgr Management Point 500.19 CcmMessaging.log 0x87d00231">
+<meta name="twitter:description" content="My lab recently started playing up when I noticed clients weren&amp;rsquo;t receiving any new policies.
+TDLR (it&amp;rsquo;s not even that long!): a while ago I moved my SUP/WSUS off host from the site server that also hosted a MP. As a result it seemed to have triggered this known issue: Management points stop responding to HTTP requests with error 500.19.
+First port of call was CcmMessaging.log to see it was at least talking to MP OK, and it wasn&amp;rsquo;t:"><meta name="twitter:card" content="summary">
+	<meta name="twitter:image" content='https://adamcook.io/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/cover.jpg' /></head><body class="">
+        <div class="container flex on-phone--column align-items--flex-start extended article-page with-toolbar">
+            <aside class="sidebar left-sidebar sticky">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header class="site-info">
+        
+            <figure class="site-avatar">
+                
+
+                
+                    
+                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_2.png" width="300"
+                        height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+
+                <span class="emoji">🙃</span>
+            </figure>
+        
+        <h1 class="site-name"><a href="https://adamcook.io/">Adam Cook</a></h1>
+        <h2 class="site-description">Passionate about helping people. #PowerShell, #ConfigMgr and #Azure. Misses #Linux.</h2>
+    </header>
+
+    <ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='https://adamcook.io/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://adamcook.io/archives'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://twitter.com/codaamok'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84 0 0 0 .497 -3.753C20.18 7.773 21.692 5.25 22 4.009z" />
+</svg>
+                
+                <span>Twitter</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://github.com/codaamok'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+                
+                <span>GitHub</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://linkedin.com/in/adamcharlescook'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-linkedin" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="4" width="16" height="16" rx="2" />
+  <line x1="8" y1="11" x2="8" y2="16" />
+  <line x1="8" y1="8" x2="8" y2="8.01" />
+  <line x1="12" y1="16" x2="12" y2="11" />
+  <path d="M16 16v-3a2 2 0 0 0 -4 0" />
+</svg>
+                
+                <span>LinkedIn</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://www.youracclaim.com/users/adam-cook.e3a67a21/badges'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-award" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <circle cx="12" cy="9" r="6" />
+  <polyline points="9 14.2 9 21 12 19 15 21 15 14.2" transform="rotate(-30 12 9)" />
+  <polyline points="9 14.2 9 21 12 19 15 21 15 14.2" transform="rotate(30 12 9)" />
+</svg>
+                
+                <span>My Acclaims</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://sysmansquad.com/author/codaamok/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-notebook" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M6 4h11a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-11a1 1 0 0 1 -1 -1v-14a1 1 0 0 1 1 -1m3 0v18" />
+  <line x1="13" y1="8" x2="15" y2="8" />
+  <line x1="13" y1="12" x2="15" y2="12" />
+</svg>
+                
+                <span>SysManSquad</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://pssouth.co.uk'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-prompt" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <polyline points="5 7 10 12 5 17" />
+  <line x1="13" y1="17" x2="19" y2="17" />
+</svg>
+                
+                <span>PowerShell Southampton</span>
+            </a>
+        </li>
+        
+    </ol>
+</aside>
+            <main class="main full-width">
+    <div id="article-toolbar">
+        <a href="https://adamcook.io/" class="back-home">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+            <span>Back</span>
+        </a>
+    </div>
+
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <img srcset="/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/cover_hu7af45c05e7eaab656aeab8d5fe153c59_195251_1024x0_resize_q75_box.jpg 1024w, /p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/cover_hu7af45c05e7eaab656aeab8d5fe153c59_195251_2000x0_resize_q75_box.jpg 2000w"
+                    src="/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/cover_hu7af45c05e7eaab656aeab8d5fe153c59_195251_2000x0_resize_q75_box.jpg" width="1262" height="946" loading="lazy"
+                    alt="Featured image of post ConfigMgr Management Point 500.19 CcmMessaging.log 0x87d00231" />
+            
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="https://adamcook.io/categories/configmgr/" 
+                    class="color-tag"
+                    data-image="/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/cover_hu7af45c05e7eaab656aeab8d5fe153c59_195251_20x20_fill_q75_box_smart1.jpg" 
+                    data-key="" 
+                    data-hash="md5-Ma7KP5j2jWHnGZu/LfMwYQ==">
+                    ConfigMgr
+                </a>
+            
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="https://adamcook.io/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/">ConfigMgr Management Point 500.19 CcmMessaging.log 0x87d00231</a>
+    </h2>
+
+    <table>
+        <tr>
+            <td width="25%">
+                <footer class="article-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="5" width="16" height="16" rx="2" />
+  <line x1="16" y1="3" x2="16" y2="7" />
+  <line x1="8" y1="3" x2="8" y2="7" />
+  <line x1="4" y1="11" x2="20" y2="11" />
+  <line x1="11" y1="15" x2="12" y2="15" />
+  <line x1="12" y1="15" x2="12" y2="18" />
+</svg>
+                    <time class="article-time--published">22 July 2019</time>
+                </footer>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <footer class="article-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--published">
+                        Reading time: 2 minutes.
+                    </time>
+                </footer>
+            </td>
+        </tr>
+    </table></div>
+</header>
+
+    <section class="article-content">
+    <p>My lab recently started playing up when I noticed clients weren&rsquo;t receiving any new policies.</p>
+<p>TDLR (it&rsquo;s not even that long!): a while ago I moved my SUP/WSUS off host from the site server that also hosted a MP. As a result it seemed to have triggered this known issue: <a class="link" href="https://support.microsoft.com/en-gb/help/4468361/management-points-stop-responding-to-http-requests-with-error-500-19"  target="_blank" rel="noopener"
+    >Management points stop responding to HTTP requests with error 500.19</a>.</p>
+<p>First port of call was <code>CcmMessaging.log</code> to see it was at least talking to MP OK, and it wasn&rsquo;t:</p>
+<pre><code>Successfully queued event on HTTP/HTTPS failure for server 'SCCM.acc.local'.
+Post to http://SCCM.acc.local/ccm_system_windowsauth/request failed with 0x87d00231.
+[CCMHTTP] ERROR: URL=http://SCCM.acc.local/ccm_system/request, Port=80, Options=224, Code=0, Text=CCM_E_BAD_HTTP_STATUS_CODE
+[CCMHTTP] ERROR INFO: StatusCode=500 StatusText=Internal Server Error
+Raising event: instance of CCM_CcmHttp_Status {ClientID = &quot;GUID:A5FB49C2-955B-43EC-AE78-2BBB289FFD0F&quot;;DateTime = &quot;20190722130543.131000+000&quot;;HostName = &quot;SCCM.acc.local&quot;;HRESULT = &quot;0x87d0027e&quot;;ProcessID = 4496;StatusCode = 500;ThreadID = 1340; };
+Successfully queued event on HTTP/HTTPS failure for server 'SCCM.acc.local'.
+Post to http://SCCM.acc.local/ccm_system/request failed with 0x87d00231.
+</code></pre><p>Poking around server-side in the MP logs gave me a bit of a red herring with this in <code>MP_Status.log</code>:</p>
+<pre><code>CMPDBConnection::Init(): IDBInitialize::Initialize() failed with 0x80004005	
+=======================================	
+MPDB ERROR - CONNECTION PARAMETERS
+SQL Server Name     : SCCM.acc.local\SCCM_LOCALHOST
+SQL Database Name   : CM_ACC
+Integrated Auth     : True
+MPDB ERROR - EXTENDED INFORMATION
+MPDB Method         : Init()
+MPDB Method HRESULT : 0x80004005
+Error Description   : Login timeout expired
+OLEDB IID           : {0C733A8B-2A1C-11CE-ADE5-00AA0044773D}
+ProgID              : Microsoft SQL Server Native Client 11.0
+MPDB ERROR - INFORMATION FROM DRIVER
+null	
+=======================================
+Certificate for client GUID:D125CE68-1CAD-4AED-9759-5ECF3842932C is revoked	
+Mp Status: Failed ProcessKnownProperties, error 80004005	
+MP Status: processing failed for 1 event(s)	
+MP StatusForwarder (the event processor) reported an error 80004005
+</code></pre><p>Opening up in the browser on the server hosting the MP gave me a 500.19 status code when testing MP connectivity with <code>http://&lt;ServerName.FQND&gt;/sms_mp/.sms_aut?mplist</code>.</p>
+<p><figure>
+		<a href="/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/configmgr-management-point-500-19-ccmmessaging-log-0x87d00231-01.jpg" data-size="918x645">
+			<img srcset="/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/_hua70a28880ab277bb9ce3b50854d771d4_180749_27adda0cd6e900e3878fb74789d570f5.jpg 480w, /p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/_hua70a28880ab277bb9ce3b50854d771d4_180749_5fed7adc4bb3b71ad7d397d51e7e9ced.jpg 1024w"
+				src="/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/configmgr-management-point-500-19-ccmmessaging-log-0x87d00231-01.jpg" width="918" height="645" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure></p>
+<p>Another place to find more information of HTTP status codes for web requests is the web server&rsquo;s logs! You can find where your MP&rsquo;s logs are stored by:</p>
+<ol>
+<li>Opening <code>Internet Information Services (IIS) Manager</code></li>
+<li>Expand <code>Sites</code> node</li>
+<li>Expand <code>Default Web Site</code> node</li>
+<li>Select <code>SMS\_MP</code> node</li>
+<li>Double click logging and observe the value in the <code>Directory</code> field</li>
+</ol>
+<p><figure>
+		<a href="/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/configmgr-management-point-500-19-ccmmessaging-log-0x87d00231-02.jpg" data-size="1280x689">
+			<img srcset="/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/_hu7b3dfc494206edd92c079b117760c234_204617_96a85e6aee5265233994a0499aa6a5de.jpg 480w, /p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/_hu7b3dfc494206edd92c079b117760c234_204617_6552e023d2e4aac631c72cbdb728b8b7.jpg 1024w"
+				src="/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/configmgr-management-point-500-19-ccmmessaging-log-0x87d00231-02.jpg" width="1280" height="689" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure></p>
+<p>Log snippet:</p>
+<pre><code>...
+2019-07-22 13:11:58 192.168.175.11 CCM_POST /ccm_system_windowsauth/request - 80 - 192.168.175.16 ccmhttp - 401 2 5 1357 189
+2019-07-22 13:12:32 192.168.175.11 PROPFIND /CCM_Client - 80 - 192.168.175.16 ccmsetup - 500 19 126 1357 21
+2019-07-22 13:12:32 192.168.175.11 PROPFIND /CCM_Client - 80 - 192.168.175.16 ccmsetup - 500 19 126 1357 53
+...
+</code></pre><p>Some slightly reworded Googling thankfully landed me here: <a class="link" href="https://support.microsoft.com/en-gb/help/4468361/management-points-stop-responding-to-http-requests-with-error-500-19"  target="_blank" rel="noopener"
+    >Management points stop responding to HTTP requests with error 500.19</a>:</p>
+<ol>
+<li>Locate  <code>%windir%\system32\inetsrv\config</code>.</li>
+<li>Open the <code>applicationHost.config</code> file in Notepad.</li>
+<li>Look for an entry that resembles the following:</li>
+</ol>
+<pre><code>&lt;scheme name=&quot;xpress&quot; doStaticCompression=&quot;false&quot; doDynamicCompression=&quot;true&quot; dll=&quot;C:\Windows\system32\inetsrv\suscomp.dll&quot; staticCompressionLevel=&quot;10&quot; dynamicCompressionLevel=&quot;0&quot; /&gt;`
+</code></pre><ol start="4">
+<li>Remove the XPress compression schema by running the following command from an elevated command prompt:</li>
+</ol>
+<pre><code>%windir%\system32\inetsrv\appcmd.exe set config -section:system.webServer/httpCompression /-[name='xpress']
+</code></pre><ol start="5">
+<li>Verify that the compression schema is removed from the <strong>applicationHost.config</strong> file, and then save the file.</li>
+<li>Run the following command from an elevated command prompt:</li>
+</ol>
+<pre><code>iisreset
+</code></pre>
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+    
+</article>
+
+    <aside class="widget related-contents--wrapper">
+    
+    
+</aside>
+
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "adam-cook" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">&copy; 2020 Adam Cook</section>
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.0.5">Stack</a></b> designed by
+        <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true" style="display:none">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+            </main>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"
+    integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g=" crossorigin="anonymous"></script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<link rel="stylesheet" href="/css/highlight/light.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="/css/highlight/dark.min.css" media="(prefers-color-scheme: dark)">
+
+    </body>
+</html>

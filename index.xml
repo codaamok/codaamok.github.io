@@ -802,6 +802,93 @@ Event Xml:
 </description>
         </item>
         <item>
+        <title>ConfigMgr Management Point 500.19 CcmMessaging.log 0x87d00231</title>
+        <link>https://adamcook.io/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/</link>
+        <pubDate>Mon, 22 Jul 2019 00:00:00 +0100</pubDate>
+        
+        <guid>https://adamcook.io/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/</guid>
+        <description>&lt;img src="https://adamcook.io/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/cover.jpg" alt="Featured image of post ConfigMgr Management Point 500.19 CcmMessaging.log 0x87d00231" /&gt;&lt;p&gt;My lab recently started playing up when I noticed clients weren&amp;rsquo;t receiving any new policies.&lt;/p&gt;
+&lt;p&gt;TDLR (it&amp;rsquo;s not even that long!): a while ago I moved my SUP/WSUS off host from the site server that also hosted a MP. As a result it seemed to have triggered this known issue: &lt;a class=&#34;link&#34; href=&#34;https://support.microsoft.com/en-gb/help/4468361/management-points-stop-responding-to-http-requests-with-error-500-19&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Management points stop responding to HTTP requests with error 500.19&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;First port of call was &lt;code&gt;CcmMessaging.log&lt;/code&gt; to see it was at least talking to MP OK, and it wasn&amp;rsquo;t:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Successfully queued event on HTTP/HTTPS failure for server &#39;SCCM.acc.local&#39;.
+Post to http://SCCM.acc.local/ccm_system_windowsauth/request failed with 0x87d00231.
+[CCMHTTP] ERROR: URL=http://SCCM.acc.local/ccm_system/request, Port=80, Options=224, Code=0, Text=CCM_E_BAD_HTTP_STATUS_CODE
+[CCMHTTP] ERROR INFO: StatusCode=500 StatusText=Internal Server Error
+Raising event: instance of CCM_CcmHttp_Status {ClientID = &amp;quot;GUID:A5FB49C2-955B-43EC-AE78-2BBB289FFD0F&amp;quot;;DateTime = &amp;quot;20190722130543.131000+000&amp;quot;;HostName = &amp;quot;SCCM.acc.local&amp;quot;;HRESULT = &amp;quot;0x87d0027e&amp;quot;;ProcessID = 4496;StatusCode = 500;ThreadID = 1340; };
+Successfully queued event on HTTP/HTTPS failure for server &#39;SCCM.acc.local&#39;.
+Post to http://SCCM.acc.local/ccm_system/request failed with 0x87d00231.
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Poking around server-side in the MP logs gave me a bit of a red herring with this in &lt;code&gt;MP_Status.log&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;CMPDBConnection::Init(): IDBInitialize::Initialize() failed with 0x80004005	
+=======================================	
+MPDB ERROR - CONNECTION PARAMETERS
+SQL Server Name     : SCCM.acc.local\SCCM_LOCALHOST
+SQL Database Name   : CM_ACC
+Integrated Auth     : True
+MPDB ERROR - EXTENDED INFORMATION
+MPDB Method         : Init()
+MPDB Method HRESULT : 0x80004005
+Error Description   : Login timeout expired
+OLEDB IID           : {0C733A8B-2A1C-11CE-ADE5-00AA0044773D}
+ProgID              : Microsoft SQL Server Native Client 11.0
+MPDB ERROR - INFORMATION FROM DRIVER
+null	
+=======================================
+Certificate for client GUID:D125CE68-1CAD-4AED-9759-5ECF3842932C is revoked	
+Mp Status: Failed ProcessKnownProperties, error 80004005	
+MP Status: processing failed for 1 event(s)	
+MP StatusForwarder (the event processor) reported an error 80004005
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Opening up in the browser on the server hosting the MP gave me a 500.19 status code when testing MP connectivity with &lt;code&gt;http://&amp;lt;ServerName.FQND&amp;gt;/sms_mp/.sms_aut?mplist&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/configmgr-management-point-500-19-ccmmessaging-log-0x87d00231-01.jpg&#34; data-size=&#34;918x645&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/_hua70a28880ab277bb9ce3b50854d771d4_180749_27adda0cd6e900e3878fb74789d570f5.jpg 480w, https://adamcook.io/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/_hua70a28880ab277bb9ce3b50854d771d4_180749_5fed7adc4bb3b71ad7d397d51e7e9ced.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/configmgr-management-point-500-19-ccmmessaging-log-0x87d00231-01.jpg&#34; width=&#34;918&#34; height=&#34;645&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;Another place to find more information of HTTP status codes for web requests is the web server&amp;rsquo;s logs! You can find where your MP&amp;rsquo;s logs are stored by:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Opening &lt;code&gt;Internet Information Services (IIS) Manager&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Expand &lt;code&gt;Sites&lt;/code&gt; node&lt;/li&gt;
+&lt;li&gt;Expand &lt;code&gt;Default Web Site&lt;/code&gt; node&lt;/li&gt;
+&lt;li&gt;Select &lt;code&gt;SMS\_MP&lt;/code&gt; node&lt;/li&gt;
+&lt;li&gt;Double click logging and observe the value in the &lt;code&gt;Directory&lt;/code&gt; field&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/configmgr-management-point-500-19-ccmmessaging-log-0x87d00231-02.jpg&#34; data-size=&#34;1280x689&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/_hu7b3dfc494206edd92c079b117760c234_204617_96a85e6aee5265233994a0499aa6a5de.jpg 480w, https://adamcook.io/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/_hu7b3dfc494206edd92c079b117760c234_204617_6552e023d2e4aac631c72cbdb728b8b7.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/images/configmgr-management-point-500-19-ccmmessaging-log-0x87d00231-02.jpg&#34; width=&#34;1280&#34; height=&#34;689&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;Log snippet:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;...
+2019-07-22 13:11:58 192.168.175.11 CCM_POST /ccm_system_windowsauth/request - 80 - 192.168.175.16 ccmhttp - 401 2 5 1357 189
+2019-07-22 13:12:32 192.168.175.11 PROPFIND /CCM_Client - 80 - 192.168.175.16 ccmsetup - 500 19 126 1357 21
+2019-07-22 13:12:32 192.168.175.11 PROPFIND /CCM_Client - 80 - 192.168.175.16 ccmsetup - 500 19 126 1357 53
+...
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Some slightly reworded Googling thankfully landed me here: &lt;a class=&#34;link&#34; href=&#34;https://support.microsoft.com/en-gb/help/4468361/management-points-stop-responding-to-http-requests-with-error-500-19&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Management points stop responding to HTTP requests with error 500.19&lt;/a&gt;:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Locate  &lt;code&gt;%windir%\system32\inetsrv\config&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Open the &lt;code&gt;applicationHost.config&lt;/code&gt; file in Notepad.&lt;/li&gt;
+&lt;li&gt;Look for an entry that resembles the following:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;&amp;lt;scheme name=&amp;quot;xpress&amp;quot; doStaticCompression=&amp;quot;false&amp;quot; doDynamicCompression=&amp;quot;true&amp;quot; dll=&amp;quot;C:\Windows\system32\inetsrv\suscomp.dll&amp;quot; staticCompressionLevel=&amp;quot;10&amp;quot; dynamicCompressionLevel=&amp;quot;0&amp;quot; /&amp;gt;`
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;Remove the XPress compression schema by running the following command from an elevated command prompt:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;%windir%\system32\inetsrv\appcmd.exe set config -section:system.webServer/httpCompression /-[name=&#39;xpress&#39;]
+&lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;5&#34;&gt;
+&lt;li&gt;Verify that the compression schema is removed from the &lt;strong&gt;applicationHost.config&lt;/strong&gt; file, and then save the file.&lt;/li&gt;
+&lt;li&gt;Run the following command from an elevated command prompt:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;iisreset
+&lt;/code&gt;&lt;/pre&gt;</description>
+        </item>
+        <item>
         <title>Get CMUnusedSources</title>
         <link>https://adamcook.io/p/get-cmunusedsources/</link>
         <pubDate>Sun, 07 Jul 2019 00:00:00 +0100</pubDate>

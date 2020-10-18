@@ -61,6 +61,17 @@ I recently stood up a remote SUP with its own WSUS role and SQL database. What I
     </item>
     
     <item>
+      <title>ConfigMgr Management Point 500.19 CcmMessaging.log 0x87d00231</title>
+      <link>https://adamcook.io/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/</link>
+      <pubDate>Mon, 22 Jul 2019 00:00:00 +0100</pubDate>
+      
+      <guid>https://adamcook.io/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/</guid>
+      <description>My lab recently started playing up when I noticed clients weren&amp;rsquo;t receiving any new policies.
+TDLR (it&amp;rsquo;s not even that long!): a while ago I moved my SUP/WSUS off host from the site server that also hosted a MP. As a result it seemed to have triggered this known issue: Management points stop responding to HTTP requests with error 500.19.
+First port of call was CcmMessaging.log to see it was at least talking to MP OK, and it wasn&amp;rsquo;t:</description>
+    </item>
+    
+    <item>
       <title>Get CMUnusedSources</title>
       <link>https://adamcook.io/p/get-cmunusedsources/</link>
       <pubDate>Sun, 07 Jul 2019 00:00:00 +0100</pubDate>
