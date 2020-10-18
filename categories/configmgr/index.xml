@@ -40,6 +40,19 @@ Enough is enough I started writing in February and since then I have refactored 
     </item>
     
     <item>
+      <title>UpdatesDeployment.log Job Error (0x80004005)</title>
+      <link>https://adamcook.io/p/updatesdeployment.log-job-error-0x80004005/</link>
+      <pubDate>Fri, 01 Mar 2019 00:00:00 +0100</pubDate>
+      
+      <guid>https://adamcook.io/p/updatesdeployment.log-job-error-0x80004005/</guid>
+      <description>Glorious, 0x80004005.
+No updates showing in Software Center? Is a client reporting in an unknown state in your reports?
+Do you see this in UpdatesDeployment.log when triggering Software Update Deployment Evaluation Cycle?
+Job error (0x80004005) received for assignment ({09985588-0eff-47e1-9f9d-3846efce8c2b}) action	Updates will not be made available Give this a whirl:
+Move-Item -Path &amp;#34;$env:SystemRoot\System32\GroupPolicy\Machine\Registry.pol&amp;#34; -Destination &amp;#34;$env:SystemRoot\System32\GroupPolicy\Machine\Registry.pol.old&amp;#34; Invoke-GPUpdate -Force Verify a new Registry.pol file is created, then trigger Software Update Deployment Evaluation Cycle and Software Updates Scan Cycle.</description>
+    </item>
+    
+    <item>
       <title>ConfigMgr Throttling Distribution Point Bandwidth</title>
       <link>https://adamcook.io/p/configmgr-throttling-distribution-point-bandwidth/</link>
       <pubDate>Sun, 17 Feb 2019 00:00:00 +0100</pubDate>

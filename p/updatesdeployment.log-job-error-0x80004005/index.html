@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Glorious, 0x80004005.
+No updates showing in Software Center? Is a client reporting in an unknown state in your reports?
+Do you see this in UpdatesDeployment.log when triggering Software Update Deployment Evaluation Cycle?
+Job error (0x80004005) received for assignment ({09985588-0eff-47e1-9f9d-3846efce8c2b}) action	Updates will not be made available Give this a whirl:
+Move-Item -Path &amp;#34;$env:SystemRoot\System32\GroupPolicy\Machine\Registry.pol&amp;#34; -Destination &amp;#34;$env:SystemRoot\System32\GroupPolicy\Machine\Registry.pol.old&amp;#34; Invoke-GPUpdate -Force Verify a new Registry.pol file is created, then trigger Software Update Deployment Evaluation Cycle and Software Updates Scan Cycle.'><title>UpdatesDeployment.log Job Error (0x80004005)</title>
+    
+    <link rel='canonical' href='https://adamcook.io/p/updatesdeployment.log-job-error-0x80004005/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='UpdatesDeployment.log Job Error (0x80004005)'>
+<meta property='og:description' content='Glorious, 0x80004005.
+No updates showing in Software Center? Is a client reporting in an unknown state in your reports?
+Do you see this in UpdatesDeployment.log when triggering Software Update Deployment Evaluation Cycle?
+Job error (0x80004005) received for assignment ({09985588-0eff-47e1-9f9d-3846efce8c2b}) action	Updates will not be made available Give this a whirl:
+Move-Item -Path &amp;#34;$env:SystemRoot\System32\GroupPolicy\Machine\Registry.pol&amp;#34; -Destination &amp;#34;$env:SystemRoot\System32\GroupPolicy\Machine\Registry.pol.old&amp;#34; Invoke-GPUpdate -Force Verify a new Registry.pol file is created, then trigger Software Update Deployment Evaluation Cycle and Software Updates Scan Cycle.'>
+<meta property='og:url' content='https://adamcook.io/p/updatesdeployment.log-job-error-0x80004005/'>
+<meta property='og:site_name' content='Adam Cook'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2019-03-01T00:00:00&#43;01:00'/><meta property='article:modified_time' content='2019-03-01T00:00:00&#43;01:00'/><meta property='og:image' content='https://adamcook.io/p/updatesdeployment.log-job-error-0x80004005/images/cover.jpg' />
+<meta name="twitter:site" content="codaamok"><meta name="twitter:title" content="UpdatesDeployment.log Job Error (0x80004005)">
+<meta name="twitter:description" content="Glorious, 0x80004005.
+No updates showing in Software Center? Is a client reporting in an unknown state in your reports?
+Do you see this in UpdatesDeployment.log when triggering Software Update Deployment Evaluation Cycle?
+Job error (0x80004005) received for assignment ({09985588-0eff-47e1-9f9d-3846efce8c2b}) action	Updates will not be made available Give this a whirl:
+Move-Item -Path &amp;#34;$env:SystemRoot\System32\GroupPolicy\Machine\Registry.pol&amp;#34; -Destination &amp;#34;$env:SystemRoot\System32\GroupPolicy\Machine\Registry.pol.old&amp;#34; Invoke-GPUpdate -Force Verify a new Registry.pol file is created, then trigger Software Update Deployment Evaluation Cycle and Software Updates Scan Cycle."><meta name="twitter:card" content="summary">
+	<meta name="twitter:image" content='https://adamcook.io/p/updatesdeployment.log-job-error-0x80004005/images/cover.jpg' /></head><body class="">
+        <div class="container flex on-phone--column align-items--flex-start extended article-page with-toolbar">
+            <aside class="sidebar left-sidebar sticky">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header class="site-info">
+        
+            <figure class="site-avatar">
+                
+
+                
+                    
+                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_2.png" width="300"
+                        height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+
+                <span class="emoji">🙃</span>
+            </figure>
+        
+        <h1 class="site-name"><a href="https://adamcook.io/">Adam Cook</a></h1>
+        <h2 class="site-description">Passionate about helping people. #PowerShell, #ConfigMgr and #Azure. Misses #Linux.</h2>
+    </header>
+
+    <ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='https://adamcook.io/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://adamcook.io/archives'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://twitter.com/codaamok'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84 0 0 0 .497 -3.753C20.18 7.773 21.692 5.25 22 4.009z" />
+</svg>
+                
+                <span>Twitter</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://github.com/codaamok'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+                
+                <span>GitHub</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://linkedin.com/in/adamcharlescook'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-linkedin" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="4" width="16" height="16" rx="2" />
+  <line x1="8" y1="11" x2="8" y2="16" />
+  <line x1="8" y1="8" x2="8" y2="8.01" />
+  <line x1="12" y1="16" x2="12" y2="11" />
+  <path d="M16 16v-3a2 2 0 0 0 -4 0" />
+</svg>
+                
+                <span>LinkedIn</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://www.youracclaim.com/users/adam-cook.e3a67a21/badges'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-award" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <circle cx="12" cy="9" r="6" />
+  <polyline points="9 14.2 9 21 12 19 15 21 15 14.2" transform="rotate(-30 12 9)" />
+  <polyline points="9 14.2 9 21 12 19 15 21 15 14.2" transform="rotate(30 12 9)" />
+</svg>
+                
+                <span>My Acclaims</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://sysmansquad.com/author/codaamok/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-notebook" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M6 4h11a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-11a1 1 0 0 1 -1 -1v-14a1 1 0 0 1 1 -1m3 0v18" />
+  <line x1="13" y1="8" x2="15" y2="8" />
+  <line x1="13" y1="12" x2="15" y2="12" />
+</svg>
+                
+                <span>SysManSquad</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://pssouth.co.uk'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-prompt" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <polyline points="5 7 10 12 5 17" />
+  <line x1="13" y1="17" x2="19" y2="17" />
+</svg>
+                
+                <span>PowerShell Southampton</span>
+            </a>
+        </li>
+        
+    </ol>
+</aside>
+            <main class="main full-width">
+    <div id="article-toolbar">
+        <a href="https://adamcook.io/" class="back-home">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+            <span>Back</span>
+        </a>
+    </div>
+
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <img srcset="/p/updatesdeployment.log-job-error-0x80004005/images/cover_huf8906ca3ef0c6868ff1bba7b7279d8b1_295574_1024x0_resize_q75_box.jpg 1024w, /p/updatesdeployment.log-job-error-0x80004005/images/cover_huf8906ca3ef0c6868ff1bba7b7279d8b1_295574_2000x0_resize_q75_box.jpg 2000w"
+                    src="/p/updatesdeployment.log-job-error-0x80004005/images/cover_huf8906ca3ef0c6868ff1bba7b7279d8b1_295574_2000x0_resize_q75_box.jpg" width="1262" height="631" loading="lazy"
+                    alt="Featured image of post UpdatesDeployment.log Job Error (0x80004005)" />
+            
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="https://adamcook.io/categories/configmgr/" 
+                    class="color-tag"
+                    data-image="/p/updatesdeployment.log-job-error-0x80004005/images/cover_huf8906ca3ef0c6868ff1bba7b7279d8b1_295574_20x20_fill_q75_box_smart1.jpg" 
+                    data-key="" 
+                    data-hash="md5-sI4XrERpwc4GgEHytHfpqQ==">
+                    ConfigMgr
+                </a>
+            
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="https://adamcook.io/p/updatesdeployment.log-job-error-0x80004005/">UpdatesDeployment.log Job Error (0x80004005)</a>
+    </h2>
+
+    <table>
+        <tr>
+            <td width="25%">
+                <footer class="article-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="5" width="16" height="16" rx="2" />
+  <line x1="16" y1="3" x2="16" y2="7" />
+  <line x1="8" y1="3" x2="8" y2="7" />
+  <line x1="4" y1="11" x2="20" y2="11" />
+  <line x1="11" y1="15" x2="12" y2="15" />
+  <line x1="12" y1="15" x2="12" y2="18" />
+</svg>
+                    <time class="article-time--published">1 March 2019</time>
+                </footer>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <footer class="article-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--published">
+                        Reading time: 1 minutes.
+                    </time>
+                </footer>
+            </td>
+        </tr>
+    </table></div>
+</header>
+
+    <section class="article-content">
+    <p><figure>
+		<a href="/p/updatesdeployment.log-job-error-0x80004005/images/updatesdeployment-log-job-error-0x80004005-01.jpg" data-size="302x292">
+			<img srcset="/p/updatesdeployment.log-job-error-0x80004005/images/updatesdeployment-log-job-error-0x80004005-01_hu35c53e470c01e96947dedb1b555cc0c4_14877_480x0_resize_q75_box.jpg 480w, /p/updatesdeployment.log-job-error-0x80004005/images/updatesdeployment-log-job-error-0x80004005-01_hu35c53e470c01e96947dedb1b555cc0c4_14877_1024x0_resize_q75_box.jpg 1024w"
+				src="/p/updatesdeployment.log-job-error-0x80004005/images/updatesdeployment-log-job-error-0x80004005-01.jpg" width="302" height="292" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure></p>
+<p>Glorious, 0x80004005.</p>
+<p>No updates showing in Software Center? Is a client reporting in an unknown state in your reports?</p>
+<p>Do you see this in UpdatesDeployment.log when triggering Software Update Deployment Evaluation Cycle?</p>
+<pre><code>Job error (0x80004005) received for assignment ({09985588-0eff-47e1-9f9d-3846efce8c2b}) action	
+Updates will not be made available
+</code></pre><p>Give this a whirl:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Move-Item -Path <span style="color:#e6db74">&#34;$env:SystemRoot\System32\GroupPolicy\Machine\Registry.pol&#34;</span> -Destination <span style="color:#e6db74">&#34;$env:SystemRoot\System32\GroupPolicy\Machine\Registry.pol.old&#34;</span>
+Invoke-GPUpdate -Force
+</code></pre></div><p>Verify a new Registry.pol file is created, then trigger Software Update Deployment Evaluation Cycle and Software Updates Scan Cycle.</p>
+<p>How did I discover? <a class="link" href="http://henkhoogendoorn.blogspot.com/2015/09/software-update-error-0x80004005-on.html"  target="_blank" rel="noopener"
+    >This poor soul</a>. Why am I sharing again? Because when you&rsquo;re given 0x80004005 you may feel at wit&rsquo;s end and struggle for direction - I&rsquo;m just contributing to the Google fu pool.</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+    
+</article>
+
+    <aside class="widget related-contents--wrapper">
+    
+    
+</aside>
+
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "adam-cook" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">&copy; 2020 Adam Cook</section>
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.0.5">Stack</a></b> designed by
+        <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true" style="display:none">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+            </main>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"
+    integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g=" crossorigin="anonymous"></script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<link rel="stylesheet" href="/css/highlight/light.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="/css/highlight/dark.min.css" media="(prefers-color-scheme: dark)">
+
+    </body>
+</html>
