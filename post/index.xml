@@ -54,6 +54,15 @@ Enough is enough I started writing in February and since then I have refactored 
     </item>
     
     <item>
+      <title>ConfigMgr SQL Server Upgrade From 2012 SP4 to 2017 CU13</title>
+      <link>https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/</link>
+      <pubDate>Wed, 20 Mar 2019 00:00:00 +0100</pubDate>
+      
+      <guid>https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/</guid>
+      <description>Currently my lab&amp;rsquo;s primary site is running on 2012 R2. I recently wanted to try LEDBAT so I could sell it to a customer but it needed to be on 2016 or newer. I could have configured a 2016 &amp;ldquo;source DP&amp;rdquo; using pull distribution points and still get the experience, but then I was curious if IPU while ConfigMgr is installed was possible, turns out it is. Then I discovered I had SQL 2012 SP2 installed!</description>
+    </item>
+    
+    <item>
       <title>ConfigMgr Throttling Distribution Point Bandwidth</title>
       <link>https://adamcook.io/p/configmgr-throttling-distribution-point-bandwidth/</link>
       <pubDate>Sun, 17 Feb 2019 00:00:00 +0100</pubDate>

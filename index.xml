@@ -844,6 +844,455 @@ Testing DataTable select
 </description>
         </item>
         <item>
+        <title>ConfigMgr SQL Server Upgrade From 2012 SP4 to 2017 CU13</title>
+        <link>https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/</link>
+        <pubDate>Wed, 20 Mar 2019 00:00:00 +0100</pubDate>
+        
+        <guid>https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/</guid>
+        <description>&lt;img src="https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/cover.jpg" alt="Featured image of post ConfigMgr SQL Server Upgrade From 2012 SP4 to 2017 CU13" /&gt;&lt;p&gt;Currently my lab&amp;rsquo;s primary site is running on 2012 R2. I recently wanted to try LEDBAT so I could sell it to a customer but it needed to be on 2016 or newer. I could have configured a 2016 &amp;ldquo;source DP&amp;rdquo; using pull distribution points and still get the experience, but then I was curious if IPU while ConfigMgr is installed was possible, &lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/sccm/core/servers/manage/upgrade-on-premises-infrastructure&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;turns out it is&lt;/a&gt;. Then I discovered I had SQL 2012 SP2 installed! So I bumped it to SP4. Then I thought, why not go to 2017?&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;ve applied service packs to SQL for ConfigMgr before but never a major release upgrade. Turns out, it&amp;rsquo;s straight forward!&lt;/p&gt;
+&lt;p&gt;These are the resources I found useful and guided me:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/sql/sql-server/install/hardware-and-software-requirements-for-installing-sql-server?view=sql-server-2017&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Hardware and Software Requirements for Installing SQL Server&lt;/a&gt; - Microsoft&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/sql/database-engine/install-windows/supported-version-and-edition-upgrades?view=sql-server-2017%ef%bb%bf&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Supported Version and Edition Upgrades&lt;/a&gt; - Microsoft&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/sccm/core/plan-design/configs/support-for-sql-server-versions&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Supported SQL Server versions for Configuration Manager&lt;/a&gt; - Microsoft&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/sccm/core/servers/manage/configuring-reporting&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Configuring reporting in System Center Configuration Manager&lt;/a&gt; - Microsoft&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://sccmentor.com/2016/10/03/upgrading-your-sccm-site-database/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Upgrading your SCCM site database&lt;/a&gt; - Paul Winstanley&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.prajwaldesai.com/sccm-1606-upgrade-sql-server-2014-sql-server-2016/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;SCCM 1606 Upgrade SQL Server 2014 To SQL Server 2016&lt;/a&gt; -Prajwal Desai&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://sccm-zone.com/patching-mssql-with-sccm-fee8583eb6b6&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Patching SQL Server with SCCM&lt;/a&gt; - Octavian Cordos&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.anoopcnair.com/complete-guide-sccm-server-migration-part-1-sql-2017/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;The Complete Guide for SCCM Server Migration Part 1 – SQL 2017&lt;/a&gt; - Rajul OS&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;overview&#34;&gt;Overview&lt;/h2&gt;
+&lt;p&gt;We&amp;rsquo;ll migrate custom reports, remove the Report Services Point role, install SSRS 2017, upgrade to SQL Server 2017, reinstall the Report Services Point role, and finally talk about anti-virus exclusions and new CE levels for your ConfigMgr db.&lt;/p&gt;
+&lt;p&gt;Please don&amp;rsquo;t hate my SQL instance name. I started the environment off trying out a ConfigMgr database move so at the time I wanted the instance name to be distinctively different!&lt;/p&gt;
+&lt;h2 id=&#34;sql-server-reporting-services-upgrade&#34;&gt;SQL Server Reporting Services Upgrade&lt;/h2&gt;
+&lt;p&gt;SSRS is now a separate installer and the installation of SQL Server 2017 will remove any bundled SSRS components you have installed.&lt;/p&gt;
+&lt;p&gt;So, how do we handle our current reports and ReportServer database?&lt;/p&gt;
+&lt;h3 id=&#34;report-migration&#34;&gt;Report migration&lt;/h3&gt;
+&lt;p&gt;If you google &amp;ldquo;sql reporting services migration&amp;rdquo; you&amp;rsquo;ll quickly learn many people have had a stab at this. Below are a few I&amp;rsquo;ve put together, though honestly, if you have a handful, just export the .rdl files manually and be done with it.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.sqlshack.com/migrating-ssrs-content-powershell/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Craig Porteous&lt;/a&gt; has a great write up talking about various ways to tackle this, strongly encourage you to read the post. Be sure to check out his method of tackling the problem using mostly PowerShell and the &lt;a class=&#34;link&#34; href=&#34;https://dbatools.io/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;dbatools&lt;/a&gt; module.&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.microsoft.com/en-gb/download/details.aspx?id=29560&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Reporting Services Migration Tool&lt;/a&gt; which is Microsoft&amp;rsquo;s own attempt at being a solution, made back in 2012 and not been touched since. As Craig mentions in his post, it&amp;rsquo;s written in PoSH and by default the target instance must be a SharePoint integrated instance - apparently easily modifiable to point to a regular SQL instance.&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/sql/reporting-services/tools/sample-reporting-services-rs-exe-script-to-copy-content-between-report-servers?view=sql-server-2017&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;RS.exe ssrs_migration.rss script&lt;/a&gt; is another Microsoft attempt, which looks like a more recent attempt.&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://code.google.com/archive/p/reportsync/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;ReportSync&lt;/a&gt; which is an open source tool under MIT license, seemingly popular however it&amp;rsquo;s old and unloved&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.systemcenterdudes.com/sccm-reports-manager-tool/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;SCCM Report Manager Tool&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;reporting-service-point-role&#34;&gt;Reporting Service Point role&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;p&gt;After you upgrade SQL Server, and SQL Server Reporting Services that is used as the data source for a reporting services point, you might experience errors when you run or edit reports from the Configuration Manager console. For reporting to work properly from the Configuration Manager console, you must remove the reporting services point site system role for the site and reinstall it. However, after the upgrade you can continue to run and edit reports successfully from an Internet browser.&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/sccm/core/servers/manage/configuring-reporting#upgrading-sql-server&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Configuring Reporting - Upgrading SQL Server&lt;/a&gt; - Microsoft&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;With that in mind, you may as well remove the RSP role before you start. There&amp;rsquo;s no harm in doing this after the upgrade, you&amp;rsquo;ll just get a moaning RSP component in console is all because it can&amp;rsquo;t start the SSRS service tied to the RSP that the install for SQL Server 2017 removed.&lt;/p&gt;
+&lt;p&gt;Checkout &lt;code&gt;srsrp.log&lt;/code&gt;, &lt;code&gt;srsrpMSI.log&lt;/code&gt;, &lt;code&gt;srsrpsetup.log&lt;/code&gt; and &lt;code&gt;sitecomp.log&lt;/code&gt; if there are any issues with this.&lt;/p&gt;
+&lt;h3 id=&#34;installing-ssrs-2017&#34;&gt;Installing SSRS 2017&lt;/h3&gt;
+&lt;p&gt;Once you&amp;rsquo;ve decided what you want to do with your custom reports and removed the Reporting Service Point role, we can start installing SSRS 2017. You&amp;rsquo;ll need your SQL Server product key, check out &lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/sql/reporting-services/install-windows/find-reporting-services-product-key-ssrs?view=sql-server-2017&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;How to find the product key for SQL Server 2017 Reporting Services&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-01.jpg&#34; data-size=&#34;695x600&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hue0d0859f42226fe1b546172ee954fac6_78838_0d5315b8d6f19eeab2507615b1bd88e1.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hue0d0859f42226fe1b546172ee954fac6_78838_83d81c94d25148850607967c89390781.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-01.jpg&#34; width=&#34;695&#34; height=&#34;600&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-02.jpg&#34; data-size=&#34;695x600&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hue0d0859f42226fe1b546172ee954fac6_53954_ad0ede09f5d51be7692b5a379dc89176.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hue0d0859f42226fe1b546172ee954fac6_53954_554ced12ea758ea30dca715db232fa12.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-02.jpg&#34; width=&#34;695&#34; height=&#34;600&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-03.jpg&#34; data-size=&#34;695x600&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hue0d0859f42226fe1b546172ee954fac6_116046_b1f56d4c824f8f05c4c7c9dd222c0555.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hue0d0859f42226fe1b546172ee954fac6_116046_4f252661c0709cc393243df3b9db65c6.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-03.jpg&#34; width=&#34;695&#34; height=&#34;600&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;
+&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-04.jpg&#34; data-size=&#34;695x600&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hue0d0859f42226fe1b546172ee954fac6_70211_83e6fa8e9c1bd144c8185b6b59dd2304.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hue0d0859f42226fe1b546172ee954fac6_70211_7a4194441d3ffc45bdeb19deee545ef5.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-04.jpg&#34; width=&#34;695&#34; height=&#34;600&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-05.jpg&#34; data-size=&#34;695x600&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu254b537a3d8819baba45d97f12dbfd70_78405_16d312c6ed46f6b84a61f75539d510c3.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu254b537a3d8819baba45d97f12dbfd70_78405_b05830768cfa54c6bbd574d8f9475263.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-05.jpg&#34; width=&#34;695&#34; height=&#34;600&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-06.jpg&#34; data-size=&#34;695x600&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu254b537a3d8819baba45d97f12dbfd70_52235_97f9fccc1c11a793a835328631afe03f.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu254b537a3d8819baba45d97f12dbfd70_52235_df550125ae838fd49048fe89fe4228a6.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-06.jpg&#34; width=&#34;695&#34; height=&#34;600&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;After install for SSRS 2017 you&amp;rsquo;ll have the option in configuration to create a new database or choose an existing one. As your current SSRS instance still exists you must create a new database with a unique name and also create a web service point with a unique name too.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;ℹ️ &lt;strong&gt;Note:&lt;/strong&gt; After entering data in any section ensure you hit &lt;code&gt;Apply&lt;/code&gt; at the bottom.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-07.jpg&#34; data-size=&#34;970x835&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu0a8dec6e5856eaaa4d8b6f2718b857fd_164255_d1edf36faa1b9453c5818a7321b8f5e6.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu0a8dec6e5856eaaa4d8b6f2718b857fd_164255_9d23ef90ac359c419db6ee6dd0bdc469.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-07.jpg&#34; width=&#34;970&#34; height=&#34;835&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-08.jpg&#34; data-size=&#34;970x835&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu9fb30ddb1e97c0d54993ed73471dc2da_166900_8f3bd81ba61eafe07aa2476280c6413a.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu9fb30ddb1e97c0d54993ed73471dc2da_166900_4bc97f069e8444742ba8e3903120b7b1.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-08.jpg&#34; width=&#34;970&#34; height=&#34;835&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-09.jpg&#34; data-size=&#34;970x835&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu9fb30ddb1e97c0d54993ed73471dc2da_187799_1896fafe9a45eebb4ed517916b3e4fa5.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu9fb30ddb1e97c0d54993ed73471dc2da_187799_a9a41cd52e1adfcff3259049fc950796.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-09.jpg&#34; width=&#34;970&#34; height=&#34;835&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-10.jpg&#34; data-size=&#34;970x835&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_188813_97091227a8590672bfd56226ba62f676.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_188813_61c6dd1b2d4fc21023a4c1249359bb41.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-10.jpg&#34; width=&#34;970&#34; height=&#34;835&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-11.jpg&#34; data-size=&#34;970x835&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_196934_4a5d5b6883add083a3cb329aa02a19e9.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_196934_0b1d708d93bda7b47d9b0bb93a7069ee.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-11.jpg&#34; width=&#34;970&#34; height=&#34;835&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-12.jpg&#34; data-size=&#34;970x835&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_189364_5efae39afcb69050cca6c7963f2a4c39.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_189364_3fd46d678f60cad94025da9237c32f1c.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-12.jpg&#34; width=&#34;970&#34; height=&#34;835&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-13.jpg&#34; data-size=&#34;970x835&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_201783_7a18cd3fbdd290e4f759e30cf8462cc1.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_201783_3fc6b54580b0252100ee80519d44c883.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-13.jpg&#34; width=&#34;970&#34; height=&#34;835&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-14.jpg&#34; data-size=&#34;970x835&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_205872_32f966fa69c9b716a313c34c9d5dbf70.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_205872_b6676856ab0aa7fc720de11b1f65cd9b.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-14.jpg&#34; width=&#34;970&#34; height=&#34;835&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-15.jpg&#34; data-size=&#34;970x835&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_207524_b8ba64aed7b7f2a1d13bd03897d7e68d.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_207524_8360c6aca419bbbdd8d442c8e2316746.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-15.jpg&#34; width=&#34;970&#34; height=&#34;835&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-16.jpg&#34; data-size=&#34;970x835&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu9fb30ddb1e97c0d54993ed73471dc2da_204303_c818769c0843deaa545cff0105e8a206.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu9fb30ddb1e97c0d54993ed73471dc2da_204303_265d3eabe56d59ed5f30f6867bdff2a1.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-16.jpg&#34; width=&#34;970&#34; height=&#34;835&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-17.jpg&#34; data-size=&#34;970x835&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu9fb30ddb1e97c0d54993ed73471dc2da_157801_bf2f12b911bb22c9ac8c349f7011df2b.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu9fb30ddb1e97c0d54993ed73471dc2da_157801_b565f35f31a897e6558d0f613be8524a.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-17.jpg&#34; width=&#34;970&#34; height=&#34;835&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-18.jpg&#34; data-size=&#34;970x835&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu9fb30ddb1e97c0d54993ed73471dc2da_207581_7d27eaf1e8750ec9acaad44fb40c902e.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu9fb30ddb1e97c0d54993ed73471dc2da_207581_2b5e7468ce60768589647697a806c9a5.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-18.jpg&#34; width=&#34;970&#34; height=&#34;835&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;h2 id=&#34;sql-server-upgrade&#34;&gt;SQL Server Upgrade&lt;/h2&gt;
+&lt;p&gt;Now we can get started upgrading the DB engine.&lt;/p&gt;
+&lt;p&gt;Start off by stopping and disabling all ConfigMgr services until we&amp;rsquo;re ready. I disabled mine in case I needed to reboot and didn&amp;rsquo;t want to run the risk of ConfigMgr running on an unsupported SQL backend in fear of the gremlins.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$Services = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_EXECUTIVE&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_NOTIFICATION_SERVER&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_BACKUP&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_COMPONENT_MANAGER&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_SQL_BACKUP&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_VSS_WRITER&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;CONFIGURATION_MANAGER_UPDATE&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;ForEach&lt;/span&gt; ($Service &lt;span style=&#34;color:#66d9ef&#34;&gt;in&lt;/span&gt; $Services) { 
+    Write-Host &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$($Service)&lt;span style=&#34;color:#e6db74&#34;&gt;: &lt;/span&gt;$((Get-Service -Name $Service).StartType)&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
+    Stop-Service -Name $Service -Force 
+    Set-Service -Name $Service -StartupType Disabled
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;installing-sql-server-2017&#34;&gt;Installing SQL Server 2017&lt;/h3&gt;
+&lt;p&gt;Run &lt;code&gt;setup.exe&lt;/code&gt; in the installation media and work your way through the wizard:&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-19.jpg&#34; data-size=&#34;800x600&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu748fdd3920f7109198b1c3b017355ef3_236613_072f21b80d59583c18196bd82b420454.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu748fdd3920f7109198b1c3b017355ef3_236613_e17de7890a21fa1c7ba70980f6f0b924.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-19.jpg&#34; width=&#34;800&#34; height=&#34;600&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-20.jpg&#34; data-size=&#34;820x615&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_154309_ebd8af20878b35a8223a3419e4249e08.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_154309_4d0f3fcc75e178f748dc50fad0abe288.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-20.jpg&#34; width=&#34;820&#34; height=&#34;615&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-21.jpg&#34; data-size=&#34;820x615&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_166326_d6486a0ea89d48fc7502abd34e4b993b.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_166326_884aef60e206a6ecbd88f5f3086dbe0b.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-21.jpg&#34; width=&#34;820&#34; height=&#34;615&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-22.jpg&#34; data-size=&#34;820x615&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_121170_4ad0c1fdacee96c2aa1b754b4668c8c9.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_121170_dd7545cbf0f9ca87c7a81cd60a3ac31a.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-22.jpg&#34; width=&#34;820&#34; height=&#34;615&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-23.jpg&#34; data-size=&#34;820x615&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_129539_f52a6c77f925dd25acb0e02378581fe5.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_129539_c20dd20185dc354b12e9db89e4e58ee7.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-23.jpg&#34; width=&#34;820&#34; height=&#34;615&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-24.jpg&#34; data-size=&#34;820x615&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_142083_bc379a2199b8185bc2095b36c325c05e.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_142083_cd2d81efdd4c9b16a885588b9910328c.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-24.jpg&#34; width=&#34;820&#34; height=&#34;615&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-25.jpg&#34; data-size=&#34;820x615&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu439fd993af529c0fec507668f7f8c9ae_129684_b9854629ab1c328033c557f390d6f5d9.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu439fd993af529c0fec507668f7f8c9ae_129684_30300e3e043c7685b203b3e24e11538a.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-25.jpg&#34; width=&#34;820&#34; height=&#34;615&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-26.jpg&#34; data-size=&#34;820x615&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_huac589cb721b09482fa62cf122844837b_148802_ec19b20b6236388d87fa9edef93e5315.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_huac589cb721b09482fa62cf122844837b_148802_00c3c6bd1cc555d6c800b03900e6f992.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-26.jpg&#34; width=&#34;820&#34; height=&#34;615&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-27.jpg&#34; data-size=&#34;820x615&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hufc9a19eef668ff067a88236ccbbe4f0b_162509_ba58085cc20cebfe86f1f5b28bc6c847.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hufc9a19eef668ff067a88236ccbbe4f0b_162509_a1ff827ab9662eb68d17e8f6c380e117.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-27.jpg&#34; width=&#34;820&#34; height=&#34;615&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-28.jpg&#34; data-size=&#34;820x615&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_146315_9b4d8298805e991c84868f7ea106f6d9.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_146315_7b0b0786049721d904f8068243290f5f.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-28.jpg&#34; width=&#34;820&#34; height=&#34;615&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;I want to point out that I ran through this process three times and played hot potato with the &amp;ldquo;&lt;em&gt;Use Microsoft Update to check for updates (recommended)&lt;/em&gt;&amp;rdquo; and I found it did not install any cumulative updates.&lt;/p&gt;
+&lt;p&gt;Restart 😄&lt;/p&gt;
+&lt;p&gt;At this point I&amp;rsquo;m at RTM build number:&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-29.jpg&#34; data-size=&#34;1912x722&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu77bfc6a04f0287b3b6eba66f7a9256e0_330252_9c898ce21095f98012d93c1f9aa2f355.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu77bfc6a04f0287b3b6eba66f7a9256e0_330252_fe098e66771b1af68b7adccf0d2e5f40.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-29.jpg&#34; width=&#34;1912&#34; height=&#34;722&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;Which at the time of writing this, that is not supported for ConfigMgr. Minimum CU2 is needed for SQL Server 2017:&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/2019-03-20_12-23-22.jpg&#34; data-size=&#34;920x197&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/2019-03-20_12-23-22_hu83f7a27f1571dbe645dfb16989b7bbb3_51095_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/2019-03-20_12-23-22_hu83f7a27f1571dbe645dfb16989b7bbb3_51095_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/2019-03-20_12-23-22.jpg&#34; width=&#34;920&#34; height=&#34;197&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/sccm/core/plan-design/configs/support-for-sql-server-versions&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Supported SQL Server versions for Configuration Manager&lt;/a&gt; - Microsoft&lt;/p&gt;
+&lt;p&gt;Run through the CU wizard, for me this was CU 13 which took me to 14.0.3048:&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-30.jpg&#34; data-size=&#34;820x615&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_106621_b3d3229ecfd7c6375e799c21d1b4dbe1.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_106621_19c579a41afa847f2e7bf55d7ab6057d.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-30.jpg&#34; width=&#34;820&#34; height=&#34;615&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-31.jpg&#34; data-size=&#34;820x615&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_152304_497719c21a2a30e39ffaf01734eadba3.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_152304_7375f8fdd5aa252337a19ddf0bf6cc7e.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-31.jpg&#34; width=&#34;820&#34; height=&#34;615&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-32.jpg&#34; data-size=&#34;820x615&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_100148_b21305fa304d3d04619bd11cfa561389.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_100148_dfd3258106ec7f25bec168a85fcd749c.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-32.jpg&#34; width=&#34;820&#34; height=&#34;615&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-33.jpg&#34; data-size=&#34;820x615&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu0c642186e73e4d732c320df70c606581_94228_80d7c62fb236193ac935daeac97c6988.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu0c642186e73e4d732c320df70c606581_94228_427e4bd5307068a8cab457f97ce63082.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-33.jpg&#34; width=&#34;820&#34; height=&#34;615&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-34.jpg&#34; data-size=&#34;820x615&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu0c642186e73e4d732c320df70c606581_119634_5b06369e8765f59b706dbc01b5a02d21.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu0c642186e73e4d732c320df70c606581_119634_df35b23231e214a9aca23f4a43221d61.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-34.jpg&#34; width=&#34;820&#34; height=&#34;615&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-35.jpg&#34; data-size=&#34;820x615&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_huc250b0f784ee474e91a5f16fa5f16659_127964_9738c63055a79fc0fde808a180df3009.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_huc250b0f784ee474e91a5f16fa5f16659_127964_f2eea7d082867176152c1fc0f765c50b.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-35.jpg&#34; width=&#34;820&#34; height=&#34;615&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;Restart 😄&lt;/p&gt;
+&lt;p&gt;Restore the services startup types back to what they were and do one more final reboot to ensure all needed services start normally:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$Services = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_EXECUTIVE&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_NOTIFICATION_SERVER&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_BACKUP&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_COMPONENT_MANAGER&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_SQL_BACKUP&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_VSS_WRITER&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;CONFIGURATION_MANAGER_UPDATE&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;ForEach&lt;/span&gt; ($Service &lt;span style=&#34;color:#66d9ef&#34;&gt;in&lt;/span&gt; $Services) {
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;If&lt;/span&gt; ((&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_NOTIFICATION_SERVER&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_BACKUP&amp;#34;&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;-contains&lt;/span&gt; $Service) { 
+        Set-Service -Name $Service -StartupType Manual 
+    } 
+    &lt;span style=&#34;color:#66d9ef&#34;&gt;Else&lt;/span&gt; {
+        Set-Service -Name $Service -StartupType Automatic
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;If there are issues with the site connecting to the database, you will most likely see messages of interest in:&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Log file name&lt;/th&gt;
+&lt;th&gt;Description&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;smsprov.log&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Records WMI provider access to the site database.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;smsdbmon.log&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Records database changes.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;code&gt;statmgr.log&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Records the writing of all status messages to the database.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/sccm/core/plan-design/hierarchy/log-files&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Log files for troubleshooting&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;reinstall-report-services-point-role&#34;&gt;Reinstall Report Services Point role&lt;/h3&gt;
+&lt;p&gt;Now you should be good to go by adding back the RSP!&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-36.jpg&#34; data-size=&#34;1912x722&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu8393eb79a45d1c7dd36a5bc81c951bd5_317789_b34ab39e431496d30d98634c9ba350fa.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu8393eb79a45d1c7dd36a5bc81c951bd5_317789_9ae16f44a93ede875c5d7df0192076b8.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-36.jpg&#34; width=&#34;1912&#34; height=&#34;722&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-37.jpg&#34; data-size=&#34;1633x843&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hub593c8f8acbcbcd8ad79f6b7924e3f0a_188014_aa47061fb3777805bb46ffb62b6ffca2.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hub593c8f8acbcbcd8ad79f6b7924e3f0a_188014_2b13a18fbb48be96da13ad9eb33ef98e.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-37.jpg&#34; width=&#34;1633&#34; height=&#34;843&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-38.jpg&#34; data-size=&#34;863x750&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu740cbe3f7e0ddd994417d791697c1031_133870_0c72c3d7ebdf87c7f884218ba78a46e7.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu740cbe3f7e0ddd994417d791697c1031_133870_1a4e0feefcb929374544c5640c07b2e4.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-38.jpg&#34; width=&#34;863&#34; height=&#34;750&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;Again, checkout &lt;code&gt;srsrp.log&lt;/code&gt;, &lt;code&gt;srsrpMSI.log&lt;/code&gt;, &lt;code&gt;srsrpsetup.log&lt;/code&gt; and &lt;code&gt;sitecomp.log&lt;/code&gt; if there are any issues with this.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;ℹ️ &lt;strong&gt;Note:&lt;/strong&gt; Reports may take a little while to appear in console, you can monitor the progress of them being generated in &lt;code&gt;srsrp.log&lt;/code&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;post-sql-upgrade-tasks&#34;&gt;Post SQL upgrade tasks&lt;/h2&gt;
+&lt;h3 id=&#34;antivirus-exclusions&#34;&gt;Antivirus exclusions&lt;/h3&gt;
+&lt;p&gt;Slightly off-topic, but &lt;a class=&#34;link&#34; href=&#34;https://social.technet.microsoft.com/wiki/contents/articles/953.microsoft-anti-virus-exclusion-list.aspx&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;bookmark this link&lt;/a&gt; right now.&lt;/p&gt;
+&lt;p&gt;Back on-topic. This is somewhat obvious but can easily be forgotten: update your exclusion rules to reflect new paths for SQL Server + SSRS 2017!&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://blogs.technet.microsoft.com/systemcenterpfe/2017/05/24/configuration-manager-current-branch-antivirus-update/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Configuration Manager Current Branch Antivirus Exclusions&lt;/a&gt; - Microsoft&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;cardinality-estimation&#34;&gt;Cardinality Estimation&lt;/h3&gt;
+&lt;p&gt;I recently saw a tweet by Umair Khan:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;ConfigMgr Current branch (1810+) guidance for the SQL CE levels with various SQL versions &lt;a href=&#34;https://t.co/0M2lryd3FJ&#34;&gt;https://t.co/0M2lryd3FJ&lt;/a&gt;&lt;a href=&#34;https://twitter.com/hashtag/ConfigMgr?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#ConfigMgr&lt;/a&gt; &lt;a href=&#34;https://twitter.com/hashtag/CardinalityEstimation?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#CardinalityEstimation&lt;/a&gt; &lt;a href=&#34;https://twitter.com/hashtag/SQL?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#SQL&lt;/a&gt;&lt;/p&gt;&amp;mdash; 𝚄𝚖𝚊𝚒𝚛 𝙺𝚑𝚊𝚗 [𝚄𝙺] (@TheFrankUK) &lt;a href=&#34;https://twitter.com/TheFrankUK/status/1090416130496389120?ref_src=twsrc%5Etfw&#34;&gt;January 30, 2019&lt;/a&gt;&lt;/blockquote&gt;
+&lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+
+&lt;/blockquote&gt;
+&lt;p&gt;The &lt;a class=&#34;link&#34; href=&#34;https://techcommunity.microsoft.com/t5/configuration-manager-archive/configmgr-current-branch-1810-guidance-for-the-sql-ce-levels/ba-p/339962&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;referenced blog&lt;/a&gt; post taught me what Cardinality Estimation is and what Umair&amp;rsquo;s guidance means. I highly encourage you to read it if you&amp;rsquo;ve just updated from an old SQL version to 2017.&lt;/p&gt;
+&lt;p&gt;As a result you may want to update your ConfigMgr DB backend CE level to something like 140. As I upgraded away from 2012, my ConfigMgr DB and new ReportServer2017 DB was CE level was 110.&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-40.jpg&#34; data-size=&#34;1645x828&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu16bf6961ffc72ca0b129db9cdadcc7ca_300404_07ac90257d4fc121d338223317659ad9.jpg 480w, https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu16bf6961ffc72ca0b129db9cdadcc7ca_300404_c2604a3d9cd9c11e1598663133ec51ec.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-40.jpg&#34; width=&#34;1645&#34; height=&#34;828&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;You can read up more on Cardinality Estimation and guidance on how to change your CE level here:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/sql/relational-databases/performance/cardinality-estimation-sql-server?view=sql-server-2017&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Cardinality Estimation (SQL Server)&lt;/a&gt; - Microsoft&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;final-comments&#34;&gt;Final comments&lt;/h2&gt;
+&lt;p&gt;I started off with SSRS first before SQL Server because I didn&amp;rsquo;t want anyone following this post having removed their SSRS instance with a boat load of custom reports without realising the impact. I figured if I made the needed warnings first then it would be safer for you.&lt;/p&gt;
+&lt;p&gt;The added benefits of doing SSRS after SQL upgrade is, I guess, are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;the CE level for ReportServer DB would default to latest&lt;/li&gt;
+&lt;li&gt;the ability to use the current web URLs and maybe even database name too, if you&amp;rsquo;re brave enough to delete/rename the original&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
         <title>ConfigMgr Throttling Distribution Point Bandwidth</title>
         <link>https://adamcook.io/p/configmgr-throttling-distribution-point-bandwidth/</link>
         <pubDate>Sun, 17 Feb 2019 00:00:00 +0100</pubDate>

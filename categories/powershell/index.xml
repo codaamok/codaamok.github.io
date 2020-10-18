@@ -18,5 +18,18 @@ The session covered the below topics:
  Introduction to CI/CD pipeline, i.e. what it means with practical explanations A walk through on the YAML structure/syntax of GitHub Actions Demonstrate on how to use Actions by uploading content to Azure Blob storage Demonstrate a self hosted runner Demonstrate how to deploy a PowerShell module to: the PowerShell Gallery, create a new GitHub release, a shared folder within my home lab (which failed because I messed with the runner&amp;rsquo;s service log-on credential) and to a self hosted NuGet feed (which also failed, thanks demo gods)    </description>
     </item>
     
+    <item>
+      <title>Get CMUnusedSources</title>
+      <link>https://adamcook.io/p/get-cmunusedsources/</link>
+      <pubDate>Sun, 07 Jul 2019 00:00:00 +0100</pubDate>
+      
+      <guid>https://adamcook.io/p/get-cmunusedsources/</guid>
+      <description>I recently wrote a PowerShell script that reports on what folders are used or unused by System Center Configuration Manager.
+You can find it here on GitHub.
+I demoed the script at the London Windows Manager User Group, you can watch the recording below on YouTube.
+  Among a bunch of technical topics, I also learned a huge amount of valuable soft/personal things too.
+Enough is enough I started writing in February and since then I have refactored the script and the idea itself many times.</description>
+    </item>
+    
   </channel>
 </rss>

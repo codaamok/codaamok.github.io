@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en-us"><head>
+    <meta charset='utf-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Currently my lab&amp;rsquo;s primary site is running on 2012 R2. I recently wanted to try LEDBAT so I could sell it to a customer but it needed to be on 2016 or newer. I could have configured a 2016 &amp;ldquo;source DP&amp;rdquo; using pull distribution points and still get the experience, but then I was curious if IPU while ConfigMgr is installed was possible, turns out it is. Then I discovered I had SQL 2012 SP2 installed!'><title>ConfigMgr SQL Server Upgrade From 2012 SP4 to 2017 CU13</title>
+    
+    <link rel='canonical' href='https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='ConfigMgr SQL Server Upgrade From 2012 SP4 to 2017 CU13'>
+<meta property='og:description' content='Currently my lab&amp;rsquo;s primary site is running on 2012 R2. I recently wanted to try LEDBAT so I could sell it to a customer but it needed to be on 2016 or newer. I could have configured a 2016 &amp;ldquo;source DP&amp;rdquo; using pull distribution points and still get the experience, but then I was curious if IPU while ConfigMgr is installed was possible, turns out it is. Then I discovered I had SQL 2012 SP2 installed!'>
+<meta property='og:url' content='https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/'>
+<meta property='og:site_name' content='Adam Cook'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2019-03-20T00:00:00&#43;01:00'/><meta property='article:modified_time' content='2019-03-20T00:00:00&#43;01:00'/><meta property='og:image' content='https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/cover.jpg' />
+<meta name="twitter:site" content="codaamok"><meta name="twitter:title" content="ConfigMgr SQL Server Upgrade From 2012 SP4 to 2017 CU13">
+<meta name="twitter:description" content="Currently my lab&amp;rsquo;s primary site is running on 2012 R2. I recently wanted to try LEDBAT so I could sell it to a customer but it needed to be on 2016 or newer. I could have configured a 2016 &amp;ldquo;source DP&amp;rdquo; using pull distribution points and still get the experience, but then I was curious if IPU while ConfigMgr is installed was possible, turns out it is. Then I discovered I had SQL 2012 SP2 installed!"><meta name="twitter:card" content="summary">
+	<meta name="twitter:image" content='https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/cover.jpg' /></head><body class="">
+        <div class="container flex on-phone--column align-items--flex-start extended article-page with-toolbar">
+            <aside class="sidebar left-sidebar sticky">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header class="site-info">
+        
+            <figure class="site-avatar">
+                
+
+                
+                    
+                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_2.png" width="300"
+                        height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+
+                <span class="emoji">🙃</span>
+            </figure>
+        
+        <h1 class="site-name"><a href="https://adamcook.io/">Adam Cook</a></h1>
+        <h2 class="site-description">Passionate about helping people. #PowerShell, #ConfigMgr and #Azure. Misses #Linux.</h2>
+    </header>
+
+    <ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='https://adamcook.io/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://adamcook.io/archives'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://twitter.com/codaamok'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84 0 0 0 .497 -3.753C20.18 7.773 21.692 5.25 22 4.009z" />
+</svg>
+                
+                <span>Twitter</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://github.com/codaamok'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+                
+                <span>GitHub</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://linkedin.com/in/adamcharlescook'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-linkedin" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="4" width="16" height="16" rx="2" />
+  <line x1="8" y1="11" x2="8" y2="16" />
+  <line x1="8" y1="8" x2="8" y2="8.01" />
+  <line x1="12" y1="16" x2="12" y2="11" />
+  <path d="M16 16v-3a2 2 0 0 0 -4 0" />
+</svg>
+                
+                <span>LinkedIn</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://www.youracclaim.com/users/adam-cook.e3a67a21/badges'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-award" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <circle cx="12" cy="9" r="6" />
+  <polyline points="9 14.2 9 21 12 19 15 21 15 14.2" transform="rotate(-30 12 9)" />
+  <polyline points="9 14.2 9 21 12 19 15 21 15 14.2" transform="rotate(30 12 9)" />
+</svg>
+                
+                <span>My Acclaims</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://sysmansquad.com/author/codaamok/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-notebook" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M6 4h11a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-11a1 1 0 0 1 -1 -1v-14a1 1 0 0 1 1 -1m3 0v18" />
+  <line x1="13" y1="8" x2="15" y2="8" />
+  <line x1="13" y1="12" x2="15" y2="12" />
+</svg>
+                
+                <span>SysManSquad</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://pssouth.co.uk'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-prompt" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <polyline points="5 7 10 12 5 17" />
+  <line x1="13" y1="17" x2="19" y2="17" />
+</svg>
+                
+                <span>PowerShell Southampton</span>
+            </a>
+        </li>
+        
+    </ol>
+</aside>
+            <main class="main full-width">
+    <div id="article-toolbar">
+        <a href="https://adamcook.io/" class="back-home">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+            <span>Back</span>
+        </a>
+    </div>
+
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/cover_hu11183936e037e13c4125c4d2a3461116_154300_1024x0_resize_q75_box.jpg 1024w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/cover_hu11183936e037e13c4125c4d2a3461116_154300_2000x0_resize_q75_box.jpg 2000w"
+                    src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/cover_hu11183936e037e13c4125c4d2a3461116_154300_2000x0_resize_q75_box.jpg" width="1278" height="639" loading="lazy"
+                    alt="Featured image of post ConfigMgr SQL Server Upgrade From 2012 SP4 to 2017 CU13" />
+            
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="https://adamcook.io/categories/configmgr/" 
+                    class="color-tag"
+                    data-image="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/cover_hu11183936e037e13c4125c4d2a3461116_154300_20x20_fill_q75_box_smart1.jpg" 
+                    data-key="" 
+                    data-hash="md5-QkiO50CKfn2CFCTdwMtpgQ==">
+                    ConfigMgr
+                </a>
+            
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/">ConfigMgr SQL Server Upgrade From 2012 SP4 to 2017 CU13</a>
+    </h2>
+
+    <table>
+        <tr>
+            <td width="25%">
+                <footer class="article-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="5" width="16" height="16" rx="2" />
+  <line x1="16" y1="3" x2="16" y2="7" />
+  <line x1="8" y1="3" x2="8" y2="7" />
+  <line x1="4" y1="11" x2="20" y2="11" />
+  <line x1="11" y1="15" x2="12" y2="15" />
+  <line x1="12" y1="15" x2="12" y2="18" />
+</svg>
+                    <time class="article-time--published">20 March 2019</time>
+                </footer>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <footer class="article-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--published">
+                        Reading time: 6 minutes.
+                    </time>
+                </footer>
+            </td>
+        </tr>
+    </table></div>
+</header>
+
+    <section class="article-content">
+    <p>Currently my lab&rsquo;s primary site is running on 2012 R2. I recently wanted to try LEDBAT so I could sell it to a customer but it needed to be on 2016 or newer. I could have configured a 2016 &ldquo;source DP&rdquo; using pull distribution points and still get the experience, but then I was curious if IPU while ConfigMgr is installed was possible, <a class="link" href="https://docs.microsoft.com/en-us/sccm/core/servers/manage/upgrade-on-premises-infrastructure"  target="_blank" rel="noopener"
+    >turns out it is</a>. Then I discovered I had SQL 2012 SP2 installed! So I bumped it to SP4. Then I thought, why not go to 2017?</p>
+<p>I&rsquo;ve applied service packs to SQL for ConfigMgr before but never a major release upgrade. Turns out, it&rsquo;s straight forward!</p>
+<p>These are the resources I found useful and guided me:</p>
+<ul>
+<li><a class="link" href="https://docs.microsoft.com/en-us/sql/sql-server/install/hardware-and-software-requirements-for-installing-sql-server?view=sql-server-2017"  target="_blank" rel="noopener"
+    >Hardware and Software Requirements for Installing SQL Server</a> - Microsoft</li>
+<li><a class="link" href="https://docs.microsoft.com/en-us/sql/database-engine/install-windows/supported-version-and-edition-upgrades?view=sql-server-2017%ef%bb%bf"  target="_blank" rel="noopener"
+    >Supported Version and Edition Upgrades</a> - Microsoft</li>
+<li><a class="link" href="https://docs.microsoft.com/en-us/sccm/core/plan-design/configs/support-for-sql-server-versions"  target="_blank" rel="noopener"
+    >Supported SQL Server versions for Configuration Manager</a> - Microsoft</li>
+<li><a class="link" href="https://docs.microsoft.com/en-us/sccm/core/servers/manage/configuring-reporting"  target="_blank" rel="noopener"
+    >Configuring reporting in System Center Configuration Manager</a> - Microsoft</li>
+<li><a class="link" href="https://sccmentor.com/2016/10/03/upgrading-your-sccm-site-database/"  target="_blank" rel="noopener"
+    >Upgrading your SCCM site database</a> - Paul Winstanley</li>
+<li><a class="link" href="https://www.prajwaldesai.com/sccm-1606-upgrade-sql-server-2014-sql-server-2016/"  target="_blank" rel="noopener"
+    >SCCM 1606 Upgrade SQL Server 2014 To SQL Server 2016</a> -Prajwal Desai</li>
+<li><a class="link" href="https://sccm-zone.com/patching-mssql-with-sccm-fee8583eb6b6"  target="_blank" rel="noopener"
+    >Patching SQL Server with SCCM</a> - Octavian Cordos</li>
+<li><a class="link" href="https://www.anoopcnair.com/complete-guide-sccm-server-migration-part-1-sql-2017/"  target="_blank" rel="noopener"
+    >The Complete Guide for SCCM Server Migration Part 1 – SQL 2017</a> - Rajul OS</li>
+</ul>
+<h2 id="overview">Overview</h2>
+<p>We&rsquo;ll migrate custom reports, remove the Report Services Point role, install SSRS 2017, upgrade to SQL Server 2017, reinstall the Report Services Point role, and finally talk about anti-virus exclusions and new CE levels for your ConfigMgr db.</p>
+<p>Please don&rsquo;t hate my SQL instance name. I started the environment off trying out a ConfigMgr database move so at the time I wanted the instance name to be distinctively different!</p>
+<h2 id="sql-server-reporting-services-upgrade">SQL Server Reporting Services Upgrade</h2>
+<p>SSRS is now a separate installer and the installation of SQL Server 2017 will remove any bundled SSRS components you have installed.</p>
+<p>So, how do we handle our current reports and ReportServer database?</p>
+<h3 id="report-migration">Report migration</h3>
+<p>If you google &ldquo;sql reporting services migration&rdquo; you&rsquo;ll quickly learn many people have had a stab at this. Below are a few I&rsquo;ve put together, though honestly, if you have a handful, just export the .rdl files manually and be done with it.</p>
+<ul>
+<li><a class="link" href="https://www.sqlshack.com/migrating-ssrs-content-powershell/"  target="_blank" rel="noopener"
+    >Craig Porteous</a> has a great write up talking about various ways to tackle this, strongly encourage you to read the post. Be sure to check out his method of tackling the problem using mostly PowerShell and the <a class="link" href="https://dbatools.io/"  target="_blank" rel="noopener"
+    >dbatools</a> module.</li>
+<li><a class="link" href="https://www.microsoft.com/en-gb/download/details.aspx?id=29560"  target="_blank" rel="noopener"
+    >Reporting Services Migration Tool</a> which is Microsoft&rsquo;s own attempt at being a solution, made back in 2012 and not been touched since. As Craig mentions in his post, it&rsquo;s written in PoSH and by default the target instance must be a SharePoint integrated instance - apparently easily modifiable to point to a regular SQL instance.</li>
+<li><a class="link" href="https://docs.microsoft.com/en-us/sql/reporting-services/tools/sample-reporting-services-rs-exe-script-to-copy-content-between-report-servers?view=sql-server-2017"  target="_blank" rel="noopener"
+    >RS.exe ssrs_migration.rss script</a> is another Microsoft attempt, which looks like a more recent attempt.</li>
+<li><a class="link" href="https://code.google.com/archive/p/reportsync/"  target="_blank" rel="noopener"
+    >ReportSync</a> which is an open source tool under MIT license, seemingly popular however it&rsquo;s old and unloved</li>
+<li><a class="link" href="https://www.systemcenterdudes.com/sccm-reports-manager-tool/"  target="_blank" rel="noopener"
+    >SCCM Report Manager Tool</a></li>
+</ul>
+<h3 id="reporting-service-point-role">Reporting Service Point role</h3>
+<blockquote>
+<p>After you upgrade SQL Server, and SQL Server Reporting Services that is used as the data source for a reporting services point, you might experience errors when you run or edit reports from the Configuration Manager console. For reporting to work properly from the Configuration Manager console, you must remove the reporting services point site system role for the site and reinstall it. However, after the upgrade you can continue to run and edit reports successfully from an Internet browser.</p>
+<p><a class="link" href="https://docs.microsoft.com/en-us/sccm/core/servers/manage/configuring-reporting#upgrading-sql-server"  target="_blank" rel="noopener"
+    >Configuring Reporting - Upgrading SQL Server</a> - Microsoft</p>
+</blockquote>
+<p>With that in mind, you may as well remove the RSP role before you start. There&rsquo;s no harm in doing this after the upgrade, you&rsquo;ll just get a moaning RSP component in console is all because it can&rsquo;t start the SSRS service tied to the RSP that the install for SQL Server 2017 removed.</p>
+<p>Checkout <code>srsrp.log</code>, <code>srsrpMSI.log</code>, <code>srsrpsetup.log</code> and <code>sitecomp.log</code> if there are any issues with this.</p>
+<h3 id="installing-ssrs-2017">Installing SSRS 2017</h3>
+<p>Once you&rsquo;ve decided what you want to do with your custom reports and removed the Reporting Service Point role, we can start installing SSRS 2017. You&rsquo;ll need your SQL Server product key, check out <a class="link" href="https://docs.microsoft.com/en-us/sql/reporting-services/install-windows/find-reporting-services-product-key-ssrs?view=sql-server-2017"  target="_blank" rel="noopener"
+    >How to find the product key for SQL Server 2017 Reporting Services</a>.</p>
+<p><figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-01.jpg" data-size="695x600">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hue0d0859f42226fe1b546172ee954fac6_78838_0d5315b8d6f19eeab2507615b1bd88e1.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hue0d0859f42226fe1b546172ee954fac6_78838_83d81c94d25148850607967c89390781.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-01.jpg" width="695" height="600" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-02.jpg" data-size="695x600">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hue0d0859f42226fe1b546172ee954fac6_53954_ad0ede09f5d51be7692b5a379dc89176.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hue0d0859f42226fe1b546172ee954fac6_53954_554ced12ea758ea30dca715db232fa12.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-02.jpg" width="695" height="600" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-03.jpg" data-size="695x600">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hue0d0859f42226fe1b546172ee954fac6_116046_b1f56d4c824f8f05c4c7c9dd222c0555.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hue0d0859f42226fe1b546172ee954fac6_116046_4f252661c0709cc393243df3b9db65c6.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-03.jpg" width="695" height="600" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure>
+<figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-04.jpg" data-size="695x600">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hue0d0859f42226fe1b546172ee954fac6_70211_83e6fa8e9c1bd144c8185b6b59dd2304.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hue0d0859f42226fe1b546172ee954fac6_70211_7a4194441d3ffc45bdeb19deee545ef5.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-04.jpg" width="695" height="600" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-05.jpg" data-size="695x600">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu254b537a3d8819baba45d97f12dbfd70_78405_16d312c6ed46f6b84a61f75539d510c3.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu254b537a3d8819baba45d97f12dbfd70_78405_b05830768cfa54c6bbd574d8f9475263.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-05.jpg" width="695" height="600" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-06.jpg" data-size="695x600">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu254b537a3d8819baba45d97f12dbfd70_52235_97f9fccc1c11a793a835328631afe03f.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu254b537a3d8819baba45d97f12dbfd70_52235_df550125ae838fd49048fe89fe4228a6.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-06.jpg" width="695" height="600" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure></p>
+<p>After install for SSRS 2017 you&rsquo;ll have the option in configuration to create a new database or choose an existing one. As your current SSRS instance still exists you must create a new database with a unique name and also create a web service point with a unique name too.</p>
+<blockquote>
+<p>ℹ️ <strong>Note:</strong> After entering data in any section ensure you hit <code>Apply</code> at the bottom.</p>
+</blockquote>
+<p><figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-07.jpg" data-size="970x835">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu0a8dec6e5856eaaa4d8b6f2718b857fd_164255_d1edf36faa1b9453c5818a7321b8f5e6.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu0a8dec6e5856eaaa4d8b6f2718b857fd_164255_9d23ef90ac359c419db6ee6dd0bdc469.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-07.jpg" width="970" height="835" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-08.jpg" data-size="970x835">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu9fb30ddb1e97c0d54993ed73471dc2da_166900_8f3bd81ba61eafe07aa2476280c6413a.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu9fb30ddb1e97c0d54993ed73471dc2da_166900_4bc97f069e8444742ba8e3903120b7b1.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-08.jpg" width="970" height="835" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-09.jpg" data-size="970x835">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu9fb30ddb1e97c0d54993ed73471dc2da_187799_1896fafe9a45eebb4ed517916b3e4fa5.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu9fb30ddb1e97c0d54993ed73471dc2da_187799_a9a41cd52e1adfcff3259049fc950796.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-09.jpg" width="970" height="835" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure></p>
+<p><figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-10.jpg" data-size="970x835">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_188813_97091227a8590672bfd56226ba62f676.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_188813_61c6dd1b2d4fc21023a4c1249359bb41.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-10.jpg" width="970" height="835" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-11.jpg" data-size="970x835">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_196934_4a5d5b6883add083a3cb329aa02a19e9.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_196934_0b1d708d93bda7b47d9b0bb93a7069ee.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-11.jpg" width="970" height="835" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-12.jpg" data-size="970x835">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_189364_5efae39afcb69050cca6c7963f2a4c39.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_189364_3fd46d678f60cad94025da9237c32f1c.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-12.jpg" width="970" height="835" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-13.jpg" data-size="970x835">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_201783_7a18cd3fbdd290e4f759e30cf8462cc1.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_201783_3fc6b54580b0252100ee80519d44c883.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-13.jpg" width="970" height="835" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure></p>
+<p><figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-14.jpg" data-size="970x835">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_205872_32f966fa69c9b716a313c34c9d5dbf70.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_205872_b6676856ab0aa7fc720de11b1f65cd9b.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-14.jpg" width="970" height="835" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-15.jpg" data-size="970x835">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_207524_b8ba64aed7b7f2a1d13bd03897d7e68d.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu96b96c935e825b48f14cc68b85739df2_207524_8360c6aca419bbbdd8d442c8e2316746.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-15.jpg" width="970" height="835" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-16.jpg" data-size="970x835">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu9fb30ddb1e97c0d54993ed73471dc2da_204303_c818769c0843deaa545cff0105e8a206.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu9fb30ddb1e97c0d54993ed73471dc2da_204303_265d3eabe56d59ed5f30f6867bdff2a1.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-16.jpg" width="970" height="835" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-17.jpg" data-size="970x835">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu9fb30ddb1e97c0d54993ed73471dc2da_157801_bf2f12b911bb22c9ac8c349f7011df2b.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu9fb30ddb1e97c0d54993ed73471dc2da_157801_b565f35f31a897e6558d0f613be8524a.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-17.jpg" width="970" height="835" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-18.jpg" data-size="970x835">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu9fb30ddb1e97c0d54993ed73471dc2da_207581_7d27eaf1e8750ec9acaad44fb40c902e.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu9fb30ddb1e97c0d54993ed73471dc2da_207581_2b5e7468ce60768589647697a806c9a5.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-18.jpg" width="970" height="835" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure></p>
+<h2 id="sql-server-upgrade">SQL Server Upgrade</h2>
+<p>Now we can get started upgrading the DB engine.</p>
+<p>Start off by stopping and disabling all ConfigMgr services until we&rsquo;re ready. I disabled mine in case I needed to reboot and didn&rsquo;t want to run the risk of ConfigMgr running on an unsupported SQL backend in fear of the gremlins.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$Services = <span style="color:#e6db74">&#34;SMS_EXECUTIVE&#34;</span>, <span style="color:#e6db74">&#34;SMS_NOTIFICATION_SERVER&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_BACKUP&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_COMPONENT_MANAGER&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_SQL_BACKUP&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_VSS_WRITER&#34;</span>, <span style="color:#e6db74">&#34;CONFIGURATION_MANAGER_UPDATE&#34;</span>
+<span style="color:#66d9ef">ForEach</span> ($Service <span style="color:#66d9ef">in</span> $Services) { 
+    Write-Host <span style="color:#e6db74">&#34;</span>$($Service)<span style="color:#e6db74">: </span>$((Get-Service -Name $Service).StartType)<span style="color:#e6db74">&#34;</span>
+    Stop-Service -Name $Service -Force 
+    Set-Service -Name $Service -StartupType Disabled
+}
+</code></pre></div><h3 id="installing-sql-server-2017">Installing SQL Server 2017</h3>
+<p>Run <code>setup.exe</code> in the installation media and work your way through the wizard:</p>
+<p><figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-19.jpg" data-size="800x600">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu748fdd3920f7109198b1c3b017355ef3_236613_072f21b80d59583c18196bd82b420454.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu748fdd3920f7109198b1c3b017355ef3_236613_e17de7890a21fa1c7ba70980f6f0b924.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-19.jpg" width="800" height="600" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-20.jpg" data-size="820x615">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_154309_ebd8af20878b35a8223a3419e4249e08.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_154309_4d0f3fcc75e178f748dc50fad0abe288.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-20.jpg" width="820" height="615" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-21.jpg" data-size="820x615">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_166326_d6486a0ea89d48fc7502abd34e4b993b.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_166326_884aef60e206a6ecbd88f5f3086dbe0b.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-21.jpg" width="820" height="615" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-22.jpg" data-size="820x615">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_121170_4ad0c1fdacee96c2aa1b754b4668c8c9.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_121170_dd7545cbf0f9ca87c7a81cd60a3ac31a.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-22.jpg" width="820" height="615" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-23.jpg" data-size="820x615">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_129539_f52a6c77f925dd25acb0e02378581fe5.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_129539_c20dd20185dc354b12e9db89e4e58ee7.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-23.jpg" width="820" height="615" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure></p>
+<p><figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-24.jpg" data-size="820x615">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_142083_bc379a2199b8185bc2095b36c325c05e.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_142083_cd2d81efdd4c9b16a885588b9910328c.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-24.jpg" width="820" height="615" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-25.jpg" data-size="820x615">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu439fd993af529c0fec507668f7f8c9ae_129684_b9854629ab1c328033c557f390d6f5d9.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu439fd993af529c0fec507668f7f8c9ae_129684_30300e3e043c7685b203b3e24e11538a.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-25.jpg" width="820" height="615" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-26.jpg" data-size="820x615">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_huac589cb721b09482fa62cf122844837b_148802_ec19b20b6236388d87fa9edef93e5315.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_huac589cb721b09482fa62cf122844837b_148802_00c3c6bd1cc555d6c800b03900e6f992.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-26.jpg" width="820" height="615" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-27.jpg" data-size="820x615">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hufc9a19eef668ff067a88236ccbbe4f0b_162509_ba58085cc20cebfe86f1f5b28bc6c847.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hufc9a19eef668ff067a88236ccbbe4f0b_162509_a1ff827ab9662eb68d17e8f6c380e117.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-27.jpg" width="820" height="615" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-28.jpg" data-size="820x615">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_146315_9b4d8298805e991c84868f7ea106f6d9.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_146315_7b0b0786049721d904f8068243290f5f.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-28.jpg" width="820" height="615" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure></p>
+<p>I want to point out that I ran through this process three times and played hot potato with the &ldquo;<em>Use Microsoft Update to check for updates (recommended)</em>&rdquo; and I found it did not install any cumulative updates.</p>
+<p>Restart 😄</p>
+<p>At this point I&rsquo;m at RTM build number:</p>
+<p><figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-29.jpg" data-size="1912x722">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu77bfc6a04f0287b3b6eba66f7a9256e0_330252_9c898ce21095f98012d93c1f9aa2f355.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu77bfc6a04f0287b3b6eba66f7a9256e0_330252_fe098e66771b1af68b7adccf0d2e5f40.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-29.jpg" width="1912" height="722" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure></p>
+<p>Which at the time of writing this, that is not supported for ConfigMgr. Minimum CU2 is needed for SQL Server 2017:</p>
+<p><figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/2019-03-20_12-23-22.jpg" data-size="920x197">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/2019-03-20_12-23-22_hu83f7a27f1571dbe645dfb16989b7bbb3_51095_480x0_resize_q75_box.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/2019-03-20_12-23-22_hu83f7a27f1571dbe645dfb16989b7bbb3_51095_1024x0_resize_q75_box.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/2019-03-20_12-23-22.jpg" width="920" height="197" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure></p>
+<p><a class="link" href="https://docs.microsoft.com/en-us/sccm/core/plan-design/configs/support-for-sql-server-versions"  target="_blank" rel="noopener"
+    >Supported SQL Server versions for Configuration Manager</a> - Microsoft</p>
+<p>Run through the CU wizard, for me this was CU 13 which took me to 14.0.3048:</p>
+<p><figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-30.jpg" data-size="820x615">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_106621_b3d3229ecfd7c6375e799c21d1b4dbe1.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_106621_19c579a41afa847f2e7bf55d7ab6057d.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-30.jpg" width="820" height="615" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-31.jpg" data-size="820x615">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_152304_497719c21a2a30e39ffaf01734eadba3.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_152304_7375f8fdd5aa252337a19ddf0bf6cc7e.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-31.jpg" width="820" height="615" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-32.jpg" data-size="820x615">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_100148_b21305fa304d3d04619bd11cfa561389.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hua461740be7dec8a9e1839bf1ed7d7eed_100148_dfd3258106ec7f25bec168a85fcd749c.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-32.jpg" width="820" height="615" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-33.jpg" data-size="820x615">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu0c642186e73e4d732c320df70c606581_94228_80d7c62fb236193ac935daeac97c6988.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu0c642186e73e4d732c320df70c606581_94228_427e4bd5307068a8cab457f97ce63082.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-33.jpg" width="820" height="615" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-34.jpg" data-size="820x615">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu0c642186e73e4d732c320df70c606581_119634_5b06369e8765f59b706dbc01b5a02d21.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu0c642186e73e4d732c320df70c606581_119634_df35b23231e214a9aca23f4a43221d61.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-34.jpg" width="820" height="615" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-35.jpg" data-size="820x615">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_huc250b0f784ee474e91a5f16fa5f16659_127964_9738c63055a79fc0fde808a180df3009.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_huc250b0f784ee474e91a5f16fa5f16659_127964_f2eea7d082867176152c1fc0f765c50b.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-35.jpg" width="820" height="615" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure></p>
+<p>Restart 😄</p>
+<p>Restore the services startup types back to what they were and do one more final reboot to ensure all needed services start normally:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$Services = <span style="color:#e6db74">&#34;SMS_EXECUTIVE&#34;</span>, <span style="color:#e6db74">&#34;SMS_NOTIFICATION_SERVER&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_BACKUP&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_COMPONENT_MANAGER&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_SQL_BACKUP&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_VSS_WRITER&#34;</span>, <span style="color:#e6db74">&#34;CONFIGURATION_MANAGER_UPDATE&#34;</span>
+<span style="color:#66d9ef">ForEach</span> ($Service <span style="color:#66d9ef">in</span> $Services) {
+    <span style="color:#66d9ef">If</span> ((<span style="color:#e6db74">&#34;SMS_NOTIFICATION_SERVER&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_BACKUP&#34;</span>) <span style="color:#f92672">-contains</span> $Service) { 
+        Set-Service -Name $Service -StartupType Manual 
+    } 
+    <span style="color:#66d9ef">Else</span> {
+        Set-Service -Name $Service -StartupType Automatic
+    }
+}
+</code></pre></div><p>If there are issues with the site connecting to the database, you will most likely see messages of interest in:</p>
+<table>
+<thead>
+<tr>
+<th>Log file name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>smsprov.log</code></td>
+<td>Records WMI provider access to the site database.</td>
+</tr>
+<tr>
+<td><code>smsdbmon.log</code></td>
+<td>Records database changes.</td>
+</tr>
+<tr>
+<td><code>statmgr.log</code></td>
+<td>Records the writing of all status messages to the database.</td>
+</tr>
+</tbody>
+</table>
+<p><a class="link" href="https://docs.microsoft.com/en-us/sccm/core/plan-design/hierarchy/log-files"  target="_blank" rel="noopener"
+    >Log files for troubleshooting</a></p>
+<h3 id="reinstall-report-services-point-role">Reinstall Report Services Point role</h3>
+<p>Now you should be good to go by adding back the RSP!</p>
+<p><figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-36.jpg" data-size="1912x722">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu8393eb79a45d1c7dd36a5bc81c951bd5_317789_b34ab39e431496d30d98634c9ba350fa.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu8393eb79a45d1c7dd36a5bc81c951bd5_317789_9ae16f44a93ede875c5d7df0192076b8.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-36.jpg" width="1912" height="722" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-37.jpg" data-size="1633x843">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hub593c8f8acbcbcd8ad79f6b7924e3f0a_188014_aa47061fb3777805bb46ffb62b6ffca2.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hub593c8f8acbcbcd8ad79f6b7924e3f0a_188014_2b13a18fbb48be96da13ad9eb33ef98e.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-37.jpg" width="1633" height="843" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure> <figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-38.jpg" data-size="863x750">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu740cbe3f7e0ddd994417d791697c1031_133870_0c72c3d7ebdf87c7f884218ba78a46e7.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu740cbe3f7e0ddd994417d791697c1031_133870_1a4e0feefcb929374544c5640c07b2e4.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-38.jpg" width="863" height="750" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure></p>
+<p>Again, checkout <code>srsrp.log</code>, <code>srsrpMSI.log</code>, <code>srsrpsetup.log</code> and <code>sitecomp.log</code> if there are any issues with this.</p>
+<blockquote>
+<p>ℹ️ <strong>Note:</strong> Reports may take a little while to appear in console, you can monitor the progress of them being generated in <code>srsrp.log</code>.</p>
+</blockquote>
+<h2 id="post-sql-upgrade-tasks">Post SQL upgrade tasks</h2>
+<h3 id="antivirus-exclusions">Antivirus exclusions</h3>
+<p>Slightly off-topic, but <a class="link" href="https://social.technet.microsoft.com/wiki/contents/articles/953.microsoft-anti-virus-exclusion-list.aspx"  target="_blank" rel="noopener"
+    >bookmark this link</a> right now.</p>
+<p>Back on-topic. This is somewhat obvious but can easily be forgotten: update your exclusion rules to reflect new paths for SQL Server + SSRS 2017!</p>
+<ul>
+<li><a class="link" href="https://blogs.technet.microsoft.com/systemcenterpfe/2017/05/24/configuration-manager-current-branch-antivirus-update/"  target="_blank" rel="noopener"
+    >Configuration Manager Current Branch Antivirus Exclusions</a> - Microsoft</li>
+</ul>
+<h3 id="cardinality-estimation">Cardinality Estimation</h3>
+<p>I recently saw a tweet by Umair Khan:</p>
+<blockquote>
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">ConfigMgr Current branch (1810+) guidance for the SQL CE levels with various SQL versions <a href="https://t.co/0M2lryd3FJ">https://t.co/0M2lryd3FJ</a><a href="https://twitter.com/hashtag/ConfigMgr?src=hash&amp;ref_src=twsrc%5Etfw">#ConfigMgr</a> <a href="https://twitter.com/hashtag/CardinalityEstimation?src=hash&amp;ref_src=twsrc%5Etfw">#CardinalityEstimation</a> <a href="https://twitter.com/hashtag/SQL?src=hash&amp;ref_src=twsrc%5Etfw">#SQL</a></p>&mdash; 𝚄𝚖𝚊𝚒𝚛 𝙺𝚑𝚊𝚗 [𝚄𝙺] (@TheFrankUK) <a href="https://twitter.com/TheFrankUK/status/1090416130496389120?ref_src=twsrc%5Etfw">January 30, 2019</a></blockquote>
+<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+</blockquote>
+<p>The <a class="link" href="https://techcommunity.microsoft.com/t5/configuration-manager-archive/configmgr-current-branch-1810-guidance-for-the-sql-ce-levels/ba-p/339962"  target="_blank" rel="noopener"
+    >referenced blog</a> post taught me what Cardinality Estimation is and what Umair&rsquo;s guidance means. I highly encourage you to read it if you&rsquo;ve just updated from an old SQL version to 2017.</p>
+<p>As a result you may want to update your ConfigMgr DB backend CE level to something like 140. As I upgraded away from 2012, my ConfigMgr DB and new ReportServer2017 DB was CE level was 110.</p>
+<p><figure>
+		<a href="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-40.jpg" data-size="1645x828">
+			<img srcset="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu16bf6961ffc72ca0b129db9cdadcc7ca_300404_07ac90257d4fc121d338223317659ad9.jpg 480w, /p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/_hu16bf6961ffc72ca0b129db9cdadcc7ca_300404_c2604a3d9cd9c11e1598663133ec51ec.jpg 1024w"
+				src="/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/images/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13-40.jpg" width="1645" height="828" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure></p>
+<p>You can read up more on Cardinality Estimation and guidance on how to change your CE level here:</p>
+<ul>
+<li><a class="link" href="https://docs.microsoft.com/en-us/sql/relational-databases/performance/cardinality-estimation-sql-server?view=sql-server-2017"  target="_blank" rel="noopener"
+    >Cardinality Estimation (SQL Server)</a> - Microsoft</li>
+</ul>
+<h2 id="final-comments">Final comments</h2>
+<p>I started off with SSRS first before SQL Server because I didn&rsquo;t want anyone following this post having removed their SSRS instance with a boat load of custom reports without realising the impact. I figured if I made the needed warnings first then it would be safer for you.</p>
+<p>The added benefits of doing SSRS after SQL upgrade is, I guess, are:</p>
+<ul>
+<li>the CE level for ReportServer DB would default to latest</li>
+<li>the ability to use the current web URLs and maybe even database name too, if you&rsquo;re brave enough to delete/rename the original</li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+    
+</article>
+
+    <aside class="widget related-contents--wrapper">
+    
+    
+</aside>
+
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "adam-cook" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">&copy; 2020 Adam Cook</section>
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.0.5">Stack</a></b> designed by
+        <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true" style="display:none">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+            </main>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"
+    integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g=" crossorigin="anonymous"></script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<link rel="stylesheet" href="/css/highlight/light.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="/css/highlight/dark.min.css" media="(prefers-color-scheme: dark)">
+
+    </body>
+</html>
