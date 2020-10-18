@@ -1674,6 +1674,46 @@ net start BITS
 &lt;p&gt;I felt this was worth writing up because while the links I shared at the start cover most of what I&amp;rsquo;ve written, I wanted to show that BITS is a factor - the other posts don&amp;rsquo;t touch on this - and use it as a note for me in future. You may find you&amp;rsquo;ll only hit one or two of these issues when troubleshooting hardware inventory, unlikely to be all of them in one go like I almost did.&lt;/p&gt;
 </description>
         </item>
+        <item>
+        <title>ConfigMgr Database Move: Failed to Create/Backup SQL SSB Certificate</title>
+        <link>https://adamcook.io/p/configmgr-database-move-failed-to-create/backup-sql-ssb-certificate/</link>
+        <pubDate>Mon, 15 Oct 2018 00:00:00 +0100</pubDate>
+        
+        <guid>https://adamcook.io/p/configmgr-database-move-failed-to-create/backup-sql-ssb-certificate/</guid>
+        <description>&lt;img src="https://adamcook.io/p/configmgr-database-move-failed-to-create/backup-sql-ssb-certificate/images/cover.jpg" alt="Featured image of post ConfigMgr Database Move: Failed to Create/Backup SQL SSB Certificate" /&gt;&lt;p&gt;In a recent project I had to move the SQL database for a single primary site hierarchy to a different host in order to go beyond version 1610, because support for Windows Server 2008 R2 had ended from 1702 onward.&lt;/p&gt;
+&lt;p&gt;Everything was going smoothly up until it came to modifying the SQL configuration of the site. I was getting slapped by ConfigMgrSetup.log with:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Create_BackupSQLCert : SQL server failed to backup cert. CSiteControlSetup::SetupCertificateForSSB : Failed to create/backup SQL SSB certificate. ERROR: Failed to set up SQL Server certificate for service broker on &amp;ldquo;sccm.contoso.com&amp;rdquo; .&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;After a couple of days researching and help from colleagues, I learnt more about MS SQL and SQL certificates.&lt;/p&gt;
+&lt;p&gt;I won&amp;rsquo;t overcomplicate this or try to act like I know every minute detail of SQL so I&amp;rsquo;ll cut to the chase.&lt;/p&gt;
+&lt;p&gt;During installation of SQL, I set a domain service account for the agent, database engine and reporting service. After installation, I changed the service account used for these services. Then I attempted the database migration and stumbled across said error. During my test run in a lab env (as it was my first attempt at SCCM db move) I did not encounter this issue, because I did not play hot potato with service accounts.&lt;/p&gt;
+&lt;p&gt;According to the links below, internal SQL certificates are generated with a dependency on the database&amp;rsquo;s master key. Changing the domain user to run the service meant that its service key could no longer access or decrypt the database&amp;rsquo;s master key.&lt;/p&gt;
+&lt;p&gt;There are methods to recreate the database master keys detailed in the links below, however after initially trying (and failing) to use the stored procedure &lt;strong&gt;spCreateandBackupSQLCert,&lt;/strong&gt; I figured a reinstall of a new SQL instance using the desired service account would do the trick. The penny dropped when I read the below from &lt;a class=&#34;link&#34; href=&#34;https://blogs.technet.microsoft.com/umairkhan/2013/12/12/configmgr-2012-drs-and-sql-service-broker-certificate-issues/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;here&lt;/a&gt;:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The history was the SQL server was installed with the system account and then later changed to a domain user account.&lt;/p&gt;
+&lt;p&gt;The problem with doing the above is that when Configuration Manager is installed it creates some internal certificates which are dependent on the master key. When the account being used to run the database server changes the new account is no longer able to &amp;lsquo;unlock&amp;rsquo; the master key and consequently can not read the internal certificates which then cause communication between sites to fail.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;In case you didn&amp;rsquo;t know, because I didn&amp;rsquo;t, SQL certificates are different to the certificates you may usually deal with in a user&amp;rsquo;s, computer&amp;rsquo;s or service&amp;rsquo;s personal / trusted root store from the Certificates snap in.&lt;/p&gt;
+&lt;p&gt;Resources I used to help me understand SQL certificates:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://blogs.technet.microsoft.com/umairkhan/2013/12/12/configmgr-2012-drs-and-sql-service-broker-certificate-issues/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://blogs.technet.microsoft.com/umairkhan/2013/12/12/configmgr-2012-drs-and-sql-service-broker-certificate-issues/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;http://www.sqlservercentral.com/articles/Encryption/108693/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;http://www.sqlservercentral.com/articles/Encryption/108693/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/sql/relational-databases/security/encryption/encryption-hierarchy?view=sql-server-2017&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://docs.microsoft.com/en-us/sql/relational-databases/security/encryption/encryption-hierarchy?view=sql-server-2017&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Resources I used to help me with the database move:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://blogs.technet.microsoft.com/configurationmgr/2013/04/02/how-to-move-the-configmgr-2012-site-database-to-a-new-sql-server/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://blogs.technet.microsoft.com/configurationmgr/2013/04/02/how-to-move-the-configmgr-2012-site-database-to-a-new-sql-server/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://deploymentresearch.com/Research/Post/646/Moving-the-ConfigMgr-Current-Branch-database-to-another-server-as-in-back-to-the-primary-site-server&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://deploymentresearch.com/Research/Post/646/Moving-the-ConfigMgr-Current-Branch-database-to-another-server-as-in-back-to-the-primary-site-server&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
         
     </channel>
 </rss>

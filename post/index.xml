@@ -92,5 +92,16 @@ Enough is enough I started writing in February and since then I have refactored 
 Little did I know until recently, a lack of recent hardware inventory data could be a result of other things and client health is least likely to be the root cause.</description>
     </item>
     
+    <item>
+      <title>ConfigMgr Database Move: Failed to Create/Backup SQL SSB Certificate</title>
+      <link>https://adamcook.io/p/configmgr-database-move-failed-to-create/backup-sql-ssb-certificate/</link>
+      <pubDate>Mon, 15 Oct 2018 00:00:00 +0100</pubDate>
+      
+      <guid>https://adamcook.io/p/configmgr-database-move-failed-to-create/backup-sql-ssb-certificate/</guid>
+      <description>In a recent project I had to move the SQL database for a single primary site hierarchy to a different host in order to go beyond version 1610, because support for Windows Server 2008 R2 had ended from 1702 onward.
+Everything was going smoothly up until it came to modifying the SQL configuration of the site. I was getting slapped by ConfigMgrSetup.log with:
+ Create_BackupSQLCert : SQL server failed to backup cert.</description>
+    </item>
+    
   </channel>
 </rss>
