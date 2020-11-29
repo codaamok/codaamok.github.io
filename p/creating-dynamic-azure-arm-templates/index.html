@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en-us"><head>
-    <meta charset='utf-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='In this post I&amp;rsquo;ll demonstrate how you can dynamically create resources or set properties for resources in your Azure ARM templates.
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='In this post I&amp;rsquo;ll demonstrate how you can dynamically create resources or set properties for resources in your Azure ARM templates.
 For example, you might have a template which accepts an array. For each element in that array, you want to create resources, or set properties for a resource.
 The first objective will demonstrate how to create a dynamic number of properties associated with a resource. The second object will show you how to dynamically create a number of resources.'><title>Creating Dynamic Azure ARM Templates</title>
-    
-    <link rel='canonical' href='https://adamcook.io/p/creating-dynamic-azure-arm-templates/'>
+
+<link rel='canonical' href='https://adamcook.io/p/creating-dynamic-azure-arm-templates/'>
 
 <link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Creating Dynamic Azure ARM Templates'>
 <meta property='og:description' content='In this post I&amp;rsquo;ll demonstrate how you can dynamically create resources or set properties for resources in your Azure ARM templates.
@@ -28,10 +28,16 @@ The first objective will demonstrate how to create a dynamic number of propertie
   gtag('config', 'UA-157232649-3');
 </script>
 
+<style>
+  p a, li a { color: rgb(179, 4, 4) }
+</style>
+
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest"></head><body class="">
+<link rel="manifest" href="/site.webmanifest">
+    </head>
+    <body class="">
         <div class="container flex on-phone--column align-items--flex-start extended article-page with-toolbar">
             <aside class="sidebar left-sidebar sticky">
     <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
@@ -51,7 +57,9 @@ The first objective will demonstrate how to create a dynamic number of propertie
                         height="300" class="site-logo" loading="lazy" alt="Avatar">
                 
 
-                <span class="emoji">🙃</span>
+                
+                    <span class="emoji">🙃</span>
+                
             </figure>
         
         <h1 class="site-name"><a href="https://adamcook.io/">Adam Cook</a></h1>
@@ -64,7 +72,7 @@ The first objective will demonstrate how to create a dynamic number of propertie
         
 
         <li >
-            <a href='https://adamcook.io/'>
+            <a href='/'>
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -83,7 +91,7 @@ The first objective will demonstrate how to create a dynamic number of propertie
         
 
         <li >
-            <a href='https://adamcook.io/archives'>
+            <a href='/archives'>
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -194,6 +202,7 @@ The first objective will demonstrate how to create a dynamic number of propertie
         
     </ol>
 </aside>
+
             <main class="main full-width">
     <div id="article-toolbar">
         <a href="https://adamcook.io/" class="back-home">
@@ -488,10 +497,11 @@ New-AzResourceGroupDeployment -Name <span style="color:#e6db74">&#34;mytestdeplo
     
 </article>
 
-    <aside class="widget related-contents--wrapper">
+    <aside class="related-contents--wrapper">
     
     
 </aside>
+
 
     
         
@@ -532,10 +542,8 @@ New-AzResourceGroupDeployment -Name <span style="color:#e6db74">&#34;mytestdeplo
 
     <footer class="site-footer">
     <section class="copyright">&copy; 2020 Adam Cook</section>
-    <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.0.5">Stack</a></b> designed by
-        <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    <section class="powerby">Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.1.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>
 </footer>
 <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true" style="display:none">

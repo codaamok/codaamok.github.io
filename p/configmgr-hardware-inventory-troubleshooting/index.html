@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="en-us"><head>
-    <meta charset='utf-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='I&amp;rsquo;ve recently updated a site to 1806 and was keen to get all clients up to date too. Some machines targeted for the pre-production client were not upgrading. When I looked closer at one client I suspected client health because a hardware inventory had not been submitted in months.
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='I&amp;rsquo;ve recently updated a site to 1806 and was keen to get all clients up to date too. Some machines targeted for the pre-production client were not upgrading. When I looked closer at one client I suspected client health because a hardware inventory had not been submitted in months.
 Little did I know until recently, a lack of recent hardware inventory data could be a result of other things and client health is least likely to be the root cause.'><title>ConfigMgr Hardware Inventory Troubleshooting</title>
-    
-    <link rel='canonical' href='https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/'>
+
+<link rel='canonical' href='https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/'>
 
 <link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='ConfigMgr Hardware Inventory Troubleshooting'>
 <meta property='og:description' content='I&amp;rsquo;ve recently updated a site to 1806 and was keen to get all clients up to date too. Some machines targeted for the pre-production client were not upgrading. When I looked closer at one client I suspected client health because a hardware inventory had not been submitted in months.
@@ -25,10 +25,16 @@ Little did I know until recently, a lack of recent hardware inventory data could
   gtag('config', 'UA-157232649-3');
 </script>
 
+<style>
+  p a, li a { color: rgb(179, 4, 4) }
+</style>
+
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest"></head><body class="">
+<link rel="manifest" href="/site.webmanifest">
+    </head>
+    <body class="">
         <div class="container flex on-phone--column align-items--flex-start extended article-page with-toolbar">
             <aside class="sidebar left-sidebar sticky">
     <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
@@ -48,7 +54,9 @@ Little did I know until recently, a lack of recent hardware inventory data could
                         height="300" class="site-logo" loading="lazy" alt="Avatar">
                 
 
-                <span class="emoji">🙃</span>
+                
+                    <span class="emoji">🙃</span>
+                
             </figure>
         
         <h1 class="site-name"><a href="https://adamcook.io/">Adam Cook</a></h1>
@@ -61,7 +69,7 @@ Little did I know until recently, a lack of recent hardware inventory data could
         
 
         <li >
-            <a href='https://adamcook.io/'>
+            <a href='/'>
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -80,7 +88,7 @@ Little did I know until recently, a lack of recent hardware inventory data could
         
 
         <li >
-            <a href='https://adamcook.io/archives'>
+            <a href='/archives'>
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -191,6 +199,7 @@ Little did I know until recently, a lack of recent hardware inventory data could
         
     </ol>
 </aside>
+
             <main class="main full-width">
     <div id="article-toolbar">
         <a href="https://adamcook.io/" class="back-home">
@@ -449,10 +458,11 @@ net start BITS
     
 </article>
 
-    <aside class="widget related-contents--wrapper">
+    <aside class="related-contents--wrapper">
     
     
 </aside>
+
 
     
         
@@ -493,10 +503,8 @@ net start BITS
 
     <footer class="site-footer">
     <section class="copyright">&copy; 2020 Adam Cook</section>
-    <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.0.5">Stack</a></b> designed by
-        <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    <section class="powerby">Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.1.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>
 </footer>
 <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true" style="display:none">

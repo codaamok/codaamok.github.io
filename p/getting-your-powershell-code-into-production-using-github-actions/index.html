@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en-us"><head>
-    <meta charset='utf-8'>
-    <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Earlier in the week I presented at a WinAdmins virtual user group session. At the bottom of this post you can watch the recording.
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Earlier in the week I presented at a WinAdmins virtual user group session. At the bottom of this post you can watch the recording.
 The session covered the below topics:
  Introduction to CI/CD pipeline, i.e. what it means with practical explanations A walk through on the YAML structure/syntax of GitHub Actions Demonstrate on how to use Actions by uploading content to Azure Blob storage Demonstrate a self hosted runner Demonstrate how to deploy a PowerShell module to: the PowerShell Gallery, create a new GitHub release, a shared folder within my home lab (which failed because I messed with the runner&amp;rsquo;s service log-on credential) and to a self hosted NuGet feed (which also failed, thanks demo gods)    '><title>Getting Your Powershell Code Into Production Using Github Actions</title>
-    
-    <link rel='canonical' href='https://adamcook.io/p/getting-your-powershell-code-into-production-using-github-actions/'>
+
+<link rel='canonical' href='https://adamcook.io/p/getting-your-powershell-code-into-production-using-github-actions/'>
 
 <link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Getting Your Powershell Code Into Production Using Github Actions'>
 <meta property='og:description' content='Earlier in the week I presented at a WinAdmins virtual user group session. At the bottom of this post you can watch the recording.
@@ -28,10 +28,16 @@ The session covered the below topics:
   gtag('config', 'UA-157232649-3');
 </script>
 
+<style>
+  p a, li a { color: rgb(179, 4, 4) }
+</style>
+
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest"></head><body class="">
+<link rel="manifest" href="/site.webmanifest">
+    </head>
+    <body class="">
         <div class="container flex on-phone--column align-items--flex-start extended article-page with-toolbar">
             <aside class="sidebar left-sidebar sticky">
     <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
@@ -51,7 +57,9 @@ The session covered the below topics:
                         height="300" class="site-logo" loading="lazy" alt="Avatar">
                 
 
-                <span class="emoji">🙃</span>
+                
+                    <span class="emoji">🙃</span>
+                
             </figure>
         
         <h1 class="site-name"><a href="https://adamcook.io/">Adam Cook</a></h1>
@@ -64,7 +72,7 @@ The session covered the below topics:
         
 
         <li >
-            <a href='https://adamcook.io/'>
+            <a href='/'>
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -83,7 +91,7 @@ The session covered the below topics:
         
 
         <li >
-            <a href='https://adamcook.io/archives'>
+            <a href='/archives'>
                 
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
@@ -194,6 +202,7 @@ The session covered the below topics:
         
     </ol>
 </aside>
+
             <main class="main full-width">
     <div id="article-toolbar">
         <a href="https://adamcook.io/" class="back-home">
@@ -321,10 +330,11 @@ The session covered the below topics:
     
 </article>
 
-    <aside class="widget related-contents--wrapper">
+    <aside class="related-contents--wrapper">
     
     
 </aside>
+
 
     
         
@@ -365,10 +375,8 @@ The session covered the below topics:
 
     <footer class="site-footer">
     <section class="copyright">&copy; 2020 Adam Cook</section>
-    <section class="powerby">
-        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
-        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.0.5">Stack</a></b> designed by
-        <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    <section class="powerby">Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.1.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>
 </footer>
 <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true" style="display:none">
