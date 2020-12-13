@@ -6,7 +6,534 @@
         <description>Recent content on Adam Cook</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Sat, 17 Oct 2020 00:00:00 +0100</lastBuildDate><atom:link href="https://adamcook.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sun, 13 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://adamcook.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Hosting and Protecting Your Own NuGet Feed with ProGet</title>
+        <link>https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/</link>
+        <pubDate>Sun, 13 Dec 2020 00:00:00 +0000</pubDate>
+        
+        <guid>https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/</guid>
+        <description>&lt;img src="https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/cover.jpg" alt="Featured image of post Hosting and Protecting Your Own NuGet Feed with ProGet" /&gt;&lt;p&gt;In this post I will share with you how to install &lt;a class=&#34;link&#34; href=&#34;https://inedo.com/proget&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Inedo&amp;rsquo;s ProGet&lt;/a&gt; to host your own NuGet feed (effectively your own PowerShell Gallery). This will let you share PowerShell modules and scripts amongst other systems and colleagues from an internal resource, using cmdlets from the PowerShellGet module e.g. &lt;code&gt;Install-Module&lt;/code&gt;, &lt;code&gt;Install-Script&lt;/code&gt;, &lt;code&gt;Find-Module&lt;/code&gt;, &lt;code&gt;Find-Script&lt;/code&gt; etc.&lt;/p&gt;
+&lt;p&gt;Why might you want to do this? Remember when PowerShell Gallery went down for a while in October? That&amp;rsquo;s a pretty good reason. Another reason might be if you like or need the use of the PowerShellGet cmdlets when interacting with the PowerShell Gallery, but do not want to store your code publicly.&lt;/p&gt;
+&lt;p&gt;By hosting your own, you can be in full control of its availability (&lt;a class=&#34;link&#34; href=&#34;https://docs.inedo.com/docs/proget/administration/license&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;ProGet Enterprise&lt;/a&gt; offers high-availability and load balancing features). Perhaps instead maybe you could treat it as a secondary source in the event of PowerShell Gallery going down.&lt;/p&gt;
+&lt;p&gt;What I wanted to do differently in this post, compared to others which I&amp;rsquo;ve seen cover installing ProGet, is that I wanted to add an authentication layer when trying to pull packages. In other words, I needed my NuGet feed to be widely open in terms of network access and because of that I wanted to protect it by requiring the &lt;code&gt;-Credential&lt;/code&gt; parameter with cmdlets like &lt;code&gt;Install-Module&lt;/code&gt;, &lt;code&gt;Find-Module&lt;/code&gt; etc.&lt;/p&gt;
+&lt;p&gt;Here is what I will be covering in this post:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#what-is-nuget&#34; &gt;What is NuGet?&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#proget&#34; &gt;ProGet&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#installing-proget&#34; &gt;Installing ProGet&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#create-api-key-for-publishing&#34; &gt;Create API key for publishing&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#create-user-for-downloading-modules-or-scripts&#34; &gt;Create user for downloading modules or scripts&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#create-the-powershell-feed&#34; &gt;Create the PowerShell feed&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#configure-proget-to-use-https&#34; &gt;Configure ProGet to use HTTPS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#registering-the-feed-on-a-system-and-publishing-a-test-module&#34; &gt;Registering the feed on a system and publishing a test module&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#installing-modules-or-scripts-from-the-feed&#34; &gt;Installing modules or scripts from the feed&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#basic-authentication&#34; &gt;Basic authentication&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#endpoint-dependency-requirements&#34; &gt;Endpoint dependency requirements&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#conclusion&#34; &gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#additional-resources&#34; &gt;Additional resources&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;what-is-nuget&#34;&gt;What is NuGet?&lt;/h2&gt;
+&lt;p&gt;Here I&amp;rsquo;ll quickly breakdown why &amp;ldquo;NuGet&amp;rdquo; is a thing. It should give you an insight when trying to understand how or why it is relevant to PowerShell, especially in this context of trying to host our own PowerShell Gallery.&lt;/p&gt;
+&lt;p&gt;NuGet is a package management protocol developed by Microsoft. It was intended for .NET packages on &lt;a class=&#34;link&#34; href=&#34;https://nuget.org&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;NuGet.org&lt;/a&gt;. Developers for .NET use NuGet to pull their project&amp;rsquo;s package dependencies from NuGet.org. This is very much like how PowerShell users use &lt;code&gt;Install-Module&lt;/code&gt; from the PowerShell Gallery for their scripts, or dependencies for other PowerShell workflows.&lt;/p&gt;
+&lt;p&gt;NuGet is the binary which is behind the scenes of the PowerShellGet module to make commands like &lt;code&gt;Install-Module&lt;/code&gt;, &lt;code&gt;Install-Script&lt;/code&gt;, &lt;code&gt;Find-Module&lt;/code&gt;, &lt;code&gt;Find-Script&lt;/code&gt; etc pull content from the PowerShell Gallery, or other NuGet feeds e.g. your self-hosted one with products like ProGet.&lt;/p&gt;
+&lt;p&gt;It makes sense that Microsoft leveraged the existing NuGet protocol for PowerShell&amp;rsquo;s package management (scripts and modules). Doing so means they did not have to reinvent the wheel by producing and maintaining another package management system.&lt;/p&gt;
+&lt;p&gt;I found the below 5 video YouTube series very insightful as it explains how and why it is used for .NET developers. Don&amp;rsquo;t worry if you don&amp;rsquo;t know .NET, it&amp;rsquo;s still useful. All 5 videos will take about ~30 mins of your time. &lt;a class=&#34;link&#34; href=&#34;https://www.youtube.com/watch?v=WW3bO1lNDmo&amp;amp;list=PLdo4fOcmZ0oVLvfkFk8O9h6v2Dcdh2bh_&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Here is the playlist link&lt;/a&gt;.&lt;/p&gt;
+
+&lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
+  &lt;iframe loading=&#34;lazy&#34; src=&#34;https://www.youtube.com/embed/WW3bO1lNDmo&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&#34;proget&#34;&gt;ProGet&lt;/h2&gt;
+&lt;p&gt;ProGet is a proprietary product of &lt;a class=&#34;link&#34; href=&#34;https://inedo.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Inedo&lt;/a&gt;. You can &lt;a class=&#34;link&#34; href=&#34;https://inedo.com/open/source-code-request&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;request to view their source code&lt;/a&gt; if you want to.&lt;/p&gt;
+&lt;p&gt;They offer three support tiers of ProGet: &lt;a class=&#34;link&#34; href=&#34;https://docs.inedo.com/docs/proget/administration/license&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;free, basic and enterprise&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;It&amp;rsquo;s worth mentioning that it can host a lot more than just NuGet feeds.&lt;/p&gt;
+&lt;p&gt;I chose ProGet after fumbling around with &lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/nuget/hosting-packages/nuget-server&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;NuGet.Server&lt;/a&gt; and expressing a little frustration about in the &lt;a class=&#34;link&#34; href=&#34;https://winadmins.io&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;WinAdmins Discord&lt;/a&gt;. &lt;a class=&#34;link&#34; href=&#34;https://twitter.com/BrettMiller_IT&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Brett Miller&lt;/a&gt; suggested to me he uses ProGet, and well, here we are. After much playing and reading, I found the free tier met my needs nicely. It&amp;rsquo;s absolutely worth pointing out there are &lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/nuget/hosting-packages/overview&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;many other alternatives&lt;/a&gt; available.&lt;/p&gt;
+&lt;h2 id=&#34;installing-proget&#34;&gt;Installing ProGet&lt;/h2&gt;
+&lt;p&gt;Let&amp;rsquo;s jump straight in and start installing ProGet. If at any point you get stuck on installing ProGet, &lt;a class=&#34;link&#34; href=&#34;https://docs.inedo.com/docs/proget/installation/installation-guide&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;they do offer some docs&lt;/a&gt; of their own.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Head over to the &lt;a class=&#34;link&#34; href=&#34;https://inedo.com/proget/download&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Downloads&lt;/a&gt; page and click &lt;strong&gt;Download Inedo Hub&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This is its web installer and it also installs a separate &lt;strong&gt;Inedo Hub&lt;/strong&gt; application where you can launch, reinstall, reconfigure or upgrade ProGet. It&amp;rsquo;s reasonably lightweight, so it&amp;rsquo;s not offensive by any means. It&amp;rsquo;s actually really helpful. They do offer an &lt;a class=&#34;link&#34; href=&#34;https://my.inedo.com/downloads?_ga=2.17971129.1219962463.1607855304-1273722551.1607855304&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;offline installer&lt;/a&gt; but its &lt;a class=&#34;link&#34; href=&#34;https://inedo.com/support/documentation/proget/installation/installation-guide/traditional-installer&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;installation instructions&lt;/a&gt; are different, so bear that in mind.&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;Launch the installer. Once the downloading and prerequisites scanning is complete:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Choosing &lt;strong&gt;Specify instance&amp;hellip;&lt;/strong&gt; gave me the &amp;ldquo;localhost&amp;rdquo; option. On this VM I have SQL Server installed. If you don&amp;rsquo;t have SQL Server installed, choose &amp;ldquo;Install Inedo Instance&amp;rdquo; and it installs SQL Express instead for you.&lt;/p&gt;
+&lt;p&gt;Optionally change the &lt;strong&gt;Database Name&lt;/strong&gt; if you want to.&lt;/p&gt;
+&lt;p&gt;I chose &lt;strong&gt;IIS&lt;/strong&gt; as the web server, instead of the &lt;strong&gt;Integrated Web Server&lt;/strong&gt;. You can later switch from the integrated web server to IIS if you &lt;a class=&#34;link&#34; href=&#34;https://docs.inedo.com/docs/various/iis/switching-to-iis&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;following this doc&lt;/a&gt;. Although it seems 
+they recommend IIS for load-balancing / HA config and also for configuring HTTPS. Later on in this doc we will be configuring the feed to use HTTPS with a web certificate so I recommend you do this too.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;⚠️ Some API endpoints for ProGet use HTTP methods PUT and DELETE. If WebDAV is installed on IIS, it is recommended to disable it. See &lt;a class=&#34;link&#34; href=&#34;https://docs.inedo.com/docs/various/iis/disabling-webdav&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Disabling WebDAV in IIS&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01a.jpg&#34; data-size=&#34;785x576&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu20513fddfbf73efd3ed3965836384b22_47563_5b6d29f2d1352a217a7291d925654d59.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu20513fddfbf73efd3ed3965836384b22_47563_35937a9fb32af07aa1dd1f7af514dd62.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01a.jpg&#34; width=&#34;785&#34; height=&#34;576&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01b.jpg&#34; data-size=&#34;783x574&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu03908e51900057a01171d48f876abd94_47970_a5930f4d1ce9b66ab9cf335696e6d5b1.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu03908e51900057a01171d48f876abd94_47970_9fb5742bd3e47fb3bf493c1300ac4c89.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01b.jpg&#34; width=&#34;783&#34; height=&#34;574&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01c.jpg&#34; data-size=&#34;785x576&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu20513fddfbf73efd3ed3965836384b22_49968_8123df0f11371cb7e52d8ad5c9aed24b.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu20513fddfbf73efd3ed3965836384b22_49968_b647d14f3f40cbdfc949964e6ae0d54a.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01c.jpg&#34; width=&#34;785&#34; height=&#34;576&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;Click &lt;strong&gt;Install&lt;/strong&gt; to get rolling. You&amp;rsquo;ll be prompted to provide name and email address to sign up, even for a free license. You will then be emailed a license key.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Once install completes, I recommend either rebooting or just bouncing the &lt;strong&gt;ProGet Service&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Close and re-open the Inedo Hub and click &lt;strong&gt;Launch&lt;/strong&gt;. You will be taken to the Web UI:&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01d.jpg&#34; data-size=&#34;785x576&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu20513fddfbf73efd3ed3965836384b22_47509_04601b7f7724184a8de65f1e25a5ab6f.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu20513fddfbf73efd3ed3965836384b22_47509_6cce03d1e6c9ba44c88e425b4db39269.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01d.jpg&#34; width=&#34;785&#34; height=&#34;576&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01e.jpg&#34; data-size=&#34;1325x768&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_150004_86ad29a822d4f6e01404c4d35abfbe1b.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_150004_c65352aa5cf41f908dc1776095440815.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01e.jpg&#34; width=&#34;1325&#34; height=&#34;768&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;After you&amp;rsquo;ve successfully installed ProGet and can see the web UI successfully load (default credentials are &lt;strong&gt;Admin&lt;/strong&gt;/&lt;strong&gt;Admin&lt;/strong&gt;, by the way), we need to lock it down a little bit. We will change the default credentials and remove the built-it Anonymous identity object access to all feeds.&lt;/p&gt;
+&lt;ol start=&#34;6&#34;&gt;
+&lt;li&gt;Click the settings cog at the top right to access the settings and choose &lt;strong&gt;Users &amp;amp; Tasks&lt;/strong&gt; under &lt;strong&gt;Security &amp;amp; Authentication&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Click the &lt;strong&gt;Admin&lt;/strong&gt; user and change the password to be something complex&lt;/li&gt;
+&lt;li&gt;Go to the &lt;strong&gt;Tasks&lt;/strong&gt; tab and remove &lt;strong&gt;Anonymous&lt;/strong&gt; from the task &lt;strong&gt;Administer&lt;/strong&gt; and &lt;strong&gt;View &amp;amp; Download Packages&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;⚠️ After removing the &lt;strong&gt;Anonymous&lt;/strong&gt; identity from the &lt;strong&gt;Administer&lt;/strong&gt; task, you will likely be prompted to log in using your new Admin credential.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02a.jpg&#34; data-size=&#34;1325x768&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_114595_ef5830cc28b765d275fb494610069749.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_114595_5eb64374fca6b4f948016ba2a60d3b5e.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02a.jpg&#34; width=&#34;1325&#34; height=&#34;768&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02b.jpg&#34; data-size=&#34;1325x586&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_69057_3ba0a3d39d24c92797319ecec93d13d0.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_69057_281ff7bb1e973858a6be6ba07f9bd3b7.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02b.jpg&#34; width=&#34;1325&#34; height=&#34;586&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02c.jpg&#34; data-size=&#34;1325x848&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_82686_4ab66c11fd8a4f637bc3d0c923cb89bd.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_82686_a292ba9192ad26856fcdbd31c58f87ed.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02c.jpg&#34; width=&#34;1325&#34; height=&#34;848&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02d.jpg&#34; data-size=&#34;1325x848&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_144027_990b923610a6bb8356e6f8c52312e38f.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_144027_1dba34f1e5e1b7c26580975f47b26215.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02d.jpg&#34; width=&#34;1325&#34; height=&#34;848&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02e.jpg&#34; data-size=&#34;1325x848&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_107401_d5bbf1311315871b47b51e5527112610.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_107401_34e49bf566f47fcd3be5fe1ced44c8af.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02e.jpg&#34; width=&#34;1325&#34; height=&#34;848&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;h2 id=&#34;create-api-key-for-publishing&#34;&gt;Create API key for publishing&lt;/h2&gt;
+&lt;p&gt;Let&amp;rsquo;s create an API key. This key will be needed for when we publish modules or scripts using either of the &lt;code&gt;Publish-Module&lt;/code&gt; or &lt;code&gt;Publish-Script&lt;/code&gt; cmdlets.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Go back to the settings via the cog at the top right, under &lt;strong&gt;Integration &amp;amp; Extensibility&lt;/strong&gt; select &lt;strong&gt;API Keys&lt;/strong&gt; and click &lt;strong&gt;Create API Key&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Check the box which reads &lt;strong&gt;Grant access to Feed API&lt;/strong&gt; and click &lt;strong&gt;Save API Key&lt;/strong&gt;. The key will display in clear text in the UI. Make note of this as we will need it later on.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03a.jpg&#34; data-size=&#34;1325x848&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_125112_b217b0a5c3c56c8b8ab6b8ff9442e8e6.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_125112_33f5a4b6334e54ca7abaded8f883b5e2.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03a.jpg&#34; width=&#34;1325&#34; height=&#34;848&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03b.jpg&#34; data-size=&#34;1325x848&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_72030_4cb03eda6273ef0e408f832d4ca7c6a7.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_72030_fcc875103a9e66bfc946a9fb19741670.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03b.jpg&#34; width=&#34;1325&#34; height=&#34;848&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03c.jpg&#34; data-size=&#34;1325x890&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_117849_a15f5d4ed8b7591ef97c73b9797a50e8.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_117849_95c990fdd29b66ab9c358cf5a38e7b34.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03c.jpg&#34; width=&#34;1325&#34; height=&#34;890&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03d.jpg&#34; data-size=&#34;1325x621&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_62967_4ff1a86207f3a55f2680bec9a8e7ab16.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_62967_5232274780f3e365b4610bac1861e9e5.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03d.jpg&#34; width=&#34;1325&#34; height=&#34;621&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;h2 id=&#34;create-user-for-downloading-modules-or-scripts&#34;&gt;Create user for downloading modules or scripts&lt;/h2&gt;
+&lt;p&gt;Now we will create a user which will be used for basic authentication in the &lt;code&gt;-Credential&lt;/code&gt; parameter of cmdlets like &lt;code&gt;Find-Module&lt;/code&gt;, &lt;code&gt;Find-Script&lt;/code&gt;, &lt;code&gt;Install-Module&lt;/code&gt; and &lt;code&gt;Install-Script&lt;/code&gt; etc.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Again, work your way back to settings. This time click &lt;strong&gt;Users &amp;amp; Tasks&lt;/strong&gt; and click &lt;strong&gt;Create User&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Set a username and password and click &lt;strong&gt;Save&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Change to the &lt;strong&gt;Tasks&lt;/strong&gt; tab and we will give the newly created user access to only &lt;strong&gt;View &amp;amp; Download Packages&lt;/strong&gt; by clicking on &lt;strong&gt;Add Restriction&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Enter the user name created in step 2 in the &lt;strong&gt;Principles&lt;/strong&gt; field and enter &lt;strong&gt;View &amp;amp; Download Packages&lt;/strong&gt; in the &lt;strong&gt;Tasks&lt;/strong&gt; field - don&amp;rsquo;t forget to click &lt;strong&gt;Save Privilege&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04a.jpg&#34; data-size=&#34;1325x810&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_120287_d0f9c74be7ca4d4f6208c6e870bcd7fc.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_120287_b134d77da600def47d40a4de160a34b8.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04a.jpg&#34; width=&#34;1325&#34; height=&#34;810&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04b.jpg&#34; data-size=&#34;1325x810&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_72887_94ab1f5c5ef1353d908c83b4896eb66d.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_72887_3eceb63e879b01ef1f07cecc678ec3dd.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04b.jpg&#34; width=&#34;1325&#34; height=&#34;810&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04c.jpg&#34; data-size=&#34;1325x810&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_75815_76d02f6aad809a6165776000a9cd8930.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_75815_a8faf840440ac2f772b676d6234ca5d7.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04c.jpg&#34; width=&#34;1325&#34; height=&#34;810&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04d.jpg&#34; data-size=&#34;1325x810&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_112584_c48ffceb1722ab4e7f54a58642364350.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_112584_7b22f8be8c85004a7bc60ac07d2e07bd.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04d.jpg&#34; width=&#34;1325&#34; height=&#34;810&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04e.jpg&#34; data-size=&#34;1325x810&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_87193_d5a016bea37a38e5d981a66cae76c403.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_87193_eadda5542509f774fdc4f0f997c98541.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04e.jpg&#34; width=&#34;1325&#34; height=&#34;810&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04f.jpg&#34; data-size=&#34;1325x810&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_103730_470344aec014258e9170271ac5d93171.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_103730_0eb8d98b99c36b3386c984a798099127.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04f.jpg&#34; width=&#34;1325&#34; height=&#34;810&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;h2 id=&#34;create-the-powershell-feed&#34;&gt;Create the PowerShell feed&lt;/h2&gt;
+&lt;p&gt;Good stuff, next we will create a new PowerShell feed which will contain our published modules and scripts.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Navigate to &lt;strong&gt;Feeds&lt;/strong&gt; from the top navigation bar and click &lt;strong&gt;Create New Feed&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Scroll down and choose &lt;strong&gt;PowerShell Modules&lt;/strong&gt; as the feed type&lt;/li&gt;
+&lt;li&gt;Give your feed a name and select the radio button which reads &lt;strong&gt;Private/Internal packages&lt;/strong&gt;, click &lt;strong&gt;Create New Feed&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05a.jpg&#34; data-size=&#34;1325x810&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_72712_15f11510bf85e2f70aafa596412a1043.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_72712_5bd94f955ab4f214f297a75ca8435385.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05a.jpg&#34; width=&#34;1325&#34; height=&#34;810&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05b.jpg&#34; data-size=&#34;1325x730&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hufec9f8a447cd7da5a47b8d2ab7bfe6ca_165729_b819e0cb018007ee2c18a255e3e60b41.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hufec9f8a447cd7da5a47b8d2ab7bfe6ca_165729_4e2335fba5d392f9ff9cb911060b58e1.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05b.jpg&#34; width=&#34;1325&#34; height=&#34;730&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05c.jpg&#34; data-size=&#34;1325x810&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_151971_c531a4bdc67de7378245cd8763335e3a.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_151971_77495f1f6cdd066e7339227778bacf59.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05c.jpg&#34; width=&#34;1325&#34; height=&#34;810&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;h2 id=&#34;configure-proget-to-use-https&#34;&gt;Configure ProGet to use HTTPS&lt;/h2&gt;
+&lt;p&gt;Now we will configure ProGet to listen on an additional alternative port with a web certificate. This is optional for you; perhaps you&amp;rsquo;re running this internally and you are OK with non-encrypted traffic. However in any case I still think it&amp;rsquo;s a good idea to use TLS.&lt;/p&gt;
+&lt;p&gt;You will need a web certificate which we will configure in IIS to use. As this is in my lab, things are like the wild west around here so I&amp;rsquo;m just going to yolo it with a LetsEncrypt certificate using the &lt;a class=&#34;link&#34; href=&#34;https://github.com/rmbolger/Posh-ACME&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Posh-ACME module&lt;/a&gt;.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Generate or obtain web certificate. Here I&amp;rsquo;ll quickly demo how I do this with the Posh-ACME module.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Install-Module &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Posh-ACME&amp;#34;&lt;/span&gt;
+Import-Module &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Posh-ACME&amp;#34;&lt;/span&gt;
+$Params = @{
+    Domain = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;nuget.adamcook.io&amp;#34;&lt;/span&gt;
+    Contact = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;myemail@address.com&amp;#34;&lt;/span&gt;
+    DnsPlugin = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Cloudflare&amp;#34;&lt;/span&gt;
+    PluginArgs = @{
+        CFToken = ConvertTo-SecureString &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;MySuperSecretCloudflareAPIKey&amp;#34;&lt;/span&gt; -AsPlainText -Force
+    }
+}
+New-PACertificate @Params
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol&gt;
+&lt;li&gt;Create a DNS record to point to your ProGet server&amp;rsquo;s IP&lt;/li&gt;
+&lt;li&gt;Load the certificate in to the Local System&amp;rsquo;s Personal or Web Hosting certificate store.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;If you used Posh-ACME, you will find the &lt;code&gt;.pfx&lt;/code&gt; in &lt;strong&gt;%LOCALAPPDATA%\Posh-ACME&lt;/strong&gt;. Simply right click, choose &lt;strong&gt;Install PFX&lt;/strong&gt; and complete the wizard. The default password protecting the certificate is &lt;code&gt;poshacme&lt;/code&gt;.&lt;/p&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Open IIS and navigate through: &lt;strong&gt;Sites&lt;/strong&gt; &amp;gt; &lt;strong&gt;ProGet&lt;/strong&gt; &amp;gt; &lt;strong&gt;Bindings&lt;/strong&gt; &amp;gt; &lt;strong&gt;Add&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Change &lt;strong&gt;Type&lt;/strong&gt; to &lt;strong&gt;https&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;By default the port is 443. If you have another site or service bound to this port on the host you&amp;rsquo;re currently configuring, choose a different port. For this demo I chose port &lt;strong&gt;8625&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;In the drop down for &lt;strong&gt;SSL certificate&lt;/strong&gt; you should see our certificate&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06a.jpg&#34; data-size=&#34;1551x920&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hufca7a2d6ed4f54385eb596b0a0e69556_170620_effea731422337e880461363c93fcc2d.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hufca7a2d6ed4f54385eb596b0a0e69556_170620_4af2120356c9ccdd9b87f7c1c01c2018.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06a.jpg&#34; width=&#34;1551&#34; height=&#34;920&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;ol start=&#34;7&#34;&gt;
+&lt;li&gt;Click OK!&lt;/li&gt;
+&lt;li&gt;Go to Settings of ProGet and under &lt;strong&gt;System Configuration&lt;/strong&gt; choose &lt;strong&gt;Advanced Settings&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Scroll down to &lt;code&gt;Web.BaseUrl&lt;/code&gt; and populate the field with your full root URL. For example, for me I have set it to &lt;code&gt;https://nuget.adamcook.io:8625&lt;/code&gt;. This part is important if you are serving ProGet under a different path in the URL or port, e.g. I could have used &lt;code&gt;https://adamcook.io:8625/nuget&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Click &lt;strong&gt;Save Changes&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;At this point you will need to make sure DNS is correctly configured for whatever domain you used for your certificate. All should be well once you can browse to the domain and not receive any certificate errors. For example:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06b.jpg&#34; data-size=&#34;1325x1081&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_144590_0df349828562b1962df31cbe919ecadc.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_144590_b3031146a835f0fe45a2a188a1a36ac7.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06b.jpg&#34; width=&#34;1325&#34; height=&#34;1081&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06c.jpg&#34; data-size=&#34;1325x889&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_169862_750f2b31f978bb9cc87e40feaa1fd211.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70ab8b913f607837a7f637cdf80fde60_169862_2db36b4841827281238b16222484cb64.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06c.jpg&#34; width=&#34;1325&#34; height=&#34;889&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06d.jpg&#34; data-size=&#34;1321x759&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu57fdc17b95c1b78d4473f161c236c275_93368_4e0a71a6da6c45f224315fc37004c12f.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu57fdc17b95c1b78d4473f161c236c275_93368_054fa572007d58bce3cb9050cd0933f2.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06d.jpg&#34; width=&#34;1321&#34; height=&#34;759&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;h2 id=&#34;registering-the-feed-on-a-system-and-publishing-a-test-module&#34;&gt;Registering the feed on a system and publishing a test module&lt;/h2&gt;
+&lt;p&gt;At this point, you are good to go to start publishing scripts or modules to this feed. As an example, let&amp;rsquo;s save a module from the PowerShell Gallery and publish it to our newly created NuGet feed.&lt;/p&gt;
+&lt;p&gt;For a laugh we&amp;rsquo;ll demo with the &lt;code&gt;Az&lt;/code&gt; module, which has 62 other dependent modules. As a result we will be downloading 63 modules from the PowerShell Gallery and publishing them all to our new self-hosted NuGet feed.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Register the NuGet feed on your system using the below. This can be from your desktop or even the server running ProGet itself.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I&amp;rsquo;ll be honest.. I have no idea why we need to configure a package source before we can register the repository, but I couldn&amp;rsquo;t get it to work otherwise. &lt;a class=&#34;link&#34; href=&#34;https://github.com/OneGet/oneget/issues/403&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;More info here on that&lt;/a&gt;!&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Set the URL to match your config from the section &amp;#39;Configure ProGet to use HTTPS&amp;#39;&lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# i.e. https/http, domain and port&lt;/span&gt;
+$URL = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://nuget.adamcook.io:8625/nuget/MyPrivateRepo&amp;#34;&lt;/span&gt; 
+&lt;span style=&#34;color:#75715e&#34;&gt;# Enter the username and password created from the section &lt;/span&gt;
+&lt;span style=&#34;color:#75715e&#34;&gt;# &amp;#39;Create user for downloading modules or scripts&amp;#39;&lt;/span&gt;
+$Cred = Get-Credential
+
+$Params = @{
+	Name = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;MyPrivateRepo&amp;#34;&lt;/span&gt;
+	Location = $URL
+	ProviderName = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;NuGet&amp;#34;&lt;/span&gt;
+	Credential = $Cred
+	Trusted = $true
+	SkipValidate = $true
+}
+Register-PackageSource @Params
+
+$Params = @{
+	Name = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;MyPrivateRepo&amp;#34;&lt;/span&gt;
+	SourceLocation = $URL
+    PublishLocation = $URL
+    ScriptSourceLocation = $URL
+    ScriptPublishLocation = $URL
+    PackageManagementProvider = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;NuGet&amp;#34;&lt;/span&gt;
+	Credential = $Cred
+    InstallationPolicy = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Trusted&amp;#34;&lt;/span&gt;
+}
+Register-PSRepository @Params
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You will notice that if you now run &lt;code&gt;Get-PackageSource&lt;/code&gt; and &lt;code&gt;Get-PSRepository&lt;/code&gt;, you will see our new NuGet repository. It is important to note that this is not a system-wide config, it is per-user. In other words, if you intend to register the package source and repository, and you want another security context on the same system the leverage this registration, you will need to register them in that context. &lt;a class=&#34;link&#34; href=&#34;https://github.com/PowerShell/PowerShellGet/issues/84&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Here&amp;rsquo;s a GitHub issue requesting this to change&lt;/a&gt;.&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;Issue the following command to grab all of the modules and save them to &lt;code&gt;C:\temp\Az&lt;/code&gt; locally&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Save-Module -Name &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Az&amp;#34;&lt;/span&gt; -Path &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;C:\temp\Az&amp;#34;&lt;/span&gt; -Repository PSGallery
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote&gt;
+&lt;p&gt;⚠️ If you receive an error along the lines of:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;Failed to generate the compressed file for module &#39;C:\Program Files\dotnet\dotnet.exe failed to pack
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Run the below. Close and re-open the console, then try again. &lt;a class=&#34;link&#34; href=&#34;https://github.com/PowerShell/PowerShellGetv2/issues/303&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Credit&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Invoke-WebRequest -Uri &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://dist.nuget.org/win-x86-commandline/latest/nuget.exe&amp;#34;&lt;/span&gt; -OutFile &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;$env:LOCALAPPDATA\Microsoft\Windows\PowerShell\PowerShellGet\NuGet.exe&amp;#34;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;⚠️ Also note that we are now explicitly specifying to use the &lt;strong&gt;PSGallery&lt;/strong&gt; registered repository using the &lt;code&gt;-Repository&lt;/code&gt; parameter, because we now have multiple registered repositories (or at least you should, the PowerShell Gallery is configured by default on most systems).&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07a.jpg&#34; data-size=&#34;1113x1002&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70286569983e3e8203d16b8e44059fad_122719_a39a873154e1987e83c0bc0a6eb01882.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70286569983e3e8203d16b8e44059fad_122719_8f1dda6375631143a2e1e3087198c883.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07a.jpg&#34; width=&#34;1113&#34; height=&#34;1002&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07b.jpg&#34; data-size=&#34;1113x1002&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70286569983e3e8203d16b8e44059fad_121003_28a2ab325a795e4805b9829e8321165c.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70286569983e3e8203d16b8e44059fad_121003_24a897b25b0f02ae770d3f1e368cc3c8.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07b.jpg&#34; width=&#34;1113&#34; height=&#34;1002&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Using the API key we gathered from the section &lt;a class=&#34;link&#34; href=&#34;#create-api-key-for-publishing&#34; &gt;Create API key for publishing&lt;/a&gt;, we can now publish all the modules which are in the &lt;code&gt;C:\temp\Az&lt;/code&gt; directory:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-ChildItem -Path &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;C:\temp\Az&amp;#34;&lt;/span&gt; | &lt;span style=&#34;color:#66d9ef&#34;&gt;ForEach&lt;/span&gt;-Object {
+    Publish-Module -Path $_.FullName -NuGetApiKey &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;MySuperSecretAPIKey&amp;#34;&lt;/span&gt; -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;MyPrivateRepo&amp;#34;&lt;/span&gt;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;After a couple of minutes, all of the modules will finish publishing. The web UI of ProGet will reflect this and we can also see this with &lt;code&gt;Find-Module&lt;/code&gt; too. Don&amp;rsquo;t forget, you will also need to use the &lt;code&gt;-Credential&lt;/code&gt; parameter with &lt;code&gt;Find-Module&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;em&gt;Forgot what credential to use? It&amp;rsquo;s the one we set from the section &lt;a class=&#34;link&#34; href=&#34;#create-user-for-downloading-modules-or-scripts&#34; &gt;Create user for downloading modules or scripts&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07c.jpg&#34; data-size=&#34;1113x508&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70286569983e3e8203d16b8e44059fad_150603_1894a0e7e04631e2828bd7d2d39b3b3e.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu70286569983e3e8203d16b8e44059fad_150603_0e7024ad7d7a2f15d00b8606c1d52328.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07c.jpg&#34; width=&#34;1113&#34; height=&#34;508&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07d.jpg&#34; data-size=&#34;1428x828&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu3ebf0193911db17c2ec09b4f543ea771_59695_3b94dc6be85317e2baa0a77200760e8c.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu3ebf0193911db17c2ec09b4f543ea771_59695_9cbd8fd3151832226045216890acfef5.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07d.jpg&#34; width=&#34;1428&#34; height=&#34;828&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07e.jpg&#34; data-size=&#34;1428x828&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hueeec182459c80104b542b342c7138076_111142_d96e318f09745a7a60f135351cc85f87.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hueeec182459c80104b542b342c7138076_111142_41884863e8fe25bfaf1f538da20ef6bd.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07e.jpg&#34; width=&#34;1428&#34; height=&#34;828&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07f.jpg&#34; data-size=&#34;968x1344&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu7eb4a9ecec460d986e1f3bb76fef9abe_114999_05892c198d7cc7a466d53822e988c42c.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu7eb4a9ecec460d986e1f3bb76fef9abe_114999_1ef4a1f58c884334ceefc6a159696198.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07f.jpg&#34; width=&#34;968&#34; height=&#34;1344&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;Don&amp;rsquo;t forget, you can still publish and install scripts to the NuGet feed just like you can with modules, using cmdlets like &lt;code&gt;Publish-Script&lt;/code&gt;, &lt;code&gt;Find-Script&lt;/code&gt; and &lt;code&gt;Install-Script&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;installing-modules-or-scripts-from-the-feed&#34;&gt;Installing modules or scripts from the feed&lt;/h2&gt;
+&lt;p&gt;Now let&amp;rsquo;s demonstrate installing a PowerShell module from our new NuGet feed. Again you can do this from your desktop or on the ProGet server itself.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;If you&amp;rsquo;re trying this from a different system compared to the last section, registry the package source and repository again as shown in the section &lt;a class=&#34;link&#34; href=&#34;#registering-the-feed-on-a-system-and-publishing-a-test-module&#34; &gt;Registering the feed on a system and publishing a test module&lt;/a&gt;. It is possible to omit the the &lt;code&gt;-ScriptPublishLocation&lt;/code&gt; and &lt;code&gt;-PublishLocation&lt;/code&gt; parameters if you do not intend to publish modules or scripts from the system(s).&lt;/li&gt;
+&lt;li&gt;Install all of the &lt;code&gt;Az*&lt;/code&gt; modules. We need to make sure we explicitly specify our new NuGet feed using the &lt;code&gt;-Repository&lt;/code&gt; parameter and the credential too using &lt;code&gt;-Credential&lt;/code&gt;:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$Modules = Find-Module -Name &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Az*&amp;#34;&lt;/span&gt; -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;MyPrivateRepo&amp;#34;&lt;/span&gt; -Credential $Cred
+$Modules | Install-Module -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;MyPrivateRepo&amp;#34;&lt;/span&gt; -Credential $Cred
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;em&gt;Forgot what credential to use? It&amp;rsquo;s the one we set from the section &lt;a class=&#34;link&#34; href=&#34;#create-user-for-downloading-modules-or-scripts&#34; &gt;Create user for downloading modules/scripts&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-08.jpg&#34; data-size=&#34;1346x1344&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu3ebf0193911db17c2ec09b4f543ea771_303407_97a73d2b581a4fdbda6e7d20a0e6393b.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu3ebf0193911db17c2ec09b4f543ea771_303407_32927051b90e5c74b86915026cc9937e.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-08.jpg&#34; width=&#34;1346&#34; height=&#34;1344&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;That&amp;rsquo;s more or less it. You just pulled a bunch of PowerShell modules from your self-hosted NuGet feed which is hosted using your own TLS certificate and protected with basic authentication via the &lt;code&gt;-Credential&lt;/code&gt; parameter.&lt;/p&gt;
+&lt;h2 id=&#34;basic-authentication&#34;&gt;Basic authentication&lt;/h2&gt;
+&lt;p&gt;I&amp;rsquo;ve mentioned this a few times throughout the post but not discussed it.&lt;/p&gt;
+&lt;p&gt;The authentication method when using the &lt;code&gt;-Credential&lt;/code&gt; parameter used here is &lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Basic_access_authentication&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;HTTP basic authentication&lt;/a&gt;. If you have configured your ProGet instance to be using only HTTP and have protected the feeds using a built-in security identity as discussed in section &lt;a class=&#34;link&#34; href=&#34;#create-user-for-downloading-modules-or-scripts&#34; &gt;Create user for downloading modules or scripts&lt;/a&gt;, then your credentials will be sent across the wire merely encoded with base64 - (&lt;strong&gt;this is not encryption&lt;/strong&gt;).&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;ve demonstrated this below; I configured the package source and repository locally on my machine (repository name is &lt;strong&gt;insecure&lt;/strong&gt;). I have registered them using the HTTP endpoint of ProGet, not HTTPS. You can see the credentials in cleartext in packet tracing tools like Wireshark because they&amp;rsquo;re generally helpful and do the decoding for you in the GUI.&lt;/p&gt;
+&lt;p&gt;Encrypting the traffic with TLS certificates is for sure the way to go. Even if the traffic is only traversing internally. Your code, and therefore the packages on your NuGet feed, should never contain sensitive information. Therefore in theory all you are protecting is the intellectual property of the code. However, let&amp;rsquo;s be real, a lot of us at the very least sometimes store things like IP addresses and stuff in our code. With that in mind, if you had a script named &amp;ldquo;Get-SecretFromCyberArk&amp;rdquo; on your NuGet feed, which contained even the most trivial information like the IP addresses of your CyberArk infrastructure, that is still an easy win of information gathering for a malicious actor. Just mooching around your network. They would have picked up the username and password of the user account, logged in to ProGet and able to view all your packages.&lt;/p&gt;
+&lt;p&gt;Using TLS does not provide total security, as you are still at the mercy of a simple username and password where those credentials are stored in the ProGet database. However, there is no reason why you should not be using HTTPS.&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-09a.jpg&#34; data-size=&#34;1366x1040&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu00755f6eed2be73effa0a7f9860f493a_388652_a1c8736dfabd8b4dc72f1ebc6f5429b9.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu00755f6eed2be73effa0a7f9860f493a_388652_7bca5b2a2c49061e6e85560ea42da210.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-09a.jpg&#34; width=&#34;1366&#34; height=&#34;1040&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt; &lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-09b.jpg&#34; data-size=&#34;1367x1032&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu20dd6580e23920edc1850ff795af6c42_324897_907d0f40d406e7bf7b19906e95bd96ca.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/_hu20dd6580e23920edc1850ff795af6c42_324897_a9b6bb20056711a02745ebc1ac67c40c.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-09b.jpg&#34; width=&#34;1367&#34; height=&#34;1032&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;h2 id=&#34;endpoint-dependency-requirements&#34;&gt;Endpoint dependency requirements&lt;/h2&gt;
+&lt;p&gt;In order for other users to start using your new NuGet feed, you need to satisfy some prerequisites. I strongly recommend you:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;For all systems you intend to use the repository from, have the latest available &lt;a class=&#34;link&#34; href=&#34;https://www.powershellgallery.com/packages/PackageManagement&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;PackageManagement&lt;/a&gt; and &lt;a class=&#34;link&#34; href=&#34;https://www.powershellgallery.com/packages/PowerShellGet&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;PowerShellGet&lt;/a&gt; modules installed.&lt;/li&gt;
+&lt;li&gt;If not already, upgrade the systems using the NuGet feed to be using PowerShell 5.1 (&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/powershell/scripting/windows-powershell/wmf/setup/install-configure?view=powershell-7.1&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Windows Management Framework 5.1&lt;/a&gt;) as it will make your life &lt;em&gt;a lot&lt;/em&gt; easier.&lt;/li&gt;
+&lt;li&gt;After the last two items are resolved, you then need to register the package source and repository on all of the endpoints you want to leverage the repository from. We did this in section &lt;a class=&#34;link&#34; href=&#34;#registering-the-feed-on-a-system-and-publishing-a-test-module&#34; &gt;Registering the feed on a system and publishing a test module&lt;/a&gt;. Don&amp;rsquo;t forget that the security context of which you register the package source and repository from, is the only context in which the repositories are available. If you want to access the registered repository from another security context on the same system, you will have to re-register them in that context.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;Conclusion&lt;/h2&gt;
+&lt;p&gt;Some things which I didn&amp;rsquo;t get to touch on are LDAP authentication integration and extensions within ProGet.&lt;/p&gt;
+&lt;p&gt;Authenticating using Active Directory would for sure be a better and more manageable solution in terms of handling the credential when using the &lt;code&gt;-Credential&lt;/code&gt; parameter. ProGet even provides support for gMSA accounts. You can find out more here &lt;a class=&#34;link&#34; href=&#34;https://docs.inedo.com/docs/various/ldap/ldap-active-directory&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Using LDAP/AD Integration&lt;/a&gt;. And even better, there is support for &lt;a class=&#34;link&#34; href=&#34;https://docs.inedo.com/docs/various/saml/overview&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;SAML authentication with AD&lt;/a&gt; and &lt;a class=&#34;link&#34; href=&#34;https://docs.inedo.com/docs/various/saml/azure-ad&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Azure AD&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I also wanted to highlight is that it is possible to store your packages in cloud storage using ProGet&amp;rsquo;s &lt;a class=&#34;link&#34; href=&#34;https://docs.inedo.com/docs/proget/advanced/cloud-storage&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Cloud Package Stores&lt;/a&gt; and extension for Azure. The would certainly reduce your on-premises storage requirements and allow greater room scalability and flexibility by using an Azure Storage Account.&lt;/p&gt;
+&lt;p&gt;I like to use a featured image in my blog which is relevant at the time in my life while I was writing the post. For this post I started around halloween and got both lazy and busy. Here I am, 12 days before Christmas using a picture of the pumpkins my fiancé carved on our front porch. It&amp;rsquo;s purely because of COVID-19.. I do nothing with my spare time other than stay home. Nothing to take pictures of!&lt;/p&gt;
+&lt;p&gt;I hope you found this information useful. If there&amp;rsquo;s any room for improvements, let me know in the comments below. If it helped you in any way, still let me know - that helps me keep going. Check out the additional resources below for further reading.&lt;/p&gt;
+&lt;h2 id=&#34;additional-resources&#34;&gt;Additional resources&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/nuget/what-is-nuget&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;What is NuGet and what does it do?&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/powershell/scripting/gallery/how-to/getting-support/bootstrapping-nuget?view=powershell-7.1&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Bootstrap the NuGet provider and NuGet.exe&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://adamtheautomator.com/nuget-iis-windows-server/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;NuGet and IIS on Windows Server: The Ultimate Guide&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/nuget/hosting-packages/overview&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Hosting your own NuGet feeds&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
         <title>Getting Your Powershell Code Into Production Using Github Actions</title>
         <link>https://adamcook.io/p/getting-your-powershell-code-into-production-using-github-actions/</link>
         <pubDate>Sat, 17 Oct 2020 00:00:00 +0100</pubDate>
