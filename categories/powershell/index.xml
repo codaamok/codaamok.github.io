@@ -6,7 +6,17 @@
     <description>Recent content in PowerShell on Adam Cook</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 13 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://adamcook.io/categories/powershell/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Mon, 21 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://adamcook.io/categories/powershell/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Using PowerShell to Manage Shlink With PSShlink</title>
+      <link>https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/</link>
+      <pubDate>Mon, 21 Dec 2020 00:00:00 +0000</pubDate>
+      
+      <guid>https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/</guid>
+      <description>Shlink is an open-source self-hosted and PHP-based URL shortener application. I wrote PSShlink which will help you manage all of your short codes using PowerShell!
+Shlink helped me tremendously when I moved my domain and blog CMS from cookadam.co.uk to adamcook.io. Some of my posts rank modestly in search results for some keywords and I felt unhappy about letting that go. I also did not want people&amp;rsquo;s bookmarks for posts using my old domain to result in an incomplete redirect to its new URL.</description>
+    </item>
+    
     <item>
       <title>Hosting and Protecting Your Own NuGet Feed with ProGet</title>
       <link>https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/</link>

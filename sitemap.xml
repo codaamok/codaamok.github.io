@@ -4,26 +4,31 @@
   
   <url>
     <loc>https://adamcook.io/</loc>
-    <lastmod>2020-12-13T00:00:00+00:00</lastmod>
+    <lastmod>2020-12-21T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://adamcook.io/categories/</loc>
-    <lastmod>2020-12-13T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/</loc>
-    <lastmod>2020-12-13T00:00:00+00:00</lastmod>
+    <lastmod>2020-12-21T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://adamcook.io/post/</loc>
-    <lastmod>2020-12-13T00:00:00+00:00</lastmod>
+    <lastmod>2020-12-21T00:00:00+00:00</lastmod>
   </url>
   
   <url>
     <loc>https://adamcook.io/categories/powershell/</loc>
+    <lastmod>2020-12-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/</loc>
+    <lastmod>2020-12-21T00:00:00+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/</loc>
     <lastmod>2020-12-13T00:00:00+00:00</lastmod>
   </url>
   

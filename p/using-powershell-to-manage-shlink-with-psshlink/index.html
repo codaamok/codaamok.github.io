@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Shlink is an open-source self-hosted and PHP-based URL shortener application. I wrote PSShlink which will help you manage all of your short codes using PowerShell!
+Shlink helped me tremendously when I moved my domain and blog CMS from cookadam.co.uk to adamcook.io. Some of my posts rank modestly in search results for some keywords and I felt unhappy about letting that go. I also did not want people&amp;rsquo;s bookmarks for posts using my old domain to result in an incomplete redirect to its new URL.'><title>Using PowerShell to Manage Shlink With PSShlink</title>
+
+<link rel='canonical' href='https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Using PowerShell to Manage Shlink With PSShlink'>
+<meta property='og:description' content='Shlink is an open-source self-hosted and PHP-based URL shortener application. I wrote PSShlink which will help you manage all of your short codes using PowerShell!
+Shlink helped me tremendously when I moved my domain and blog CMS from cookadam.co.uk to adamcook.io. Some of my posts rank modestly in search results for some keywords and I felt unhappy about letting that go. I also did not want people&amp;rsquo;s bookmarks for posts using my old domain to result in an incomplete redirect to its new URL.'>
+<meta property='og:url' content='https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/'>
+<meta property='og:site_name' content='Adam Cook'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2020-12-21T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2020-12-21T00:00:00&#43;00:00'/><meta property='og:image' content='https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/images/cover.jpg' />
+<meta name="twitter:site" content="codaamok"><meta name="twitter:title" content="Using PowerShell to Manage Shlink With PSShlink">
+<meta name="twitter:description" content="Shlink is an open-source self-hosted and PHP-based URL shortener application. I wrote PSShlink which will help you manage all of your short codes using PowerShell!
+Shlink helped me tremendously when I moved my domain and blog CMS from cookadam.co.uk to adamcook.io. Some of my posts rank modestly in search results for some keywords and I felt unhappy about letting that go. I also did not want people&amp;rsquo;s bookmarks for posts using my old domain to result in an incomplete redirect to its new URL."><meta name="twitter:card" content="summary">
+	<meta name="twitter:image" content='https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/images/cover.jpg' />
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-157232649-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-157232649-3');
+</script>
+
+<style>
+  p a, li a { color: #ff4949 }
+</style>
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+    </head>
+    <body class="">
+        <div class="container flex on-phone--column align-items--flex-start extended article-page with-toolbar">
+            <aside class="sidebar left-sidebar sticky">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header class="site-info">
+        
+            <figure class="site-avatar">
+                
+
+                
+                    
+                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_2.png" width="300"
+                        height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+
+                
+                    <span class="emoji">🙃</span>
+                
+            </figure>
+        
+        <h1 class="site-name"><a href="https://adamcook.io/">Adam Cook</a></h1>
+        <h2 class="site-description">Passionate about helping people. #PowerShell, #ConfigMgr and #Azure. Misses #Linux.</h2>
+    </header>
+
+    <ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://twitter.com/codaamok'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84 0 0 0 .497 -3.753C20.18 7.773 21.692 5.25 22 4.009z" />
+</svg>
+                
+                <span>Twitter</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://github.com/codaamok'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+                
+                <span>GitHub</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://linkedin.com/in/adamcharlescook'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-linkedin" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="4" width="16" height="16" rx="2" />
+  <line x1="8" y1="11" x2="8" y2="16" />
+  <line x1="8" y1="8" x2="8" y2="8.01" />
+  <line x1="12" y1="16" x2="12" y2="11" />
+  <path d="M16 16v-3a2 2 0 0 0 -4 0" />
+</svg>
+                
+                <span>LinkedIn</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://www.youracclaim.com/users/adam-cook.e3a67a21/badges'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-award" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <circle cx="12" cy="9" r="6" />
+  <polyline points="9 14.2 9 21 12 19 15 21 15 14.2" transform="rotate(-30 12 9)" />
+  <polyline points="9 14.2 9 21 12 19 15 21 15 14.2" transform="rotate(30 12 9)" />
+</svg>
+                
+                <span>My Acclaims</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://sysmansquad.com/author/codaamok/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-notebook" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M6 4h11a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-11a1 1 0 0 1 -1 -1v-14a1 1 0 0 1 1 -1m3 0v18" />
+  <line x1="13" y1="8" x2="15" y2="8" />
+  <line x1="13" y1="12" x2="15" y2="12" />
+</svg>
+                
+                <span>SysManSquad</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://pssouth.co.uk'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-prompt" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <polyline points="5 7 10 12 5 17" />
+  <line x1="13" y1="17" x2="19" y2="17" />
+</svg>
+                
+                <span>PowerShell Southampton</span>
+            </a>
+        </li>
+        
+    </ol>
+</aside>
+
+            <main class="main full-width">
+    <div id="article-toolbar">
+        <a href="https://adamcook.io/" class="back-home">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+            <span>Back</span>
+        </a>
+    </div>
+
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <img srcset="/p/using-powershell-to-manage-shlink-with-psshlink/images/cover_hu162989ee52484725a44bb6ca4d2e9b2e_47074_1024x0_resize_q75_box.jpg 1024w, /p/using-powershell-to-manage-shlink-with-psshlink/images/cover_hu162989ee52484725a44bb6ca4d2e9b2e_47074_2000x0_resize_q75_box.jpg 2000w"
+                    src="/p/using-powershell-to-manage-shlink-with-psshlink/images/cover_hu162989ee52484725a44bb6ca4d2e9b2e_47074_2000x0_resize_q75_box.jpg" width="640" height="427" loading="lazy"
+                    alt="Featured image of post Using PowerShell to Manage Shlink With PSShlink" />
+            
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="https://adamcook.io/categories/powershell/" 
+                    class="color-tag"
+                    data-image="/p/using-powershell-to-manage-shlink-with-psshlink/images/cover_hu162989ee52484725a44bb6ca4d2e9b2e_47074_20x20_fill_q75_box_smart1.jpg" 
+                    data-key="" 
+                    data-hash="md5-ojvdYYZEWg5KANxdKhewvw==">
+                    PowerShell
+                </a>
+            
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/">Using PowerShell to Manage Shlink With PSShlink</a>
+    </h2>
+
+    <table>
+        <tr>
+            <td width="25%">
+                <footer class="article-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="5" width="16" height="16" rx="2" />
+  <line x1="16" y1="3" x2="16" y2="7" />
+  <line x1="8" y1="3" x2="8" y2="7" />
+  <line x1="4" y1="11" x2="20" y2="11" />
+  <line x1="11" y1="15" x2="12" y2="15" />
+  <line x1="12" y1="15" x2="12" y2="18" />
+</svg>
+                    <time class="article-time--published">21 December 2020</time>
+                </footer>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <footer class="article-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--published">
+                        Reading time: 3 minutes.
+                    </time>
+                </footer>
+            </td>
+        </tr>
+    </table></div>
+</header>
+
+    <section class="article-content">
+    <p><a class="link" href="https://shlink.io/"  target="_blank" rel="noopener"
+    >Shlink</a> is an open-source self-hosted and PHP-based URL shortener application. I wrote <a class="link" href="https://github.com/codaamok/psshlink"  target="_blank" rel="noopener"
+    >PSShlink</a> which will help you manage all of your short codes using PowerShell!</p>
+<p>Shlink helped me tremendously when I moved my domain and blog CMS from cookadam.co.uk to adamcook.io. Some of my posts rank modestly in search results for some keywords and I felt unhappy about letting that go. I also did not want people&rsquo;s bookmarks for posts using my old domain to result in an incomplete redirect to its new URL.</p>
+<p>Google also help you secure your position in search results if you tell them your new domain. There were a couple of prerequisites to make this happen and one of them was to ensure all posts (discovered by my sitemap.xml) provided a 301 to a valid URL, usign my new domain. This is where Shlink stepped in.</p>
+<p>Anyway, I wholeheartedly consumed Shlink which enabled me to migrate my blog to a new domain and I loved it. I moved from WordPress to using Hugo (see <a class="link" href="https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/"  target="_blank" rel="noopener"
+    >Deploying Hugo Websites in Azure for Pennies or Free on GitHub Pages</a>). Thankfully I didn&rsquo;t have too many posts to carry over. However there was enough to make me want to use a tool to convert WordPress post XML to Markdown: <a class="link" href="https://github.com/lonekorean/wordpress-export-to-markdown"  target="_blank" rel="noopener"
+    >lonekorean/wordpress-export-to-markdown</a>.</p>
+<p>There was also enough to make my hands hurt with a lot of careful copying and pasting trying to create all the short links in Shlink for both domains <code>cookadam.co.uk</code> and <code>www.cookadam.co.uk</code>. I looked to see if there was a Shlink module in PowerShell gallery, and there wasn&rsquo;t. Like many other PowerShell enthusiasts, I jumped on the opportunity and wrote <a class="link" href="https://github.com/codaamok/PSShlink"  target="_blank" rel="noopener"
+    >PSShlink</a>.</p>
+<h2 id="installing-psshlink">Installing PSShlink</h2>
+<p>Install the module from the PowerShell Gallery:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Install-Module PSShlink -Scope CurrentUser
+Import-Module PSShlink
+</code></pre></div><p>Check out all of the available functions:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-Command -Module PSShlink
+</code></pre></div><p><figure>
+		<a href="/p/using-powershell-to-manage-shlink-with-psshlink/images/1.jpg" data-size="1113x508">
+			<img srcset="/p/using-powershell-to-manage-shlink-with-psshlink/images/1_hu56414c8df0d48db30f3ff9ac1aca37cd_34017_480x0_resize_q75_box.jpg 480w, /p/using-powershell-to-manage-shlink-with-psshlink/images/1_hu56414c8df0d48db30f3ff9ac1aca37cd_34017_1024x0_resize_q75_box.jpg 1024w"
+				src="/p/using-powershell-to-manage-shlink-with-psshlink/images/1.jpg" width="1113" height="508" loading="lazy"
+				alt="&nbsp;">
+		</a>
+		
+	</figure></p>
+<h2 id="authentication">Authentication</h2>
+<p>Each function will have two parameters for authentication to your Shlink instance:</p>
+<p><code>-ShlinkServer</code>: a string value of the Shlink server address e.g. <a href="https://example.com">https://example.com</a>
+<code>-ShlinkApiKey</code>: a SecureString value for the Shlink server&rsquo;s API key</p>
+<p>After using any function of PSShlink for the first time after importing the module - which have both parameters <code>-ShlinkServer</code> and <code>-ShlinkApiKey</code> * - it is not necessary to use the parameters again in subsequent uses for other functions of PSShlink. These values are held in memory for as long as the PowerShell session exists.</p>
+<ul>
+<li>Some functions do not require both <code>-ShlinkServer</code> and <code>-ShlinkApiKey</code>, e.g. Get<code>-ShlinkServer</code>. Therefore if the first function you use after importing PSShlink accepts only <code>-ShlinkServer</code>, you will not be asked again for this value by other functions of PSShlink. You will however be prompted for the API key. Again, subsequent uses of other functions will no longer require <code>-ShlinkServer</code> and <code>-ShlinkApiKey</code>.</li>
+</ul>
+<p>If the first function you use after importing PSShlink requires <code>-ShlinkServer</code> and/or <code>-ShlinkApiKey</code> and you have not passed the parameter(s), you will be prompted for them.</p>
+<h2 id="using-psshlink">Using PSShlink</h2>
+<p>As previously mentioned, <code>-ShlinkApiKey</code> only accepts a SecureString value for simplicity we&rsquo;ll create a SecureString value now for our API key.</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$ApiKey = <span style="color:#e6db74">&#34;ba6c52ed-flk5-4e84-9fc7-9c7e34825da0&#34;</span> | ConvertTo-SecureString -AsPlainText -Force
+</code></pre></div><p>Using the newly created SecureString API key for our Shlink instance, let&rsquo;s query all of our short codes:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-ShlinkUrl -ShlinkServer <span style="color:#e6db74">&#34;https://myshlinkserver.com&#34;</span> -ShlinkApiKey $Key
+</code></pre></div><p>The great thing about PSShlink is that the Shlink server name and API key are held in memory for as long as the PowerShell lives. They&rsquo;re not accessible as variables to use outside of the <a class="link" href="https://mikefrobbins.com/2017/06/08/what-is-this-module-scope-in-powershell-that-you-speak-of/#:~:text=%E2%80%9CThe%20privacy%20of%20a%20module,do%20have%20their%20own%20scope.%E2%80%9D"  target="_blank" rel="noopener"
+    >&ldquo;module&rsquo;s scope&rdquo;</a> though.</p>
+<p>This means you do not have to repeatedly supply the <code>-ShlinkServer</code> or <code>-ShlinkApiKey</code> parameters for subsequent function calls of PSShlink, so long as the first one was successful.</p>
+<p>For example, let&rsquo;s save QR code images for all of our short codes:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-ShlinkUrl | Save-ShlinkUrlQrCode
+</code></pre></div><p>All files will be saved as png and 300x300 in size. All files by default are saved in your Downloads directory using the naming convention: <code>ShlinkQRCode_&lt;shortCode&gt;_&lt;domain&gt;_&lt;size&gt;.&lt;format&gt;</code>. e.g. <code>ShlinkQRCode_asFk2_example-com_300.png</code>. As promised, you can clearly see we did not supply the Server address or API keys and it still worked!</p>
+<h2 id="getting-help">Getting help</h2>
+<p>All functions come with complete comment based help, so it is possible to find examples for each function using <code>Get-Help</code>. For example, use the following to see detailed help including examples for <code>Save-ShlinkUrlQrCode</code>:</p>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-Help Save-ShlinkUrlQrCode
+</code></pre></div><p>Failing that, feel free to raise an issue on the <a class="link" href="https://github.com/codaamok/PSShlink"  target="_blank" rel="noopener"
+    >GitHub repo</a>!</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+</aside>
+
+
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "adam-cook" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">&copy; 2020 Adam Cook</section>
+    <section class="powerby">Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.1.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true" style="display:none">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+            </main>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"
+    integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g=" crossorigin="anonymous"></script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<link rel="stylesheet" href="/css/highlight/light.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="/css/highlight/dark.min.css" media="(prefers-color-scheme: dark)">
+
+    </body>
+</html>

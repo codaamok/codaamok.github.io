@@ -6,7 +6,64 @@
         <description>Recent content on Adam Cook</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Sun, 13 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://adamcook.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Mon, 21 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://adamcook.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Using PowerShell to Manage Shlink With PSShlink</title>
+        <link>https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/</link>
+        <pubDate>Mon, 21 Dec 2020 00:00:00 +0000</pubDate>
+        
+        <guid>https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/</guid>
+        <description>&lt;img src="https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/images/cover.jpg" alt="Featured image of post Using PowerShell to Manage Shlink With PSShlink" /&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://shlink.io/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Shlink&lt;/a&gt; is an open-source self-hosted and PHP-based URL shortener application. I wrote &lt;a class=&#34;link&#34; href=&#34;https://github.com/codaamok/psshlink&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;PSShlink&lt;/a&gt; which will help you manage all of your short codes using PowerShell!&lt;/p&gt;
+&lt;p&gt;Shlink helped me tremendously when I moved my domain and blog CMS from cookadam.co.uk to adamcook.io. Some of my posts rank modestly in search results for some keywords and I felt unhappy about letting that go. I also did not want people&amp;rsquo;s bookmarks for posts using my old domain to result in an incomplete redirect to its new URL.&lt;/p&gt;
+&lt;p&gt;Google also help you secure your position in search results if you tell them your new domain. There were a couple of prerequisites to make this happen and one of them was to ensure all posts (discovered by my sitemap.xml) provided a 301 to a valid URL, usign my new domain. This is where Shlink stepped in.&lt;/p&gt;
+&lt;p&gt;Anyway, I wholeheartedly consumed Shlink which enabled me to migrate my blog to a new domain and I loved it. I moved from WordPress to using Hugo (see &lt;a class=&#34;link&#34; href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Deploying Hugo Websites in Azure for Pennies or Free on GitHub Pages&lt;/a&gt;). Thankfully I didn&amp;rsquo;t have too many posts to carry over. However there was enough to make me want to use a tool to convert WordPress post XML to Markdown: &lt;a class=&#34;link&#34; href=&#34;https://github.com/lonekorean/wordpress-export-to-markdown&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;lonekorean/wordpress-export-to-markdown&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;There was also enough to make my hands hurt with a lot of careful copying and pasting trying to create all the short links in Shlink for both domains &lt;code&gt;cookadam.co.uk&lt;/code&gt; and &lt;code&gt;www.cookadam.co.uk&lt;/code&gt;. I looked to see if there was a Shlink module in PowerShell gallery, and there wasn&amp;rsquo;t. Like many other PowerShell enthusiasts, I jumped on the opportunity and wrote &lt;a class=&#34;link&#34; href=&#34;https://github.com/codaamok/PSShlink&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;PSShlink&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;installing-psshlink&#34;&gt;Installing PSShlink&lt;/h2&gt;
+&lt;p&gt;Install the module from the PowerShell Gallery:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Install-Module PSShlink -Scope CurrentUser
+Import-Module PSShlink
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Check out all of the available functions:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-Command -Module PSShlink
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/images/1.jpg&#34; data-size=&#34;1113x508&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/images/1_hu56414c8df0d48db30f3ff9ac1aca37cd_34017_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/images/1_hu56414c8df0d48db30f3ff9ac1aca37cd_34017_1024x0_resize_q75_box.jpg 1024w&#34;
+				src=&#34;https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/images/1.jpg&#34; width=&#34;1113&#34; height=&#34;508&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;h2 id=&#34;authentication&#34;&gt;Authentication&lt;/h2&gt;
+&lt;p&gt;Each function will have two parameters for authentication to your Shlink instance:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;-ShlinkServer&lt;/code&gt;: a string value of the Shlink server address e.g. &lt;a href=&#34;https://example.com&#34;&gt;https://example.com&lt;/a&gt;
+&lt;code&gt;-ShlinkApiKey&lt;/code&gt;: a SecureString value for the Shlink server&amp;rsquo;s API key&lt;/p&gt;
+&lt;p&gt;After using any function of PSShlink for the first time after importing the module - which have both parameters &lt;code&gt;-ShlinkServer&lt;/code&gt; and &lt;code&gt;-ShlinkApiKey&lt;/code&gt; * - it is not necessary to use the parameters again in subsequent uses for other functions of PSShlink. These values are held in memory for as long as the PowerShell session exists.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Some functions do not require both &lt;code&gt;-ShlinkServer&lt;/code&gt; and &lt;code&gt;-ShlinkApiKey&lt;/code&gt;, e.g. Get&lt;code&gt;-ShlinkServer&lt;/code&gt;. Therefore if the first function you use after importing PSShlink accepts only &lt;code&gt;-ShlinkServer&lt;/code&gt;, you will not be asked again for this value by other functions of PSShlink. You will however be prompted for the API key. Again, subsequent uses of other functions will no longer require &lt;code&gt;-ShlinkServer&lt;/code&gt; and &lt;code&gt;-ShlinkApiKey&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If the first function you use after importing PSShlink requires &lt;code&gt;-ShlinkServer&lt;/code&gt; and/or &lt;code&gt;-ShlinkApiKey&lt;/code&gt; and you have not passed the parameter(s), you will be prompted for them.&lt;/p&gt;
+&lt;h2 id=&#34;using-psshlink&#34;&gt;Using PSShlink&lt;/h2&gt;
+&lt;p&gt;As previously mentioned, &lt;code&gt;-ShlinkApiKey&lt;/code&gt; only accepts a SecureString value for simplicity we&amp;rsquo;ll create a SecureString value now for our API key.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$ApiKey = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;ba6c52ed-flk5-4e84-9fc7-9c7e34825da0&amp;#34;&lt;/span&gt; | ConvertTo-SecureString -AsPlainText -Force
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Using the newly created SecureString API key for our Shlink instance, let&amp;rsquo;s query all of our short codes:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-ShlinkUrl -ShlinkServer &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://myshlinkserver.com&amp;#34;&lt;/span&gt; -ShlinkApiKey $Key
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The great thing about PSShlink is that the Shlink server name and API key are held in memory for as long as the PowerShell lives. They&amp;rsquo;re not accessible as variables to use outside of the &lt;a class=&#34;link&#34; href=&#34;https://mikefrobbins.com/2017/06/08/what-is-this-module-scope-in-powershell-that-you-speak-of/#:~:text=%E2%80%9CThe%20privacy%20of%20a%20module,do%20have%20their%20own%20scope.%E2%80%9D&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&amp;ldquo;module&amp;rsquo;s scope&amp;rdquo;&lt;/a&gt; though.&lt;/p&gt;
+&lt;p&gt;This means you do not have to repeatedly supply the &lt;code&gt;-ShlinkServer&lt;/code&gt; or &lt;code&gt;-ShlinkApiKey&lt;/code&gt; parameters for subsequent function calls of PSShlink, so long as the first one was successful.&lt;/p&gt;
+&lt;p&gt;For example, let&amp;rsquo;s save QR code images for all of our short codes:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-ShlinkUrl | Save-ShlinkUrlQrCode
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;All files will be saved as png and 300x300 in size. All files by default are saved in your Downloads directory using the naming convention: &lt;code&gt;ShlinkQRCode_&amp;lt;shortCode&amp;gt;_&amp;lt;domain&amp;gt;_&amp;lt;size&amp;gt;.&amp;lt;format&amp;gt;&lt;/code&gt;. e.g. &lt;code&gt;ShlinkQRCode_asFk2_example-com_300.png&lt;/code&gt;. As promised, you can clearly see we did not supply the Server address or API keys and it still worked!&lt;/p&gt;
+&lt;h2 id=&#34;getting-help&#34;&gt;Getting help&lt;/h2&gt;
+&lt;p&gt;All functions come with complete comment based help, so it is possible to find examples for each function using &lt;code&gt;Get-Help&lt;/code&gt;. For example, use the following to see detailed help including examples for &lt;code&gt;Save-ShlinkUrlQrCode&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-Help Save-ShlinkUrlQrCode
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Failing that, feel free to raise an issue on the &lt;a class=&#34;link&#34; href=&#34;https://github.com/codaamok/PSShlink&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;GitHub repo&lt;/a&gt;!&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Hosting and Protecting Your Own NuGet Feed with ProGet</title>
         <link>https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/</link>
         <pubDate>Sun, 13 Dec 2020 00:00:00 +0000</pubDate>
