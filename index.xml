@@ -1045,7 +1045,7 @@ $Modules | Install-Module -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;
 &lt;p&gt;The first event is this Wednesday and I got seriously carried away this weekend with styling some &amp;ldquo;starting soon&amp;rdquo; or &amp;ldquo;be right back&amp;rdquo; animations. Below is what I&amp;rsquo;ve ended up with and I&amp;rsquo;ll quickly walkthrough how to use it if you wanted to do something similar.&lt;/p&gt;
 
 &lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
-  &lt;iframe loading=&#34;lazy&#34; src=&#34;https://www.youtube.com/embed/VAtMaMHLFW8&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+  &lt;iframe loading=&#34;lazy&#34; src=&#34;https://www.youtube.com/embed/zubibdBBTVU&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
 &lt;/div&gt;
 
 &lt;p&gt;As you can see in both scenes there is only 1 single browse source. This immediately makes my OBS setup super simple and easily to recreate if I ever need to.&lt;/p&gt;
@@ -1068,7 +1068,7 @@ $Modules | Install-Module -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;
 &lt;p&gt;Here&amp;rsquo;s a quick demo of using the &lt;code&gt;New-PSSouthamptonVirtualSession.ps1&lt;/code&gt; and how easily it changes &lt;code&gt;index.php&lt;/code&gt;:&lt;/p&gt;
 
 &lt;div style=&#34;position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;&#34;&gt;
-  &lt;iframe loading=&#34;lazy&#34; src=&#34;https://www.youtube.com/embed/1OhdfvRGNyo&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
+  &lt;iframe loading=&#34;lazy&#34; src=&#34;https://www.youtube.com/embed/fuGn8oPYBzE&#34; style=&#34;position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;&#34; allowfullscreen title=&#34;YouTube Video&#34;&gt;&lt;/iframe&gt;
 &lt;/div&gt;
 
 </description>
