@@ -50,7 +50,7 @@ Little did I know until recently, a lack of recent hardware inventory data could
 
                 
                     
-                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_2.png" width="300"
+                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_3.png" width="300"
                         height="300" class="site-logo" loading="lazy" alt="Avatar">
                 
 
@@ -360,7 +360,7 @@ Little did I know until recently, a lack of recent hardware inventory data could
 </ul>
 <p>You can manually trigger a delta by running the Hardware Inventory Cycle in the Control Panel applet, however consider running the below if you want to force a full report. Also consider using <a class="link" href="https://recastsoftware.com/"  target="_blank" rel="noopener"
     >Recast&rsquo;s Right Click Tools</a> which gives you this option from the console.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-CimInstance -Namespace <span style="color:#e6db74">&#34;root\ccm\invagt&#34;</span> -ClassName <span style="color:#e6db74">&#34;InventoryActionStatus&#34;</span> | 
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-CimInstance -Namespace <span style="color:#e6db74">&#34;root\ccm\invagt&#34;</span> -ClassName <span style="color:#e6db74">&#34;InventoryActionStatus&#34;</span> | 
     Where-Object { $_.InventoryActionID <span style="color:#f92672">-eq</span> <span style="color:#e6db74">&#34;{00000000-0000-0000-0000-000000000001}&#34;</span> } | 
         Remove-CimInstance
 
@@ -388,20 +388,20 @@ Invoke-CimMethod @InvokeCimMethodSplat
 <p>CMD</p>
 <pre><code>bitsadmin /list /allusers
 </code></pre><p>PowerShell</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-BitsTransfer -AllUsers
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-BitsTransfer -AllUsers
 </code></pre></div><p>Get more information about the reason why they&rsquo;re failing with:</p>
 <p>CMD</p>
 <pre><code>bitsadmin /info JOBID /verbose
 </code></pre><p>PowerShell</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-BitsTransfer -JobId JOBID | Select-Object *
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-BitsTransfer -JobId JOBID | Select-Object *
 </code></pre></div><p>To reset all BITS jobs&hellip; You will notice most of the jobs are owned by SYSTEM or NETWORK SERVICE, of which commands you run in any other context will not be successful at purging. A workaround could be to create a scheduled task that runs as SYSTEM to run either of the below:</p>
 <p>CMD</p>
 <pre><code>bitsadmin /reset /allusers
 </code></pre><p>PowerShell</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-BitsTransfer -AllUsers | Remove-BitsTransfer
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-BitsTransfer -AllUsers | Remove-BitsTransfer
 </code></pre></div><p>However, an easier way posted by <a class="link" href="http://www.scconfigmgr.com/2014/03/28/how-to-reset-bits-transfer-queue/"  target="_blank" rel="noopener"
     >Nickolaj Andersen</a> works well:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cmd" data-lang="cmd">net stop BITS 
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-cmd" data-lang="cmd">net stop BITS 
 ipconfig /flushdns 
 <span style="color:#66d9ef">ren</span> <span style="color:#e6db74">&#34;</span>%ALLUSERSPROFILE%<span style="color:#e6db74">\Application Data\Microsoft\Network\Downloader\qmgr0.dat&#34;</span> qmgr0.dat.old 
 <span style="color:#66d9ef">ren</span> <span style="color:#e6db74">&#34;</span>%ALLUSERSPROFILE%<span style="color:#e6db74">\Application Data\Microsoft\Network\Downloader\qmgr1.dat&#34;</span> qmgr1.dat.old
@@ -502,7 +502,7 @@ net start BITS
     
 
     <footer class="site-footer">
-    <section class="copyright">&copy; 2021 Adam Cook</section>
+    <section class="copyright">&copy; 2022 Adam Cook</section>
     <section class="powerby">Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.1.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>

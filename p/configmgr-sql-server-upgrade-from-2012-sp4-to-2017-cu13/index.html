@@ -47,7 +47,7 @@
 
                 
                     
-                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_2.png" width="300"
+                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_3.png" width="300"
                         height="300" class="site-logo" loading="lazy" alt="Avatar">
                 
 
@@ -471,7 +471,7 @@
 <h2 id="sql-server-upgrade">SQL Server Upgrade</h2>
 <p>Now we can get started upgrading the DB engine.</p>
 <p>Start off by stopping and disabling all ConfigMgr services until we&rsquo;re ready. I disabled mine in case I needed to reboot and didn&rsquo;t want to run the risk of ConfigMgr running on an unsupported SQL backend in fear of the gremlins.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$Services = <span style="color:#e6db74">&#34;SMS_EXECUTIVE&#34;</span>, <span style="color:#e6db74">&#34;SMS_NOTIFICATION_SERVER&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_BACKUP&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_COMPONENT_MANAGER&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_SQL_BACKUP&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_VSS_WRITER&#34;</span>, <span style="color:#e6db74">&#34;CONFIGURATION_MANAGER_UPDATE&#34;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$Services = <span style="color:#e6db74">&#34;SMS_EXECUTIVE&#34;</span>, <span style="color:#e6db74">&#34;SMS_NOTIFICATION_SERVER&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_BACKUP&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_COMPONENT_MANAGER&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_SQL_BACKUP&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_VSS_WRITER&#34;</span>, <span style="color:#e6db74">&#34;CONFIGURATION_MANAGER_UPDATE&#34;</span>
 <span style="color:#66d9ef">ForEach</span> ($Service <span style="color:#66d9ef">in</span> $Services) { 
     Write-Host <span style="color:#e6db74">&#34;</span>$($Service)<span style="color:#e6db74">: </span>$((Get-Service -Name $Service).StartType)<span style="color:#e6db74">&#34;</span>
     Stop-Service -Name $Service -Force 
@@ -619,7 +619,7 @@
 	</figure></p>
 <p>Restart 😄</p>
 <p>Restore the services startup types back to what they were and do one more final reboot to ensure all needed services start normally:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$Services = <span style="color:#e6db74">&#34;SMS_EXECUTIVE&#34;</span>, <span style="color:#e6db74">&#34;SMS_NOTIFICATION_SERVER&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_BACKUP&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_COMPONENT_MANAGER&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_SQL_BACKUP&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_VSS_WRITER&#34;</span>, <span style="color:#e6db74">&#34;CONFIGURATION_MANAGER_UPDATE&#34;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$Services = <span style="color:#e6db74">&#34;SMS_EXECUTIVE&#34;</span>, <span style="color:#e6db74">&#34;SMS_NOTIFICATION_SERVER&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_BACKUP&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_COMPONENT_MANAGER&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_SQL_BACKUP&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_VSS_WRITER&#34;</span>, <span style="color:#e6db74">&#34;CONFIGURATION_MANAGER_UPDATE&#34;</span>
 <span style="color:#66d9ef">ForEach</span> ($Service <span style="color:#66d9ef">in</span> $Services) {
     <span style="color:#66d9ef">If</span> ((<span style="color:#e6db74">&#34;SMS_NOTIFICATION_SERVER&#34;</span>, <span style="color:#e6db74">&#34;SMS_SITE_BACKUP&#34;</span>) <span style="color:#f92672">-contains</span> $Service) { 
         Set-Service -Name $Service -StartupType Manual 
@@ -776,7 +776,7 @@
     
 
     <footer class="site-footer">
-    <section class="copyright">&copy; 2021 Adam Cook</section>
+    <section class="copyright">&copy; 2022 Adam Cook</section>
     <section class="powerby">Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.1.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>

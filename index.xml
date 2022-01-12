@@ -24,10 +24,10 @@
     &gt;PSShlink&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;installing-psshlink&#34;&gt;Installing PSShlink&lt;/h2&gt;
 &lt;p&gt;Install the module from the PowerShell Gallery:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Install-Module PSShlink -Scope CurrentUser
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Install-Module PSShlink -Scope CurrentUser
 Import-Module PSShlink
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Check out all of the available functions:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-Command -Module PSShlink
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-Command -Module PSShlink
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;figure&gt;
 		&lt;a href=&#34;https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/images/1.jpg&#34; data-size=&#34;1113x508&#34;&gt;
 			&lt;img srcset=&#34;https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/images/1_hu56414c8df0d48db30f3ff9ac1aca37cd_34017_480x0_resize_q75_box.jpg 480w, https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/images/1_hu56414c8df0d48db30f3ff9ac1aca37cd_34017_1024x0_resize_q75_box.jpg 1024w&#34;
@@ -38,7 +38,8 @@ Import-Module PSShlink
 	&lt;/figure&gt;&lt;/p&gt;
 &lt;h2 id=&#34;authentication&#34;&gt;Authentication&lt;/h2&gt;
 &lt;p&gt;Each function will have two parameters for authentication to your Shlink instance:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;-ShlinkServer&lt;/code&gt;: a string value of the Shlink server address e.g. &lt;a href=&#34;https://example.com&#34;&gt;https://example.com&lt;/a&gt;
+&lt;p&gt;&lt;code&gt;-ShlinkServer&lt;/code&gt;: a string value of the Shlink server address e.g. &lt;a class=&#34;link&#34; href=&#34;https://example.com&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://example.com&lt;/a&gt;
 &lt;code&gt;-ShlinkApiKey&lt;/code&gt;: a SecureString value for the Shlink server&amp;rsquo;s API key&lt;/p&gt;
 &lt;p&gt;After using any function of PSShlink for the first time after importing the module - which have both parameters &lt;code&gt;-ShlinkServer&lt;/code&gt; and &lt;code&gt;-ShlinkApiKey&lt;/code&gt; * - it is not necessary to use the parameters again in subsequent uses for other functions of PSShlink. These values are held in memory for as long as the PowerShell session exists.&lt;/p&gt;
 &lt;ul&gt;
@@ -47,18 +48,18 @@ Import-Module PSShlink
 &lt;p&gt;If the first function you use after importing PSShlink requires &lt;code&gt;-ShlinkServer&lt;/code&gt; and/or &lt;code&gt;-ShlinkApiKey&lt;/code&gt; and you have not passed the parameter(s), you will be prompted for them.&lt;/p&gt;
 &lt;h2 id=&#34;using-psshlink&#34;&gt;Using PSShlink&lt;/h2&gt;
 &lt;p&gt;As previously mentioned, &lt;code&gt;-ShlinkApiKey&lt;/code&gt; only accepts a SecureString value for simplicity we&amp;rsquo;ll create a SecureString value now for our API key.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$ApiKey = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;ba6c52ed-flk5-4e84-9fc7-9c7e34825da0&amp;#34;&lt;/span&gt; | ConvertTo-SecureString -AsPlainText -Force
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$ApiKey = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;ba6c52ed-flk5-4e84-9fc7-9c7e34825da0&amp;#34;&lt;/span&gt; | ConvertTo-SecureString -AsPlainText -Force
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Using the newly created SecureString API key for our Shlink instance, let&amp;rsquo;s query all of our short codes:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-ShlinkUrl -ShlinkServer &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://myshlinkserver.com&amp;#34;&lt;/span&gt; -ShlinkApiKey $Key
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-ShlinkUrl -ShlinkServer &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://myshlinkserver.com&amp;#34;&lt;/span&gt; -ShlinkApiKey $ApiKey
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The great thing about PSShlink is that the Shlink server name and API key are held in memory for as long as the PowerShell lives. They&amp;rsquo;re not accessible as variables to use outside of the &lt;a class=&#34;link&#34; href=&#34;https://mikefrobbins.com/2017/06/08/what-is-this-module-scope-in-powershell-that-you-speak-of/#:~:text=%E2%80%9CThe%20privacy%20of%20a%20module,do%20have%20their%20own%20scope.%E2%80%9D&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;&amp;ldquo;module&amp;rsquo;s scope&amp;rdquo;&lt;/a&gt; though.&lt;/p&gt;
 &lt;p&gt;This means you do not have to repeatedly supply the &lt;code&gt;-ShlinkServer&lt;/code&gt; or &lt;code&gt;-ShlinkApiKey&lt;/code&gt; parameters for subsequent function calls of PSShlink, so long as the first one was successful.&lt;/p&gt;
 &lt;p&gt;For example, let&amp;rsquo;s save QR code images for all of our short codes:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-ShlinkUrl | Save-ShlinkUrlQrCode
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-ShlinkUrl | Save-ShlinkUrlQrCode
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;All files will be saved as png and 300x300 in size. All files by default are saved in your Downloads directory using the naming convention: &lt;code&gt;ShlinkQRCode_&amp;lt;shortCode&amp;gt;_&amp;lt;domain&amp;gt;_&amp;lt;size&amp;gt;.&amp;lt;format&amp;gt;&lt;/code&gt;. e.g. &lt;code&gt;ShlinkQRCode_asFk2_example-com_300.png&lt;/code&gt;. As promised, you can clearly see we did not supply the Server address or API keys and it still worked!&lt;/p&gt;
 &lt;h2 id=&#34;getting-help&#34;&gt;Getting help&lt;/h2&gt;
 &lt;p&gt;All functions come with complete comment based help, so it is possible to find examples for each function using &lt;code&gt;Get-Help&lt;/code&gt;. For example, use the following to see detailed help including examples for &lt;code&gt;Save-ShlinkUrlQrCode&lt;/code&gt;:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-Help Save-ShlinkUrlQrCode
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-Help Save-ShlinkUrlQrCode
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Failing that, feel free to raise an issue on the &lt;a class=&#34;link&#34; href=&#34;https://github.com/codaamok/PSShlink&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;GitHub repo&lt;/a&gt;!&lt;/p&gt;
 </description>
@@ -352,7 +353,7 @@ Import-Module PSShlink
 &lt;ol&gt;
 &lt;li&gt;Generate or obtain web certificate. Here I&amp;rsquo;ll quickly demo how I do this with the Posh-ACME module.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Install-Module &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Posh-ACME&amp;#34;&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Install-Module &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Posh-ACME&amp;#34;&lt;/span&gt;
 Import-Module &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Posh-ACME&amp;#34;&lt;/span&gt;
 $Params = @{
     Domain = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;nuget.adamcook.io&amp;#34;&lt;/span&gt;
@@ -419,7 +420,7 @@ New-PACertificate @Params
 &lt;/ol&gt;
 &lt;p&gt;I&amp;rsquo;ll be honest.. I have no idea why we need to configure a package source before we can register the repository, but I couldn&amp;rsquo;t get it to work otherwise. &lt;a class=&#34;link&#34; href=&#34;https://github.com/OneGet/oneget/issues/403&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;More info here on that&lt;/a&gt;!&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Set the URL to match your config from the section &amp;#39;Configure ProGet to use HTTPS&amp;#39;&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Set the URL to match your config from the section &amp;#39;Configure ProGet to use HTTPS&amp;#39;&lt;/span&gt;
 &lt;span style=&#34;color:#75715e&#34;&gt;# i.e. https/http, domain and port&lt;/span&gt;
 $URL = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://nuget.adamcook.io:8625/nuget/MyPrivateRepo&amp;#34;&lt;/span&gt; 
 &lt;span style=&#34;color:#75715e&#34;&gt;# Enter the username and password created from the section &lt;/span&gt;
@@ -452,13 +453,13 @@ Register-PSRepository @Params
 &lt;ol start=&#34;2&#34;&gt;
 &lt;li&gt;Issue the following command to grab all of the modules and save them to &lt;code&gt;C:\temp\Az&lt;/code&gt; locally&lt;/li&gt;
 &lt;/ol&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Save-Module -Name &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Az&amp;#34;&lt;/span&gt; -Path &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;C:\temp\Az&amp;#34;&lt;/span&gt; -Repository PSGallery
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Save-Module -Name &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Az&amp;#34;&lt;/span&gt; -Path &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;C:\temp\Az&amp;#34;&lt;/span&gt; -Repository PSGallery
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote&gt;
 &lt;p&gt;⚠️ If you receive an error along the lines of:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;Failed to generate the compressed file for module &#39;C:\Program Files\dotnet\dotnet.exe failed to pack
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Run the below. Close and re-open the console, then try again. &lt;a class=&#34;link&#34; href=&#34;https://github.com/PowerShell/PowerShellGetv2/issues/303&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Credit&lt;/a&gt;.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Invoke-WebRequest -Uri &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://dist.nuget.org/win-x86-commandline/latest/nuget.exe&amp;#34;&lt;/span&gt; -OutFile &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;$env:LOCALAPPDATA\Microsoft\Windows\PowerShell\PowerShellGet\NuGet.exe&amp;#34;&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Invoke-WebRequest -Uri &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://dist.nuget.org/win-x86-commandline/latest/nuget.exe&amp;#34;&lt;/span&gt; -OutFile &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;$env:LOCALAPPDATA\Microsoft\Windows\PowerShell\PowerShellGet\NuGet.exe&amp;#34;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;⚠️ Also note that we are now explicitly specifying to use the &lt;strong&gt;PSGallery&lt;/strong&gt; registered repository using the &lt;code&gt;-Repository&lt;/code&gt; parameter, because we now have multiple registered repositories (or at least you should, the PowerShell Gallery is configured by default on most systems).&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;&lt;figure&gt;
@@ -479,7 +480,7 @@ Register-PSRepository @Params
 &lt;ol start=&#34;3&#34;&gt;
 &lt;li&gt;Using the API key we gathered from the section &lt;a class=&#34;link&#34; href=&#34;#create-api-key-for-publishing&#34; &gt;Create API key for publishing&lt;/a&gt;, we can now publish all the modules which are in the &lt;code&gt;C:\temp\Az&lt;/code&gt; directory:&lt;/li&gt;
 &lt;/ol&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-ChildItem -Path &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;C:\temp\Az&amp;#34;&lt;/span&gt; | &lt;span style=&#34;color:#66d9ef&#34;&gt;ForEach&lt;/span&gt;-Object {
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-ChildItem -Path &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;C:\temp\Az&amp;#34;&lt;/span&gt; | ForEach-Object {
     Publish-Module -Path $_.FullName -NuGetApiKey &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;MySuperSecretAPIKey&amp;#34;&lt;/span&gt; -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;MyPrivateRepo&amp;#34;&lt;/span&gt;
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;4&#34;&gt;
@@ -522,7 +523,7 @@ Register-PSRepository @Params
 &lt;li&gt;If you&amp;rsquo;re trying this from a different system compared to the last section, registry the package source and repository again as shown in the section &lt;a class=&#34;link&#34; href=&#34;#registering-the-feed-on-a-system-and-publishing-a-test-module&#34; &gt;Registering the feed on a system and publishing a test module&lt;/a&gt;. It is possible to omit the the &lt;code&gt;-ScriptPublishLocation&lt;/code&gt; and &lt;code&gt;-PublishLocation&lt;/code&gt; parameters if you do not intend to publish modules or scripts from the system(s).&lt;/li&gt;
 &lt;li&gt;Install all of the &lt;code&gt;Az*&lt;/code&gt; modules. We need to make sure we explicitly specify our new NuGet feed using the &lt;code&gt;-Repository&lt;/code&gt; parameter and the credential too using &lt;code&gt;-Credential&lt;/code&gt;:&lt;/li&gt;
 &lt;/ol&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$Modules = Find-Module -Name &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Az*&amp;#34;&lt;/span&gt; -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;MyPrivateRepo&amp;#34;&lt;/span&gt; -Credential $Cred
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$Modules = Find-Module -Name &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Az*&amp;#34;&lt;/span&gt; -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;MyPrivateRepo&amp;#34;&lt;/span&gt; -Credential $Cred
 $Modules | Install-Module -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;MyPrivateRepo&amp;#34;&lt;/span&gt; -Credential $Cred
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;em&gt;Forgot what credential to use? It&amp;rsquo;s the one we set from the section &lt;a class=&#34;link&#34; href=&#34;#create-user-for-downloading-modules-or-scripts&#34; &gt;Create user for downloading modules/scripts&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;&lt;figure&gt;
@@ -833,7 +834,7 @@ $Modules | Install-Module -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;
 &lt;p&gt;At this point, all there is left to do is to upload some content to your new Blob storage &lt;code&gt;$web&lt;/code&gt; container.&lt;/p&gt;
 &lt;p&gt;As a mess-around, create a file named &lt;code&gt;index.html&lt;/code&gt; locally with some simple HTML in it which we&amp;rsquo;ll use for testing shortly. Install &lt;a class=&#34;link&#34; href=&#34;https://azure.microsoft.com/en-us/features/storage-explorer/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Azure Storage Explorer&lt;/a&gt; and sign in with your Azure AD account with the subscription that holds your new storage account.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;html&lt;/span&gt;&amp;gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;html&lt;/span&gt;&amp;gt;
     &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;body&lt;/span&gt;&amp;gt;
         &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;h1&lt;/span&gt;&amp;gt;Hello world&amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;h1&lt;/span&gt;&amp;gt;
     &amp;lt;/&lt;span style=&#34;color:#f92672&#34;&gt;body&lt;/span&gt;&amp;gt;
@@ -885,7 +886,7 @@ $Modules | Install-Module -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;
 &lt;ol start=&#34;12&#34;&gt;
 &lt;li&gt;Create a file in your repository named &lt;code&gt;azure-blob-storage.yml&lt;/code&gt; (or whatever you want, it really doesn&amp;rsquo;t matter, must be &lt;code&gt;.yml&lt;/code&gt; though) in &lt;code&gt;.github\workflows&lt;/code&gt; directory (that does matter, it must live in there). Use the below to populate to populate its contents.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Azure Storage Blob Container CI/CD&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Azure Storage Blob Container CI/CD&lt;/span&gt;
 
 &lt;span style=&#34;color:#f92672&#34;&gt;on&lt;/span&gt;:
   &lt;span style=&#34;color:#f92672&#34;&gt;push&lt;/span&gt;: 
@@ -973,7 +974,7 @@ $Modules | Install-Module -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;ol start=&#34;10&#34;&gt;
 &lt;li&gt;Create &lt;code&gt;publish.yml&lt;/code&gt; in &lt;code&gt;.github/workflows&lt;/code&gt; and put the below content inside it, adjusting the necessary values that read &lt;code&gt;&amp;lt;CHANGEME&amp;gt;&lt;/code&gt;:&lt;/li&gt;
 &lt;/ol&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Publish site&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Publish site&lt;/span&gt;
 
 &lt;span style=&#34;color:#f92672&#34;&gt;on&lt;/span&gt;: 
   &lt;span style=&#34;color:#f92672&#34;&gt;push&lt;/span&gt;:
@@ -988,7 +989,7 @@ $Modules | Install-Module -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;
         &lt;span style=&#34;color:#f92672&#34;&gt;uses&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;actions/checkout@v2&lt;/span&gt;
 
       - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Update theme&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;run&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;git submodule update --init --recursive # Optional if you have the theme added as submodule, you can pull it and use the most updated version&lt;/span&gt;
+        &lt;span style=&#34;color:#f92672&#34;&gt;run&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;git submodule update --init --recursive&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# Optional if you have the theme added as submodule, you can pull it and use the most updated version&lt;/span&gt;
 
       - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Setup hugo&lt;/span&gt;
         &lt;span style=&#34;color:#f92672&#34;&gt;uses&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;peaceiris/actions-hugo@v2&lt;/span&gt;
@@ -1002,13 +1003,13 @@ $Modules | Install-Module -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;
       - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Deploy&lt;/span&gt;
         &lt;span style=&#34;color:#f92672&#34;&gt;uses&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;peaceiris/actions-gh-pages@v3&lt;/span&gt;
         &lt;span style=&#34;color:#f92672&#34;&gt;with&lt;/span&gt;:
-          &lt;span style=&#34;color:#f92672&#34;&gt;personal_token&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;${{ secrets.&amp;lt;CHANGEME&amp;gt; }} # The name of the secret you created in step 8&lt;/span&gt;
-          &lt;span style=&#34;color:#f92672&#34;&gt;external_repository&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;CHANGEME&amp;gt; # The name of the GitHub Pages repository, e.g. &amp;lt;username&amp;gt;/&amp;lt;username&amp;gt;.github.io&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;personal_token&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;${{ secrets.&amp;lt;CHANGEME&amp;gt; }}&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# The name of the secret you created in step 8&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;external_repository&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;CHANGEME&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# The name of the GitHub Pages repository, e.g. &amp;lt;username&amp;gt;/&amp;lt;username&amp;gt;.github.io&lt;/span&gt;
           &lt;span style=&#34;color:#f92672&#34;&gt;publish_dir&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;./public&lt;/span&gt;
-          &lt;span style=&#34;color:#f92672&#34;&gt;user_name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;CHANGEME&amp;gt; # The git username used for publishing commits to external_repository&lt;/span&gt;
-          &lt;span style=&#34;color:#f92672&#34;&gt;user_email&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;CHANGEME&amp;gt; # The git email address used for publishing commits to external_repository&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;user_name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;CHANGEME&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# The git username used for publishing commits to external_repository&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;user_email&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;CHANGEME&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# The git email address used for publishing commits to external_repository&lt;/span&gt;
           &lt;span style=&#34;color:#f92672&#34;&gt;publish_branch&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;master&lt;/span&gt;
-          &lt;span style=&#34;color:#f92672&#34;&gt;cname&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;CHANGEME&amp;gt; # If you configured your own domain, you may want to populate this with it, e.g. mine is adamcook.io.&lt;/span&gt;
+          &lt;span style=&#34;color:#f92672&#34;&gt;cname&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;&amp;lt;CHANGEME&amp;gt;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# If you configured your own domain, you may want to populate this with it, e.g. mine is adamcook.io.&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://ruddra.com/hugo-deploy-static-page-using-github-actions/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Thank you to Ruddra for inspiration of this YAML!&lt;/a&gt;&lt;/p&gt;
 &lt;ol start=&#34;11&#34;&gt;
@@ -1091,7 +1092,7 @@ $Modules | Install-Module -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;
 &lt;p&gt;Take the scenario where your current template contains a single virtual network resource and you hardcode the virtual network&amp;rsquo;s address space properties and all the subnets too.&lt;/p&gt;
 &lt;p&gt;Maybe you decide to create some logic in your scripts where you dynamically create x many subnets. To do this, we are going to dynamically add x many properties to the &lt;code&gt;Microsoft.Network/VirtualNetworks&lt;/code&gt; resource.&lt;/p&gt;
 &lt;p&gt;Let&amp;rsquo;s start with the below example using those hardcoded properties and subnets.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-JSON&#34; data-lang=&#34;JSON&#34;&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;...&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-JSON&#34; data-lang=&#34;JSON&#34;&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;...&lt;/span&gt;
 {
 	&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;vnet01&amp;#34;&lt;/span&gt;,
 	&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Microsoft.Network/VirtualNetworks&amp;#34;&lt;/span&gt;,
@@ -1133,7 +1134,7 @@ $Modules | Install-Module -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;
 &lt;li&gt;&lt;code&gt;count&lt;/code&gt;:  the number of times we want to iterate over our loop.&lt;!-- raw HTML omitted --&gt;&lt;!-- raw HTML omitted --&gt;&lt;code&gt;input&lt;/code&gt;: this is where we specify values for our resource&amp;rsquo;s properties.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;An example of the &lt;code&gt;copy&lt;/code&gt; element looks like the below.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-JSON&#34; data-lang=&#34;JSON&#34;&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;...&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-JSON&#34; data-lang=&#34;JSON&#34;&gt;&lt;span style=&#34;color:#960050;background-color:#1e0010&#34;&gt;...&lt;/span&gt;
 {
 	&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;name&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;vnet01&amp;#34;&lt;/span&gt;,
 	&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Microsoft.Network/VirtualNetworks&amp;#34;&lt;/span&gt;,
@@ -1168,7 +1169,7 @@ $Modules | Install-Module -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;
 &lt;p&gt;You notice I use both &lt;code&gt;[concat()]&lt;/code&gt; and &lt;code&gt;[copyIndex()]&lt;/code&gt; for the &lt;code&gt;addressPrefix&lt;/code&gt; property. This enables me to bump the subnet by 1 and correlate the subnet name with the 3rd subnet octet.&lt;/p&gt;
 &lt;p&gt;There&amp;rsquo;s definitely room for improvement here. The &lt;code&gt;count&lt;/code&gt; object of the &lt;code&gt;copy&lt;/code&gt; element is hardcoded at the value of 3. What we could do is leverage a parameter of our json value, which contains an array of strings for all the subnets we want in our virtual network.&lt;/p&gt;
 &lt;p&gt;The below is what an ideal could look like that creates subnets based on all the items in a given array:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-JSON&#34; data-lang=&#34;JSON&#34;&gt;{
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-JSON&#34; data-lang=&#34;JSON&#34;&gt;{
 	&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;$schema&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#&amp;#34;&lt;/span&gt;,
     &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;contentVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1.0.0.0&amp;#34;&lt;/span&gt;,
 	&lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;parameters&amp;#34;&lt;/span&gt;: {
@@ -1221,7 +1222,7 @@ $Modules | Install-Module -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;
 &lt;h2 id=&#34;objective-2&#34;&gt;Objective 2&lt;/h2&gt;
 &lt;p&gt;As for the second objective (dynamically creating resources, instead of dynamically setting properties of a resource&amp;rsquo;s properties&amp;hellip; wait, what?!), there&amp;rsquo;s hardly any difference, except there&amp;rsquo;s no need to use the &lt;code&gt;input&lt;/code&gt; object within the &lt;code&gt;copy&lt;/code&gt; element.&lt;/p&gt;
 &lt;p&gt;Below I&amp;rsquo;ll share a complete working example of the template and a short PowerShell snippet to create the deployment.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-JSON&#34; data-lang=&#34;JSON&#34;&gt;{
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-JSON&#34; data-lang=&#34;JSON&#34;&gt;{
     &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;$schema&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#&amp;#34;&lt;/span&gt;,
     &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;contentVersion&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;1.0.0.0&amp;#34;&lt;/span&gt;,
     &lt;span style=&#34;color:#f92672&#34;&gt;&amp;#34;parameters&amp;#34;&lt;/span&gt;: {
@@ -1260,7 +1261,7 @@ $Modules | Install-Module -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;
         }
     ]
 }
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$TemplateParameters = @{
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$TemplateParameters = @{
     &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;virtualNetworkAddressSpaces&amp;#34;&lt;/span&gt; = @(
         &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;192.168.1.0/24&amp;#34;&lt;/span&gt;,
         &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;192.168.2.0/24&amp;#34;&lt;/span&gt;,
@@ -1584,10 +1585,10 @@ At line:1 char:1
     &gt;Creating enums in PowerShell&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Tip! If you want to get the full Parameter Type of a parameter that&amp;rsquo;s an enum, so you can use GetNames:: on it, the below will help:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;(Get-Command Set-ExecutionPolicy).Parameters[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;ExecutionPolicy&amp;#39;&lt;/span&gt;] | Select -ExpandProperty ParameterType
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;(Get-Command Set-ExecutionPolicy).Parameters[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;ExecutionPolicy&amp;#39;&lt;/span&gt;] | Select -ExpandProperty ParameterType
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;datatables-and-filtering&#34;&gt;DataTables and filtering&lt;/h2&gt;
 &lt;p&gt;I recently tackled an issue with the script where collections of large scale and filtering them was an issue. Chris Kibble once showed me DataTables and I remember a remark about them being quick. He wasn&amp;rsquo;t joking! Checkout the below!&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$winFiles = Get-ChildItem c:\windows -Recurse -ErrorAction SilentlyContinue
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$winFiles = Get-ChildItem c:\windows -Recurse -ErrorAction SilentlyContinue
 
 $commands = @{
     &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Where-Object&amp;#39;&lt;/span&gt; = {
@@ -1623,9 +1624,9 @@ $commands = @{
     }
 }
 
-$commands.Keys | &lt;span style=&#34;color:#66d9ef&#34;&gt;ForEach&lt;/span&gt;-Object {
+$commands.Keys | ForEach-Object {
     $testName = $_
-    1..3 | &lt;span style=&#34;color:#66d9ef&#34;&gt;ForEach&lt;/span&gt;-Object {
+    1..3 | ForEach-Object {
         &lt;span style=&#34;color:#66d9ef&#34;&gt;[PSCustomObject]&lt;/span&gt;@{
             TestName  = $testName
             Attempt   = $_
@@ -1860,7 +1861,7 @@ Testing DataTable select
 &lt;h2 id=&#34;sql-server-upgrade&#34;&gt;SQL Server Upgrade&lt;/h2&gt;
 &lt;p&gt;Now we can get started upgrading the DB engine.&lt;/p&gt;
 &lt;p&gt;Start off by stopping and disabling all ConfigMgr services until we&amp;rsquo;re ready. I disabled mine in case I needed to reboot and didn&amp;rsquo;t want to run the risk of ConfigMgr running on an unsupported SQL backend in fear of the gremlins.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$Services = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_EXECUTIVE&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_NOTIFICATION_SERVER&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_BACKUP&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_COMPONENT_MANAGER&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_SQL_BACKUP&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_VSS_WRITER&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;CONFIGURATION_MANAGER_UPDATE&amp;#34;&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$Services = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_EXECUTIVE&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_NOTIFICATION_SERVER&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_BACKUP&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_COMPONENT_MANAGER&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_SQL_BACKUP&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_VSS_WRITER&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;CONFIGURATION_MANAGER_UPDATE&amp;#34;&lt;/span&gt;
 &lt;span style=&#34;color:#66d9ef&#34;&gt;ForEach&lt;/span&gt; ($Service &lt;span style=&#34;color:#66d9ef&#34;&gt;in&lt;/span&gt; $Services) { 
     Write-Host &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$($Service)&lt;span style=&#34;color:#e6db74&#34;&gt;: &lt;/span&gt;$((Get-Service -Name $Service).StartType)&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
     Stop-Service -Name $Service -Force 
@@ -2008,7 +2009,7 @@ Testing DataTable select
 	&lt;/figure&gt;&lt;/p&gt;
 &lt;p&gt;Restart 😄&lt;/p&gt;
 &lt;p&gt;Restore the services startup types back to what they were and do one more final reboot to ensure all needed services start normally:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$Services = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_EXECUTIVE&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_NOTIFICATION_SERVER&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_BACKUP&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_COMPONENT_MANAGER&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_SQL_BACKUP&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_VSS_WRITER&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;CONFIGURATION_MANAGER_UPDATE&amp;#34;&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$Services = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_EXECUTIVE&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_NOTIFICATION_SERVER&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_BACKUP&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_COMPONENT_MANAGER&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_SQL_BACKUP&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_VSS_WRITER&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;CONFIGURATION_MANAGER_UPDATE&amp;#34;&lt;/span&gt;
 &lt;span style=&#34;color:#66d9ef&#34;&gt;ForEach&lt;/span&gt; ($Service &lt;span style=&#34;color:#66d9ef&#34;&gt;in&lt;/span&gt; $Services) {
     &lt;span style=&#34;color:#66d9ef&#34;&gt;If&lt;/span&gt; ((&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_NOTIFICATION_SERVER&amp;#34;&lt;/span&gt;, &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;SMS_SITE_BACKUP&amp;#34;&lt;/span&gt;) &lt;span style=&#34;color:#f92672&#34;&gt;-contains&lt;/span&gt; $Service) { 
         Set-Service -Name $Service -StartupType Manual 
@@ -2207,7 +2208,7 @@ sudo apt update
 &lt;pre&gt;&lt;code&gt;Job error (0x80004005) received for assignment ({09985588-0eff-47e1-9f9d-3846efce8c2b}) action	
 Updates will not be made available
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Give this a whirl:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Move-Item -Path &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;$env:SystemRoot\System32\GroupPolicy\Machine\Registry.pol&amp;#34;&lt;/span&gt; -Destination &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;$env:SystemRoot\System32\GroupPolicy\Machine\Registry.pol.old&amp;#34;&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Move-Item -Path &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;$env:SystemRoot\System32\GroupPolicy\Machine\Registry.pol&amp;#34;&lt;/span&gt; -Destination &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;$env:SystemRoot\System32\GroupPolicy\Machine\Registry.pol.old&amp;#34;&lt;/span&gt;
 Invoke-GPUpdate -Force
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Verify a new Registry.pol file is created, then trigger Software Update Deployment Evaluation Cycle and Software Updates Scan Cycle.&lt;/p&gt;
 &lt;p&gt;How did I discover? &lt;a class=&#34;link&#34; href=&#34;http://henkhoogendoorn.blogspot.com/2015/09/software-update-error-0x80004005-on.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
@@ -2222,7 +2223,7 @@ Invoke-GPUpdate -Force
         <guid>https://adamcook.io/p/blank-installedon-property-for-get-hotfix-and-win32_quickfixengineering/</guid>
         <description>&lt;img src="https://adamcook.io/p/blank-installedon-property-for-get-hotfix-and-win32_quickfixengineering/images/cover.jpg" alt="Featured image of post Blank InstalledOn Property for Get-HotFix and Win32_QuickFixEngineering" /&gt;&lt;p&gt;Want to get Windows Update status on a bunch of machines, only to discover the InstalledOn property is blank for lots of updates when you&amp;rsquo;re using Get-HotFix or querying Win32_QuickFixEngineering class with Get-WmiObject?&lt;/p&gt;
 &lt;p&gt;Turns out it&amp;rsquo;s related to PowerShell parsing the date as string to datetime object incorrectly, depending what your system locale is.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$Updates = Get-HotFix | Select-Object description,hotfixid,installedby,@{l=&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;InstalledOn&amp;#34;&lt;/span&gt;;e={&lt;span style=&#34;color:#66d9ef&#34;&gt;[DateTime]&lt;/span&gt;::Parse($_.psbase.properties[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;installedon&amp;#34;&lt;/span&gt;].value,$(&lt;span style=&#34;color:#66d9ef&#34;&gt;[System.Globalization.CultureInfo]&lt;/span&gt;::GetCultureInfo(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;en-US&amp;#34;&lt;/span&gt;)))}}
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;$Updates = Get-HotFix | Select-Object description,hotfixid,installedby,@{l=&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;InstalledOn&amp;#34;&lt;/span&gt;;e={&lt;span style=&#34;color:#66d9ef&#34;&gt;[DateTime]&lt;/span&gt;::Parse($_.psbase.properties[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;installedon&amp;#34;&lt;/span&gt;].value,$(&lt;span style=&#34;color:#66d9ef&#34;&gt;[System.Globalization.CultureInfo]&lt;/span&gt;::GetCultureInfo(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;en-US&amp;#34;&lt;/span&gt;)))}}
 $Updates | Sort InstalledOn -Descending | Select -First 10
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;I like the above approach, &lt;a class=&#34;link&#34; href=&#34;https://community.idera.com/database-tools/powershell/ask_the_experts/f/learn_powershell_from_don_jones-24/12409/get-hotfix-and-get-wmiobject-win32_quickfixengineering-missing-installedon-property/21923#21923&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;as posted by user pyro3113&lt;/a&gt;, because the select expression lets you easily query remote systems using Get-HotFix or Get-WmiObject.&lt;/p&gt;
@@ -2246,7 +2247,7 @@ $Updates | Sort InstalledOn -Descending | Select -First 10
         <description>&lt;img src="https://adamcook.io/p/configmgr-throttling-distribution-point-bandwidth/images/cover.jpg" alt="Featured image of post ConfigMgr Throttling Distribution Point Bandwidth" /&gt;&lt;blockquote&gt;
 &lt;p&gt;ℹ️ It looks like as I was writing this Microsoft have just publicly released a former internal document detailing some things that I had claimed to be undocumented (&lt;a class=&#34;link&#34; href=&#34;https://support.microsoft.com/en-us/help/4482728/understand-troubleshoot-content-distribution-in-configuration-manager&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;click here&lt;/a&gt;):
-&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;Deep, deep, DEEP dive into content distribution in &lt;a href=&#34;https://twitter.com/hashtag/SCCM?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#SCCM&lt;/a&gt; by the great &lt;a href=&#34;https://twitter.com/vinay_pamnani?ref_src=twsrc%5Etfw&#34;&gt;@vinay_pamnani&lt;/a&gt;   Internal-only content originally, now free for public use! &lt;a href=&#34;https://t.co/oUPTSzrTmt&#34;&gt;https://t.co/oUPTSzrTmt&lt;/a&gt;&lt;/p&gt;&amp;mdash; Matt Toto (@_contoto) &lt;a href=&#34;https://twitter.com/_contoto/status/1092469116349440003?ref_src=twsrc%5Etfw&#34;&gt;February 4, 2019&lt;/a&gt;&lt;/blockquote&gt;
+&lt;blockquote class=&#34;twitter-tweet&#34;&gt;&lt;p lang=&#34;en&#34; dir=&#34;ltr&#34;&gt;Deep, deep, DEEP dive into content distribution in &lt;a href=&#34;https://twitter.com/hashtag/SCCM?src=hash&amp;amp;ref_src=twsrc%5Etfw&#34;&gt;#SCCM&lt;/a&gt; by the great &lt;a href=&#34;https://twitter.com/vinay_pamnani?ref_src=twsrc%5Etfw&#34;&gt;@vinay_pamnani&lt;/a&gt;   Internal-only content originally, now free for public use! &lt;a href=&#34;https://t.co/oUPTSzrTmt&#34;&gt;https://t.co/oUPTSzrTmt&lt;/a&gt;&lt;/p&gt;&amp;mdash; Contoto (@_contoto) &lt;a href=&#34;https://twitter.com/_contoto/status/1092469116349440003?ref_src=twsrc%5Etfw&#34;&gt;February 4, 2019&lt;/a&gt;&lt;/blockquote&gt;
 &lt;script async src=&#34;https://platform.twitter.com/widgets.js&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
 &lt;/p&gt;
 &lt;/blockquote&gt;
@@ -2428,7 +2429,7 @@ SMS_PACKAGE_TRANSFER_MANAGER seemed to be perfectly time so perfmon could not pl
 &lt;/ul&gt;
 &lt;p&gt;You can manually trigger a delta by running the Hardware Inventory Cycle in the Control Panel applet, however consider running the below if you want to force a full report. Also consider using &lt;a class=&#34;link&#34; href=&#34;https://recastsoftware.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Recast&amp;rsquo;s Right Click Tools&lt;/a&gt; which gives you this option from the console.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-CimInstance -Namespace &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;root\ccm\invagt&amp;#34;&lt;/span&gt; -ClassName &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;InventoryActionStatus&amp;#34;&lt;/span&gt; | 
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-CimInstance -Namespace &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;root\ccm\invagt&amp;#34;&lt;/span&gt; -ClassName &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;InventoryActionStatus&amp;#34;&lt;/span&gt; | 
     Where-Object { $_.InventoryActionID &lt;span style=&#34;color:#f92672&#34;&gt;-eq&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;{00000000-0000-0000-0000-000000000001}&amp;#34;&lt;/span&gt; } | 
         Remove-CimInstance
 
@@ -2456,20 +2457,20 @@ Invoke-CimMethod @InvokeCimMethodSplat
 &lt;p&gt;CMD&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;bitsadmin /list /allusers
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;PowerShell&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-BitsTransfer -AllUsers
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-BitsTransfer -AllUsers
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Get more information about the reason why they&amp;rsquo;re failing with:&lt;/p&gt;
 &lt;p&gt;CMD&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;bitsadmin /info JOBID /verbose
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;PowerShell&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-BitsTransfer -JobId JOBID | Select-Object *
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-BitsTransfer -JobId JOBID | Select-Object *
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To reset all BITS jobs&amp;hellip; You will notice most of the jobs are owned by SYSTEM or NETWORK SERVICE, of which commands you run in any other context will not be successful at purging. A workaround could be to create a scheduled task that runs as SYSTEM to run either of the below:&lt;/p&gt;
 &lt;p&gt;CMD&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;bitsadmin /reset /allusers
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;PowerShell&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-BitsTransfer -AllUsers | Remove-BitsTransfer
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;Get-BitsTransfer -AllUsers | Remove-BitsTransfer
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;However, an easier way posted by &lt;a class=&#34;link&#34; href=&#34;http://www.scconfigmgr.com/2014/03/28/how-to-reset-bits-transfer-queue/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Nickolaj Andersen&lt;/a&gt; works well:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;net stop BITS 
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-cmd&#34; data-lang=&#34;cmd&#34;&gt;net stop BITS 
 ipconfig /flushdns 
 &lt;span style=&#34;color:#66d9ef&#34;&gt;ren&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;%ALLUSERSPROFILE%&lt;span style=&#34;color:#e6db74&#34;&gt;\Application Data\Microsoft\Network\Downloader\qmgr0.dat&amp;#34;&lt;/span&gt; qmgr0.dat.old 
 &lt;span style=&#34;color:#66d9ef&#34;&gt;ren&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;%ALLUSERSPROFILE%&lt;span style=&#34;color:#e6db74&#34;&gt;\Application Data\Microsoft\Network\Downloader\qmgr1.dat&amp;#34;&lt;/span&gt; qmgr1.dat.old
@@ -2524,7 +2525,7 @@ net start BITS
         <guid>https://adamcook.io/p/compare-dd-wrt-wan-ip-to-a-host-public-ip/</guid>
         <description>&lt;img src="https://adamcook.io/p/compare-dd-wrt-wan-ip-to-a-host-public-ip/images/cover.jpg" alt="Featured image of post Compare DD-WRT WAN IP to a Host public IP" /&gt;&lt;p&gt;For my home lab on a particular VM that runs Ubuntu Server, I&amp;rsquo;m interested to know the public IP of my LAN&amp;rsquo;s gateway and the VM&amp;rsquo;s gateway (as it&amp;rsquo;s always connected to VPN). Below is a script I wrote to pull the WAN IP from my DD-WRT router and compare that to VM&amp;rsquo;s gateway public IP.&lt;/p&gt;
 &lt;p&gt;My copy does other things like start/stop services, configure local applications in my home lab as well as use Pushbullet to notify me if certain conditions are met. This should get you going, hopefully it helps someone.&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/bin/bash
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;#!/bin/bash
 &lt;/span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;&lt;/span&gt;
 x&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;wget &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;http://192.168.0.1/Status_Internet.live.asp&amp;#34;&lt;/span&gt; --user&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;USERNAME&amp;#34;&lt;/span&gt; --password&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;PASSWORD&amp;#34;&lt;/span&gt; -q -O - | sed -e &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;s/}/\n/g&amp;#39;&lt;/span&gt; -e &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;s/{//g&amp;#39;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;
 declare -A results

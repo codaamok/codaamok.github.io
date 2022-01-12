@@ -59,7 +59,7 @@ Move-Item -Path &amp;#34;$env:SystemRoot\System32\GroupPolicy\Machine\Registry.p
 
                 
                     
-                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_2.png" width="300"
+                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_3.png" width="300"
                         height="300" class="site-logo" loading="lazy" alt="Avatar">
                 
 
@@ -305,7 +305,7 @@ Move-Item -Path &amp;#34;$env:SystemRoot\System32\GroupPolicy\Machine\Registry.p
 <pre><code>Job error (0x80004005) received for assignment ({09985588-0eff-47e1-9f9d-3846efce8c2b}) action	
 Updates will not be made available
 </code></pre><p>Give this a whirl:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Move-Item -Path <span style="color:#e6db74">&#34;$env:SystemRoot\System32\GroupPolicy\Machine\Registry.pol&#34;</span> -Destination <span style="color:#e6db74">&#34;$env:SystemRoot\System32\GroupPolicy\Machine\Registry.pol.old&#34;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Move-Item -Path <span style="color:#e6db74">&#34;$env:SystemRoot\System32\GroupPolicy\Machine\Registry.pol&#34;</span> -Destination <span style="color:#e6db74">&#34;$env:SystemRoot\System32\GroupPolicy\Machine\Registry.pol.old&#34;</span>
 Invoke-GPUpdate -Force
 </code></pre></div><p>Verify a new Registry.pol file is created, then trigger Software Update Deployment Evaluation Cycle and Software Updates Scan Cycle.</p>
 <p>How did I discover? <a class="link" href="http://henkhoogendoorn.blogspot.com/2015/09/software-update-error-0x80004005-on.html"  target="_blank" rel="noopener"
@@ -366,7 +366,7 @@ Invoke-GPUpdate -Force
     
 
     <footer class="site-footer">
-    <section class="copyright">&copy; 2021 Adam Cook</section>
+    <section class="copyright">&copy; 2022 Adam Cook</section>
     <section class="powerby">Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.1.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>

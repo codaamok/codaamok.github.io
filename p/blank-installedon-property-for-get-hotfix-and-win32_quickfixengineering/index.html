@@ -53,7 +53,7 @@ $Updates = Get-HotFix | Select-Object description,hotfixid,installedby,@{l=&amp;
 
                 
                     
-                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_2.png" width="300"
+                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_3.png" width="300"
                         height="300" class="site-logo" loading="lazy" alt="Avatar">
                 
 
@@ -287,7 +287,7 @@ $Updates = Get-HotFix | Select-Object description,hotfixid,installedby,@{l=&amp;
     <section class="article-content">
     <p>Want to get Windows Update status on a bunch of machines, only to discover the InstalledOn property is blank for lots of updates when you&rsquo;re using Get-HotFix or querying Win32_QuickFixEngineering class with Get-WmiObject?</p>
 <p>Turns out it&rsquo;s related to PowerShell parsing the date as string to datetime object incorrectly, depending what your system locale is.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$Updates = Get-HotFix | Select-Object description,hotfixid,installedby,@{l=<span style="color:#e6db74">&#34;InstalledOn&#34;</span>;e={<span style="color:#66d9ef">[DateTime]</span>::Parse($_.psbase.properties[<span style="color:#e6db74">&#34;installedon&#34;</span>].value,$(<span style="color:#66d9ef">[System.Globalization.CultureInfo]</span>::GetCultureInfo(<span style="color:#e6db74">&#34;en-US&#34;</span>)))}}
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$Updates = Get-HotFix | Select-Object description,hotfixid,installedby,@{l=<span style="color:#e6db74">&#34;InstalledOn&#34;</span>;e={<span style="color:#66d9ef">[DateTime]</span>::Parse($_.psbase.properties[<span style="color:#e6db74">&#34;installedon&#34;</span>].value,$(<span style="color:#66d9ef">[System.Globalization.CultureInfo]</span>::GetCultureInfo(<span style="color:#e6db74">&#34;en-US&#34;</span>)))}}
 $Updates | Sort InstalledOn -Descending | Select -First 10
 </code></pre></div><p>I like the above approach, <a class="link" href="https://community.idera.com/database-tools/powershell/ask_the_experts/f/learn_powershell_from_don_jones-24/12409/get-hotfix-and-get-wmiobject-win32_quickfixengineering-missing-installedon-property/21923#21923"  target="_blank" rel="noopener"
     >as posted by user pyro3113</a>, because the select expression lets you easily query remote systems using Get-HotFix or Get-WmiObject.</p>
@@ -356,7 +356,7 @@ $Updates | Sort InstalledOn -Descending | Select -First 10
     
 
     <footer class="site-footer">
-    <section class="copyright">&copy; 2021 Adam Cook</section>
+    <section class="copyright">&copy; 2022 Adam Cook</section>
     <section class="powerby">Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.1.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>

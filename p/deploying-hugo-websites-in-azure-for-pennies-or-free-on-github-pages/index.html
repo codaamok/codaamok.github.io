@@ -53,7 +53,7 @@ In this post I want to share with you what Hugo is, why I like it and those thre
 
                 
                     
-                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_2.png" width="300"
+                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_3.png" width="300"
                         height="300" class="site-logo" loading="lazy" alt="Avatar">
                 
 
@@ -509,7 +509,7 @@ In this post I want to share with you what Hugo is, why I like it and those thre
 <p>At this point, all there is left to do is to upload some content to your new Blob storage <code>$web</code> container.</p>
 <p>As a mess-around, create a file named <code>index.html</code> locally with some simple HTML in it which we&rsquo;ll use for testing shortly. Install <a class="link" href="https://azure.microsoft.com/en-us/features/storage-explorer/"  target="_blank" rel="noopener"
     >Azure Storage Explorer</a> and sign in with your Azure AD account with the subscription that holds your new storage account.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#f92672">html</span>&gt;
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-html" data-lang="html">&lt;<span style="color:#f92672">html</span>&gt;
     &lt;<span style="color:#f92672">body</span>&gt;
         &lt;<span style="color:#f92672">h1</span>&gt;Hello world&lt;/<span style="color:#f92672">h1</span>&gt;
     &lt;/<span style="color:#f92672">body</span>&gt;
@@ -561,7 +561,7 @@ In this post I want to share with you what Hugo is, why I like it and those thre
 <ol start="12">
 <li>Create a file in your repository named <code>azure-blob-storage.yml</code> (or whatever you want, it really doesn&rsquo;t matter, must be <code>.yml</code> though) in <code>.github\workflows</code> directory (that does matter, it must live in there). Use the below to populate to populate its contents.</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">name</span>: <span style="color:#ae81ff">Azure Storage Blob Container CI/CD</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">name</span>: <span style="color:#ae81ff">Azure Storage Blob Container CI/CD</span>
 
 <span style="color:#f92672">on</span>:
   <span style="color:#f92672">push</span>: 
@@ -649,7 +649,7 @@ In this post I want to share with you what Hugo is, why I like it and those thre
 </code></pre><ol start="10">
 <li>Create <code>publish.yml</code> in <code>.github/workflows</code> and put the below content inside it, adjusting the necessary values that read <code>&lt;CHANGEME&gt;</code>:</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">name</span>: <span style="color:#ae81ff">Publish site</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">name</span>: <span style="color:#ae81ff">Publish site</span>
 
 <span style="color:#f92672">on</span>: 
   <span style="color:#f92672">push</span>:
@@ -664,7 +664,7 @@ In this post I want to share with you what Hugo is, why I like it and those thre
         <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/checkout@v2</span>
 
       - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Update theme</span>
-        <span style="color:#f92672">run</span>: <span style="color:#ae81ff">git submodule update --init --recursive # Optional if you have the theme added as submodule, you can pull it and use the most updated version</span>
+        <span style="color:#f92672">run</span>: <span style="color:#ae81ff">git submodule update --init --recursive</span> <span style="color:#75715e"># Optional if you have the theme added as submodule, you can pull it and use the most updated version</span>
 
       - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Setup hugo</span>
         <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">peaceiris/actions-hugo@v2</span>
@@ -678,13 +678,13 @@ In this post I want to share with you what Hugo is, why I like it and those thre
       - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Deploy</span>
         <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">peaceiris/actions-gh-pages@v3</span>
         <span style="color:#f92672">with</span>:
-          <span style="color:#f92672">personal_token</span>: <span style="color:#ae81ff">${{ secrets.&lt;CHANGEME&gt; }} # The name of the secret you created in step 8</span>
-          <span style="color:#f92672">external_repository</span>: <span style="color:#ae81ff">&lt;CHANGEME&gt; # The name of the GitHub Pages repository, e.g. &lt;username&gt;/&lt;username&gt;.github.io</span>
+          <span style="color:#f92672">personal_token</span>: <span style="color:#ae81ff">${{ secrets.&lt;CHANGEME&gt; }}</span> <span style="color:#75715e"># The name of the secret you created in step 8</span>
+          <span style="color:#f92672">external_repository</span>: <span style="color:#ae81ff">&lt;CHANGEME&gt;</span> <span style="color:#75715e"># The name of the GitHub Pages repository, e.g. &lt;username&gt;/&lt;username&gt;.github.io</span>
           <span style="color:#f92672">publish_dir</span>: <span style="color:#ae81ff">./public</span>
-          <span style="color:#f92672">user_name</span>: <span style="color:#ae81ff">&lt;CHANGEME&gt; # The git username used for publishing commits to external_repository</span>
-          <span style="color:#f92672">user_email</span>: <span style="color:#ae81ff">&lt;CHANGEME&gt; # The git email address used for publishing commits to external_repository</span>
+          <span style="color:#f92672">user_name</span>: <span style="color:#ae81ff">&lt;CHANGEME&gt;</span> <span style="color:#75715e"># The git username used for publishing commits to external_repository</span>
+          <span style="color:#f92672">user_email</span>: <span style="color:#ae81ff">&lt;CHANGEME&gt;</span> <span style="color:#75715e"># The git email address used for publishing commits to external_repository</span>
           <span style="color:#f92672">publish_branch</span>: <span style="color:#ae81ff">master</span>
-          <span style="color:#f92672">cname</span>: <span style="color:#ae81ff">&lt;CHANGEME&gt; # If you configured your own domain, you may want to populate this with it, e.g. mine is adamcook.io.</span>
+          <span style="color:#f92672">cname</span>: <span style="color:#ae81ff">&lt;CHANGEME&gt;</span> <span style="color:#75715e"># If you configured your own domain, you may want to populate this with it, e.g. mine is adamcook.io.</span>
 </code></pre></div><p><a class="link" href="https://ruddra.com/hugo-deploy-static-page-using-github-actions/"  target="_blank" rel="noopener"
     >Thank you to Ruddra for inspiration of this YAML!</a></p>
 <ol start="11">
@@ -757,7 +757,7 @@ In this post I want to share with you what Hugo is, why I like it and those thre
     
 
     <footer class="site-footer">
-    <section class="copyright">&copy; 2021 Adam Cook</section>
+    <section class="copyright">&copy; 2022 Adam Cook</section>
     <section class="powerby">Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.1.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>

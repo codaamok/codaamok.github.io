@@ -1,143 +1,87 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  
   <url>
     <loc>https://adamcook.io/</loc>
     <lastmod>2020-12-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/categories/</loc>
     <lastmod>2020-12-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/post/</loc>
     <lastmod>2020-12-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/categories/powershell/</loc>
     <lastmod>2020-12-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/</loc>
     <lastmod>2020-12-21T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/</loc>
     <lastmod>2020-12-13T00:00:00+00:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/categories/cicd/</loc>
     <lastmod>2020-10-17T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/p/getting-your-powershell-code-into-production-using-github-actions/</loc>
     <lastmod>2020-10-17T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/categories/presentations/</loc>
     <lastmod>2020-10-17T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/categories/azure/</loc>
     <lastmod>2020-10-05T21:04:10+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/</loc>
     <lastmod>2020-10-05T21:04:10+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/p/starting-to-automate-animated-content-for-virtual-events/</loc>
     <lastmod>2020-07-12T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/p/creating-dynamic-azure-arm-templates/</loc>
     <lastmod>2020-07-05T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/categories/configmgr/</loc>
     <lastmod>2019-12-12T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.~~login-failed-for-user-domain%5Cserver/</loc>
     <lastmod>2019-12-12T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/p/configmgr-management-point-500.19-ccmmessaging.log-0x87d00231/</loc>
     <lastmod>2019-07-22T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/p/get-cmunusedsources/</loc>
     <lastmod>2019-07-07T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/p/configmgr-sql-server-upgrade-from-2012-sp4-to-2017-cu13/</loc>
     <lastmod>2019-03-20T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/categories/linux/</loc>
     <lastmod>2019-03-16T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/p/upgrading-to-php-7.2-on-ubuntu/</loc>
     <lastmod>2019-03-16T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/p/updatesdeployment.log-job-error-0x80004005/</loc>
     <lastmod>2019-03-01T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/p/blank-installedon-property-for-get-hotfix-and-win32_quickfixengineering/</loc>
     <lastmod>2019-02-18T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/p/configmgr-throttling-distribution-point-bandwidth/</loc>
     <lastmod>2019-02-17T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/p/configmgr-hardware-inventory-troubleshooting/</loc>
     <lastmod>2018-10-28T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/p/compare-dd-wrt-wan-ip-to-a-host-public-ip/</loc>
     <lastmod>2018-10-27T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/p/configmgr-database-move-failed-to-create/backup-sql-ssb-certificate/</loc>
     <lastmod>2018-10-15T00:00:00+01:00</lastmod>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/archives/</loc>
-  </url>
-  
-  <url>
+  </url><url>
     <loc>https://adamcook.io/tags/</loc>
   </url>
-  
 </urlset>

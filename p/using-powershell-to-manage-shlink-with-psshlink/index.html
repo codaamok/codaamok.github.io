@@ -50,7 +50,7 @@ Shlink helped me tremendously when I moved my domain and blog CMS from cookadam.
 
                 
                     
-                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_2.png" width="300"
+                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_3.png" width="300"
                         height="300" class="site-logo" loading="lazy" alt="Avatar">
                 
 
@@ -294,10 +294,10 @@ Shlink helped me tremendously when I moved my domain and blog CMS from cookadam.
     >PSShlink</a>.</p>
 <h2 id="installing-psshlink">Installing PSShlink</h2>
 <p>Install the module from the PowerShell Gallery:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Install-Module PSShlink -Scope CurrentUser
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Install-Module PSShlink -Scope CurrentUser
 Import-Module PSShlink
 </code></pre></div><p>Check out all of the available functions:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-Command -Module PSShlink
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-Command -Module PSShlink
 </code></pre></div><p><figure>
 		<a href="/p/using-powershell-to-manage-shlink-with-psshlink/images/1.jpg" data-size="1113x508">
 			<img srcset="/p/using-powershell-to-manage-shlink-with-psshlink/images/1_hu56414c8df0d48db30f3ff9ac1aca37cd_34017_480x0_resize_q75_box.jpg 480w, /p/using-powershell-to-manage-shlink-with-psshlink/images/1_hu56414c8df0d48db30f3ff9ac1aca37cd_34017_1024x0_resize_q75_box.jpg 1024w"
@@ -308,7 +308,8 @@ Import-Module PSShlink
 	</figure></p>
 <h2 id="authentication">Authentication</h2>
 <p>Each function will have two parameters for authentication to your Shlink instance:</p>
-<p><code>-ShlinkServer</code>: a string value of the Shlink server address e.g. <a href="https://example.com">https://example.com</a>
+<p><code>-ShlinkServer</code>: a string value of the Shlink server address e.g. <a class="link" href="https://example.com"  target="_blank" rel="noopener"
+    >https://example.com</a>
 <code>-ShlinkApiKey</code>: a SecureString value for the Shlink server&rsquo;s API key</p>
 <p>After using any function of PSShlink for the first time after importing the module - which have both parameters <code>-ShlinkServer</code> and <code>-ShlinkApiKey</code> * - it is not necessary to use the parameters again in subsequent uses for other functions of PSShlink. These values are held in memory for as long as the PowerShell session exists.</p>
 <ul>
@@ -317,18 +318,18 @@ Import-Module PSShlink
 <p>If the first function you use after importing PSShlink requires <code>-ShlinkServer</code> and/or <code>-ShlinkApiKey</code> and you have not passed the parameter(s), you will be prompted for them.</p>
 <h2 id="using-psshlink">Using PSShlink</h2>
 <p>As previously mentioned, <code>-ShlinkApiKey</code> only accepts a SecureString value for simplicity we&rsquo;ll create a SecureString value now for our API key.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$ApiKey = <span style="color:#e6db74">&#34;ba6c52ed-flk5-4e84-9fc7-9c7e34825da0&#34;</span> | ConvertTo-SecureString -AsPlainText -Force
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$ApiKey = <span style="color:#e6db74">&#34;ba6c52ed-flk5-4e84-9fc7-9c7e34825da0&#34;</span> | ConvertTo-SecureString -AsPlainText -Force
 </code></pre></div><p>Using the newly created SecureString API key for our Shlink instance, let&rsquo;s query all of our short codes:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-ShlinkUrl -ShlinkServer <span style="color:#e6db74">&#34;https://myshlinkserver.com&#34;</span> -ShlinkApiKey $Key
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-ShlinkUrl -ShlinkServer <span style="color:#e6db74">&#34;https://myshlinkserver.com&#34;</span> -ShlinkApiKey $ApiKey
 </code></pre></div><p>The great thing about PSShlink is that the Shlink server name and API key are held in memory for as long as the PowerShell lives. They&rsquo;re not accessible as variables to use outside of the <a class="link" href="https://mikefrobbins.com/2017/06/08/what-is-this-module-scope-in-powershell-that-you-speak-of/#:~:text=%E2%80%9CThe%20privacy%20of%20a%20module,do%20have%20their%20own%20scope.%E2%80%9D"  target="_blank" rel="noopener"
     >&ldquo;module&rsquo;s scope&rdquo;</a> though.</p>
 <p>This means you do not have to repeatedly supply the <code>-ShlinkServer</code> or <code>-ShlinkApiKey</code> parameters for subsequent function calls of PSShlink, so long as the first one was successful.</p>
 <p>For example, let&rsquo;s save QR code images for all of our short codes:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-ShlinkUrl | Save-ShlinkUrlQrCode
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-ShlinkUrl | Save-ShlinkUrlQrCode
 </code></pre></div><p>All files will be saved as png and 300x300 in size. All files by default are saved in your Downloads directory using the naming convention: <code>ShlinkQRCode_&lt;shortCode&gt;_&lt;domain&gt;_&lt;size&gt;.&lt;format&gt;</code>. e.g. <code>ShlinkQRCode_asFk2_example-com_300.png</code>. As promised, you can clearly see we did not supply the Server address or API keys and it still worked!</p>
 <h2 id="getting-help">Getting help</h2>
 <p>All functions come with complete comment based help, so it is possible to find examples for each function using <code>Get-Help</code>. For example, use the following to see detailed help including examples for <code>Save-ShlinkUrlQrCode</code>:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-Help Save-ShlinkUrlQrCode
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-Help Save-ShlinkUrlQrCode
 </code></pre></div><p>Failing that, feel free to raise an issue on the <a class="link" href="https://github.com/codaamok/PSShlink"  target="_blank" rel="noopener"
     >GitHub repo</a>!</p>
 
@@ -387,7 +388,7 @@ Import-Module PSShlink
     
 
     <footer class="site-footer">
-    <section class="copyright">&copy; 2021 Adam Cook</section>
+    <section class="copyright">&copy; 2022 Adam Cook</section>
     <section class="powerby">Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.1.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>

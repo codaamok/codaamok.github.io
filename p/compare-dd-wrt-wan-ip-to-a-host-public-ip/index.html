@@ -50,7 +50,7 @@ My copy does other things like start/stop services, configure local applications
 
                 
                     
-                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_2.png" width="300"
+                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_3.png" width="300"
                         height="300" class="site-logo" loading="lazy" alt="Avatar">
                 
 
@@ -284,7 +284,7 @@ My copy does other things like start/stop services, configure local applications
     <section class="article-content">
     <p>For my home lab on a particular VM that runs Ubuntu Server, I&rsquo;m interested to know the public IP of my LAN&rsquo;s gateway and the VM&rsquo;s gateway (as it&rsquo;s always connected to VPN). Below is a script I wrote to pull the WAN IP from my DD-WRT router and compare that to VM&rsquo;s gateway public IP.</p>
 <p>My copy does other things like start/stop services, configure local applications in my home lab as well as use Pushbullet to notify me if certain conditions are met. This should get you going, hopefully it helps someone.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e">#!/bin/bash
 </span><span style="color:#75715e"></span>
 x<span style="color:#f92672">=</span><span style="color:#66d9ef">$(</span>wget <span style="color:#e6db74">&#34;http://192.168.0.1/Status_Internet.live.asp&#34;</span> --user<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;USERNAME&#34;</span> --password<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;PASSWORD&#34;</span> -q -O - | sed -e <span style="color:#e6db74">&#39;s/}/\n/g&#39;</span> -e <span style="color:#e6db74">&#39;s/{//g&#39;</span><span style="color:#66d9ef">)</span>
 declare -A results
@@ -354,7 +354,7 @@ echo $0<span style="color:#e6db74">&#39;: VM IP: &#39;</span>$vmip
     
 
     <footer class="site-footer">
-    <section class="copyright">&copy; 2021 Adam Cook</section>
+    <section class="copyright">&copy; 2022 Adam Cook</section>
     <section class="powerby">Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.1.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>

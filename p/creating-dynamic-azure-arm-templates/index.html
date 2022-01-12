@@ -53,7 +53,7 @@ The first objective will demonstrate how to create a dynamic number of propertie
 
                 
                     
-                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_2.png" width="300"
+                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_3.png" width="300"
                         height="300" class="site-logo" loading="lazy" alt="Avatar">
                 
 
@@ -297,7 +297,7 @@ The first objective will demonstrate how to create a dynamic number of propertie
 <p>Take the scenario where your current template contains a single virtual network resource and you hardcode the virtual network&rsquo;s address space properties and all the subnets too.</p>
 <p>Maybe you decide to create some logic in your scripts where you dynamically create x many subnets. To do this, we are going to dynamically add x many properties to the <code>Microsoft.Network/VirtualNetworks</code> resource.</p>
 <p>Let&rsquo;s start with the below example using those hardcoded properties and subnets.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-JSON" data-lang="JSON"><span style="color:#960050;background-color:#1e0010">...</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-JSON" data-lang="JSON"><span style="color:#960050;background-color:#1e0010">...</span>
 {
 	<span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;vnet01&#34;</span>,
 	<span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Network/VirtualNetworks&#34;</span>,
@@ -339,7 +339,7 @@ The first objective will demonstrate how to create a dynamic number of propertie
 <li><code>count</code>:  the number of times we want to iterate over our loop.<!-- raw HTML omitted --><!-- raw HTML omitted --><code>input</code>: this is where we specify values for our resource&rsquo;s properties.</li>
 </ul>
 <p>An example of the <code>copy</code> element looks like the below.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-JSON" data-lang="JSON"><span style="color:#960050;background-color:#1e0010">...</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-JSON" data-lang="JSON"><span style="color:#960050;background-color:#1e0010">...</span>
 {
 	<span style="color:#f92672">&#34;name&#34;</span>: <span style="color:#e6db74">&#34;vnet01&#34;</span>,
 	<span style="color:#f92672">&#34;type&#34;</span>: <span style="color:#e6db74">&#34;Microsoft.Network/VirtualNetworks&#34;</span>,
@@ -374,7 +374,7 @@ The first objective will demonstrate how to create a dynamic number of propertie
 <p>You notice I use both <code>[concat()]</code> and <code>[copyIndex()]</code> for the <code>addressPrefix</code> property. This enables me to bump the subnet by 1 and correlate the subnet name with the 3rd subnet octet.</p>
 <p>There&rsquo;s definitely room for improvement here. The <code>count</code> object of the <code>copy</code> element is hardcoded at the value of 3. What we could do is leverage a parameter of our json value, which contains an array of strings for all the subnets we want in our virtual network.</p>
 <p>The below is what an ideal could look like that creates subnets based on all the items in a given array:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-JSON" data-lang="JSON">{
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-JSON" data-lang="JSON">{
 	<span style="color:#f92672">&#34;$schema&#34;</span>: <span style="color:#e6db74">&#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#&#34;</span>,
     <span style="color:#f92672">&#34;contentVersion&#34;</span>: <span style="color:#e6db74">&#34;1.0.0.0&#34;</span>,
 	<span style="color:#f92672">&#34;parameters&#34;</span>: {
@@ -427,7 +427,7 @@ The first objective will demonstrate how to create a dynamic number of propertie
 <h2 id="objective-2">Objective 2</h2>
 <p>As for the second objective (dynamically creating resources, instead of dynamically setting properties of a resource&rsquo;s properties&hellip; wait, what?!), there&rsquo;s hardly any difference, except there&rsquo;s no need to use the <code>input</code> object within the <code>copy</code> element.</p>
 <p>Below I&rsquo;ll share a complete working example of the template and a short PowerShell snippet to create the deployment.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-JSON" data-lang="JSON">{
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-JSON" data-lang="JSON">{
     <span style="color:#f92672">&#34;$schema&#34;</span>: <span style="color:#e6db74">&#34;https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#&#34;</span>,
     <span style="color:#f92672">&#34;contentVersion&#34;</span>: <span style="color:#e6db74">&#34;1.0.0.0&#34;</span>,
     <span style="color:#f92672">&#34;parameters&#34;</span>: {
@@ -466,7 +466,7 @@ The first objective will demonstrate how to create a dynamic number of propertie
         }
     ]
 }
-</code></pre></div><div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$TemplateParameters = @{
+</code></pre></div><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$TemplateParameters = @{
     <span style="color:#e6db74">&#34;virtualNetworkAddressSpaces&#34;</span> = @(
         <span style="color:#e6db74">&#34;192.168.1.0/24&#34;</span>,
         <span style="color:#e6db74">&#34;192.168.2.0/24&#34;</span>,
@@ -541,7 +541,7 @@ New-AzResourceGroupDeployment -Name <span style="color:#e6db74">&#34;mytestdeplo
     
 
     <footer class="site-footer">
-    <section class="copyright">&copy; 2021 Adam Cook</section>
+    <section class="copyright">&copy; 2022 Adam Cook</section>
     <section class="powerby">Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.1.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>

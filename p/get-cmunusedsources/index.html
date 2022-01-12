@@ -58,7 +58,7 @@ Enough is enough I started writing in February and since then I have refactored 
 
                 
                     
-                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_2.png" width="300"
+                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_3.png" width="300"
                         height="300" class="site-logo" loading="lazy" alt="Avatar">
                 
 
@@ -389,10 +389,10 @@ At line:1 char:1
     >Creating enums in PowerShell</a></li>
 </ul>
 <p>Tip! If you want to get the full Parameter Type of a parameter that&rsquo;s an enum, so you can use GetNames:: on it, the below will help:</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">(Get-Command Set-ExecutionPolicy).Parameters[<span style="color:#e6db74">&#39;ExecutionPolicy&#39;</span>] | Select -ExpandProperty ParameterType
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">(Get-Command Set-ExecutionPolicy).Parameters[<span style="color:#e6db74">&#39;ExecutionPolicy&#39;</span>] | Select -ExpandProperty ParameterType
 </code></pre></div><h2 id="datatables-and-filtering">DataTables and filtering</h2>
 <p>I recently tackled an issue with the script where collections of large scale and filtering them was an issue. Chris Kibble once showed me DataTables and I remember a remark about them being quick. He wasn&rsquo;t joking! Checkout the below!</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$winFiles = Get-ChildItem c:\windows -Recurse -ErrorAction SilentlyContinue
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$winFiles = Get-ChildItem c:\windows -Recurse -ErrorAction SilentlyContinue
 
 $commands = @{
     <span style="color:#e6db74">&#39;Where-Object&#39;</span> = {
@@ -428,9 +428,9 @@ $commands = @{
     }
 }
 
-$commands.Keys | <span style="color:#66d9ef">ForEach</span>-Object {
+$commands.Keys | ForEach-Object {
     $testName = $_
-    1..3 | <span style="color:#66d9ef">ForEach</span>-Object {
+    1..3 | ForEach-Object {
         <span style="color:#66d9ef">[PSCustomObject]</span>@{
             TestName  = $testName
             Attempt   = $_
@@ -521,7 +521,7 @@ Testing DataTable select
     
 
     <footer class="site-footer">
-    <section class="copyright">&copy; 2021 Adam Cook</section>
+    <section class="copyright">&copy; 2022 Adam Cook</section>
     <section class="powerby">Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.1.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>

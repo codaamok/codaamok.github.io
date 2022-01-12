@@ -50,7 +50,7 @@ Why might you want to do this? Remember when PowerShell Gallery went down for a 
 
                 
                     
-                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_2.png" width="300"
+                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_3.png" width="300"
                         height="300" class="site-logo" loading="lazy" alt="Avatar">
                 
 
@@ -565,7 +565,7 @@ Why might you want to do this? Remember when PowerShell Gallery went down for a 
 <ol>
 <li>Generate or obtain web certificate. Here I&rsquo;ll quickly demo how I do this with the Posh-ACME module.</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Install-Module <span style="color:#e6db74">&#34;Posh-ACME&#34;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Install-Module <span style="color:#e6db74">&#34;Posh-ACME&#34;</span>
 Import-Module <span style="color:#e6db74">&#34;Posh-ACME&#34;</span>
 $Params = @{
     Domain = <span style="color:#e6db74">&#34;nuget.adamcook.io&#34;</span>
@@ -632,7 +632,7 @@ New-PACertificate @Params
 </ol>
 <p>I&rsquo;ll be honest.. I have no idea why we need to configure a package source before we can register the repository, but I couldn&rsquo;t get it to work otherwise. <a class="link" href="https://github.com/OneGet/oneget/issues/403"  target="_blank" rel="noopener"
     >More info here on that</a>!</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#75715e"># Set the URL to match your config from the section &#39;Configure ProGet to use HTTPS&#39;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#75715e"># Set the URL to match your config from the section &#39;Configure ProGet to use HTTPS&#39;</span>
 <span style="color:#75715e"># i.e. https/http, domain and port</span>
 $URL = <span style="color:#e6db74">&#34;https://nuget.adamcook.io:8625/nuget/MyPrivateRepo&#34;</span> 
 <span style="color:#75715e"># Enter the username and password created from the section </span>
@@ -665,13 +665,13 @@ Register-PSRepository @Params
 <ol start="2">
 <li>Issue the following command to grab all of the modules and save them to <code>C:\temp\Az</code> locally</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Save-Module -Name <span style="color:#e6db74">&#34;Az&#34;</span> -Path <span style="color:#e6db74">&#34;C:\temp\Az&#34;</span> -Repository PSGallery
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Save-Module -Name <span style="color:#e6db74">&#34;Az&#34;</span> -Path <span style="color:#e6db74">&#34;C:\temp\Az&#34;</span> -Repository PSGallery
 </code></pre></div><blockquote>
 <p>⚠️ If you receive an error along the lines of:</p>
 <pre><code>Failed to generate the compressed file for module 'C:\Program Files\dotnet\dotnet.exe failed to pack
 </code></pre><p>Run the below. Close and re-open the console, then try again. <a class="link" href="https://github.com/PowerShell/PowerShellGetv2/issues/303"  target="_blank" rel="noopener"
     >Credit</a>.</p>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Invoke-WebRequest -Uri <span style="color:#e6db74">&#34;https://dist.nuget.org/win-x86-commandline/latest/nuget.exe&#34;</span> -OutFile <span style="color:#e6db74">&#34;$env:LOCALAPPDATA\Microsoft\Windows\PowerShell\PowerShellGet\NuGet.exe&#34;</span>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Invoke-WebRequest -Uri <span style="color:#e6db74">&#34;https://dist.nuget.org/win-x86-commandline/latest/nuget.exe&#34;</span> -OutFile <span style="color:#e6db74">&#34;$env:LOCALAPPDATA\Microsoft\Windows\PowerShell\PowerShellGet\NuGet.exe&#34;</span>
 </code></pre></div><p>⚠️ Also note that we are now explicitly specifying to use the <strong>PSGallery</strong> registered repository using the <code>-Repository</code> parameter, because we now have multiple registered repositories (or at least you should, the PowerShell Gallery is configured by default on most systems).</p>
 </blockquote>
 <p><figure>
@@ -692,7 +692,7 @@ Register-PSRepository @Params
 <ol start="3">
 <li>Using the API key we gathered from the section <a class="link" href="#create-api-key-for-publishing" >Create API key for publishing</a>, we can now publish all the modules which are in the <code>C:\temp\Az</code> directory:</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-ChildItem -Path <span style="color:#e6db74">&#34;C:\temp\Az&#34;</span> | <span style="color:#66d9ef">ForEach</span>-Object {
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">Get-ChildItem -Path <span style="color:#e6db74">&#34;C:\temp\Az&#34;</span> | ForEach-Object {
     Publish-Module -Path $_.FullName -NuGetApiKey <span style="color:#e6db74">&#34;MySuperSecretAPIKey&#34;</span> -Repository <span style="color:#e6db74">&#34;MyPrivateRepo&#34;</span>
 }
 </code></pre></div><ol start="4">
@@ -735,7 +735,7 @@ Register-PSRepository @Params
 <li>If you&rsquo;re trying this from a different system compared to the last section, registry the package source and repository again as shown in the section <a class="link" href="#registering-the-feed-on-a-system-and-publishing-a-test-module" >Registering the feed on a system and publishing a test module</a>. It is possible to omit the the <code>-ScriptPublishLocation</code> and <code>-PublishLocation</code> parameters if you do not intend to publish modules or scripts from the system(s).</li>
 <li>Install all of the <code>Az*</code> modules. We need to make sure we explicitly specify our new NuGet feed using the <code>-Repository</code> parameter and the credential too using <code>-Credential</code>:</li>
 </ol>
-<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$Modules = Find-Module -Name <span style="color:#e6db74">&#34;Az*&#34;</span> -Repository <span style="color:#e6db74">&#34;MyPrivateRepo&#34;</span> -Credential $Cred
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell">$Modules = Find-Module -Name <span style="color:#e6db74">&#34;Az*&#34;</span> -Repository <span style="color:#e6db74">&#34;MyPrivateRepo&#34;</span> -Credential $Cred
 $Modules | Install-Module -Repository <span style="color:#e6db74">&#34;MyPrivateRepo&#34;</span> -Credential $Cred
 </code></pre></div><p><em>Forgot what credential to use? It&rsquo;s the one we set from the section <a class="link" href="#create-user-for-downloading-modules-or-scripts" >Create user for downloading modules/scripts</a>.</em></p>
 <p><figure>
@@ -856,7 +856,7 @@ $Modules | Install-Module -Repository <span style="color:#e6db74">&#34;MyPrivate
     
 
     <footer class="site-footer">
-    <section class="copyright">&copy; 2021 Adam Cook</section>
+    <section class="copyright">&copy; 2022 Adam Cook</section>
     <section class="powerby">Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
         Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.1.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
     </section>
