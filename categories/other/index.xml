@@ -5,6 +5,19 @@
     <link>https://adamcook.io/categories/other/</link>
     <description>Recent content in Other on Adam Cook</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="https://adamcook.io/categories/other/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language>
+    <lastBuildDate>Thu, 13 Jan 2022 12:57:21 +0000</lastBuildDate><atom:link href="https://adamcook.io/categories/other/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Remote Desktop Gateway Woes and NPS Logging</title>
+      <link>https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/</link>
+      <pubDate>Thu, 13 Jan 2022 12:57:21 +0000</pubDate>
+      
+      <guid>https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/</guid>
+      <description>I recently set up a new lab at home and was installing Remote Desktop Gateway on Windows Server 2022.
+While setting it up, and also configuring RAS as a virtual router, I was very confused as to why I kept getting moaned at while attempting to RDP to a system using the gateway:
+  Remote Desktop can’t connect to the remote computer for one of these reasons 
+I was absolutely confident everything was configured correctly:</description>
+    </item>
+    
   </channel>
 </rss>

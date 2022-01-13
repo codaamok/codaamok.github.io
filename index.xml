@@ -6,7 +6,71 @@
         <description>Recent content on Adam Cook</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Mon, 21 Dec 2020 00:00:00 +0000</lastBuildDate><atom:link href="https://adamcook.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Thu, 13 Jan 2022 12:57:21 +0000</lastBuildDate><atom:link href="https://adamcook.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Remote Desktop Gateway Woes and NPS Logging</title>
+        <link>https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/</link>
+        <pubDate>Thu, 13 Jan 2022 12:57:21 +0000</pubDate>
+        
+        <guid>https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/</guid>
+        <description>&lt;img src="https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/images/cover.jpg" alt="Featured image of post Remote Desktop Gateway Woes and NPS Logging" /&gt;&lt;p&gt;I recently set up a new lab at home and was installing Remote Desktop Gateway on Windows Server 2022.&lt;/p&gt;
+&lt;p&gt;While setting it up, and also configuring RAS as a virtual router, I was very confused as to why I kept getting moaned at while attempting to RDP to a system using the gateway:&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/images/rdperror.png&#34; data-size=&#34;558x246&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/images/rdperror_hu16c32773696d49455c40809e08debcb1_53896_480x0_resize_box_3.png 480w, https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/images/rdperror_hu16c32773696d49455c40809e08debcb1_53896_1024x0_resize_box_3.png 1024w&#34;
+				src=&#34;https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/images/rdperror.png&#34; width=&#34;558&#34; height=&#34;246&#34; loading=&#34;lazy&#34;
+				alt=&#34;Remote Desktop can&amp;rsquo;t connect to the remote computer for one of these reasons&#34;&gt;
+		&lt;/a&gt;
+		
+		&lt;figcaption&gt;Remote Desktop can’t connect to the remote computer for one of these reasons&lt;/figcaption&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;I was absolutely confident everything was configured correctly:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;DNS, routing, and firewall was fine&lt;/li&gt;
+&lt;li&gt;My RAP and CAP policies in RD Gateway Manager also had the correct things set: the user account I was connected with was in the correct groups, and so were the systems I was trying to connect to.&lt;/li&gt;
+&lt;li&gt;I had password authentication enabled, and not smartcard&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I spent hours scouring &amp;ldquo;the Google&amp;rdquo; for ideas and discussions etc. All &amp;ldquo;answers&amp;rdquo; revolved around the simple misconfig of missing user/computer objects in groups of the RAP/CAP stuff.&lt;/p&gt;
+&lt;p&gt;The event viewer log for TerminalServices-Gateway was leading me up the garden path:&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/images/terminalservicesgatewaylog.png&#34; data-size=&#34;2612x1243&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/images/terminalservicesgatewaylog_hucfb754fe708174484b169a86af98e2e1_284770_480x0_resize_box_3.png 480w, https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/images/terminalservicesgatewaylog_hucfb754fe708174484b169a86af98e2e1_284770_1024x0_resize_box_3.png 1024w&#34;
+				src=&#34;https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/images/terminalservicesgatewaylog.png&#34; width=&#34;2612&#34; height=&#34;1243&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;The user &amp;ldquo;CODAAMOK\acc&amp;rdquo;, on client computer &amp;ldquo;192.168.0.50&amp;rdquo;, did not meet connection authorization policy requirements and was therefore not authorized to access the RD Gateway server. The authentication method used was: &amp;ldquo;NTLM&amp;rdquo; and connection protocol used: &amp;ldquo;HTTP&amp;rdquo;. The following error occurred: &amp;ldquo;23003&amp;rdquo;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Long story short, I noticed this snippet in the System event viewer log which definitely was not useless:&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/images/systemlog.png&#34; data-size=&#34;2612x1243&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/images/systemlog_hucfb754fe708174484b169a86af98e2e1_254504_480x0_resize_box_3.png 480w, https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/images/systemlog_hucfb754fe708174484b169a86af98e2e1_254504_1024x0_resize_box_3.png 1024w&#34;
+				src=&#34;https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/images/systemlog.png&#34; width=&#34;2612&#34; height=&#34;1243&#34; loading=&#34;lazy&#34;
+				alt=&#34;&amp;nbsp;&#34;&gt;
+		&lt;/a&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;NPS cannot log accounting information in the primary data store (C:\Windows\system32\LogFiles\IN2201.log). Due to this logging failure, NPS will discard all connection requests. Error information: 22.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;This little nugget left me to finding the Network Policy Server snap-in (my RD Gateway is configured to use the local NPS service, which is the default). At this point I didn&amp;rsquo;t care for why it couldn&amp;rsquo;t log, I just wanted to use the gateway. Under &lt;code&gt;Accounting&lt;/code&gt;, select &lt;code&gt;Change Log File Properties&lt;/code&gt; and you can bypass the option to abort connection if failed to log:&lt;/p&gt;
+&lt;p&gt;&lt;figure&gt;
+		&lt;a href=&#34;https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/images/npschangelogfileproperties.png&#34; data-size=&#34;2278x1119&#34;&gt;
+			&lt;img srcset=&#34;https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/images/npschangelogfileproperties_hufd4faa43a5a2ba4d522f6bd72001ab91_125891_480x0_resize_box_3.png 480w, https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/images/npschangelogfileproperties_hufd4faa43a5a2ba4d522f6bd72001ab91_125891_1024x0_resize_box_3.png 1024w&#34;
+				src=&#34;https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/images/npschangelogfileproperties.png&#34; width=&#34;2278&#34; height=&#34;1119&#34; loading=&#34;lazy&#34;
+				alt=&#34;Change Log File Properties - Network Policy Server&#34;&gt;
+		&lt;/a&gt;
+		
+		&lt;figcaption&gt;Change Log File Properties - Network Policy Server&lt;/figcaption&gt;
+		
+	&lt;/figure&gt;&lt;/p&gt;
+&lt;p&gt;After making this change, I could use my new shiny RD Gateway!&lt;/p&gt;
+&lt;p&gt;This might not be the solution for you, perhaps your issue is simply DNS/routing/firewall, or maybe you haven&amp;rsquo;t correctly added your user account or server/computer you&amp;rsquo;re trying to access to your RAP/CAP config. However, if you were like me, and had everything setup correctly, except this oddity, then I hope this workaround is suitable for you.&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Using PowerShell to Manage Shlink With PSShlink</title>
         <link>https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/</link>
         <pubDate>Mon, 21 Dec 2020 00:00:00 +0000</pubDate>
