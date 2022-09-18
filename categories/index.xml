@@ -6,7 +6,25 @@
     <description>Recent content in Categories on Adam Cook</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 13 Jan 2022 12:57:21 +0000</lastBuildDate><atom:link href="https://adamcook.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 18 Sep 2022 10:22:56 +0100</lastBuildDate><atom:link href="https://adamcook.io/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>ConfigMgr</title>
+      <link>https://adamcook.io/categories/configmgr/</link>
+      <pubDate>Sun, 18 Sep 2022 10:22:56 +0100</pubDate>
+      
+      <guid>https://adamcook.io/categories/configmgr/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>PowerShell</title>
+      <link>https://adamcook.io/categories/powershell/</link>
+      <pubDate>Sun, 18 Sep 2022 10:22:56 +0100</pubDate>
+      
+      <guid>https://adamcook.io/categories/powershell/</guid>
+      <description></description>
+    </item>
+    
     <item>
       <title>Other</title>
       <link>https://adamcook.io/categories/other/</link>
@@ -26,15 +44,6 @@
     </item>
     
     <item>
-      <title>PowerShell</title>
-      <link>https://adamcook.io/categories/powershell/</link>
-      <pubDate>Sat, 07 Aug 2021 18:29:18 +0100</pubDate>
-      
-      <guid>https://adamcook.io/categories/powershell/</guid>
-      <description></description>
-    </item>
-    
-    <item>
       <title>CI/CD</title>
       <link>https://adamcook.io/categories/cicd/</link>
       <pubDate>Sat, 17 Oct 2020 00:00:00 +0100</pubDate>
@@ -49,15 +58,6 @@
       <pubDate>Sat, 17 Oct 2020 00:00:00 +0100</pubDate>
       
       <guid>https://adamcook.io/categories/presentations/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>ConfigMgr</title>
-      <link>https://adamcook.io/categories/configmgr/</link>
-      <pubDate>Thu, 12 Dec 2019 00:00:00 +0100</pubDate>
-      
-      <guid>https://adamcook.io/categories/configmgr/</guid>
       <description></description>
     </item>
     

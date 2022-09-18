@@ -6,7 +6,16 @@
     <description>Recent content in PowerShell on Adam Cook</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sat, 07 Aug 2021 18:29:18 +0100</lastBuildDate><atom:link href="https://adamcook.io/categories/powershell/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 18 Sep 2022 10:22:56 +0100</lastBuildDate><atom:link href="https://adamcook.io/categories/powershell/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Patching Snowflakes With ConfigMgr and PowerShell</title>
+      <link>https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/</link>
+      <pubDate>Sun, 18 Sep 2022 10:22:56 +0100</pubDate>
+      
+      <guid>https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/</guid>
+      <description>Do you have servers in your environment that require special or manual patching? Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&amp;rsquo;t figured out a way? Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles?  By &amp;ldquo;special patching&amp;rdquo;, I mean the customer or application owners are terrified of the word &amp;ldquo;patching&amp;rdquo; and demand it be performed manually on a handful of finicky application servers out of fear of downtime.</description>
+    </item>
+    
     <item>
       <title>PowerShell vs. CSharp Azure Functions Cold Starts</title>
       <link>https://adamcook.io/p/powershell-vs.-csharp-azure-functions-cold-starts/</link>

@@ -6,7 +6,16 @@
     <description>Recent content in ConfigMgr on Adam Cook</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 12 Dec 2019 00:00:00 +0100</lastBuildDate><atom:link href="https://adamcook.io/categories/configmgr/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sun, 18 Sep 2022 10:22:56 +0100</lastBuildDate><atom:link href="https://adamcook.io/categories/configmgr/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Patching Snowflakes With ConfigMgr and PowerShell</title>
+      <link>https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/</link>
+      <pubDate>Sun, 18 Sep 2022 10:22:56 +0100</pubDate>
+      
+      <guid>https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/</guid>
+      <description>Do you have servers in your environment that require special or manual patching? Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&amp;rsquo;t figured out a way? Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles?  By &amp;ldquo;special patching&amp;rdquo;, I mean the customer or application owners are terrified of the word &amp;ldquo;patching&amp;rdquo; and demand it be performed manually on a handful of finicky application servers out of fear of downtime.</description>
+    </item>
+    
     <item>
       <title>ConfigMgr WSUS woes, WSUSCtrl.log &#34;Cannot open database &#34;SUSDB&#34; requested by the login. The login failed.~~Login failed for user &#39;DOMAIN\SERVER$&#39;&#34;</title>
       <link>https://adamcook.io/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.~~login-failed-for-user-domain%5Cserver/</link>

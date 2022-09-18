@@ -3,24 +3,30 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://adamcook.io/</loc>
-    <lastmod>2022-01-13T12:57:21+00:00</lastmod>
+    <lastmod>2022-09-18T10:22:56+01:00</lastmod>
   </url><url>
     <loc>https://adamcook.io/categories/</loc>
-    <lastmod>2022-01-13T12:57:21+00:00</lastmod>
+    <lastmod>2022-09-18T10:22:56+01:00</lastmod>
   </url><url>
-    <loc>https://adamcook.io/categories/other/</loc>
-    <lastmod>2022-01-13T12:57:21+00:00</lastmod>
+    <loc>https://adamcook.io/categories/configmgr/</loc>
+    <lastmod>2022-09-18T10:22:56+01:00</lastmod>
+  </url><url>
+    <loc>https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/</loc>
+    <lastmod>2022-09-18T10:22:56+01:00</lastmod>
   </url><url>
     <loc>https://adamcook.io/post/</loc>
+    <lastmod>2022-09-18T10:22:56+01:00</lastmod>
+  </url><url>
+    <loc>https://adamcook.io/categories/powershell/</loc>
+    <lastmod>2022-09-18T10:22:56+01:00</lastmod>
+  </url><url>
+    <loc>https://adamcook.io/categories/other/</loc>
     <lastmod>2022-01-13T12:57:21+00:00</lastmod>
   </url><url>
     <loc>https://adamcook.io/p/remote-desktop-gateway-woes-and-nps-logging/</loc>
     <lastmod>2022-01-13T12:57:21+00:00</lastmod>
   </url><url>
     <loc>https://adamcook.io/categories/azure/</loc>
-    <lastmod>2021-08-07T18:29:18+01:00</lastmod>
-  </url><url>
-    <loc>https://adamcook.io/categories/powershell/</loc>
     <lastmod>2021-08-07T18:29:18+01:00</lastmod>
   </url><url>
     <loc>https://adamcook.io/p/powershell-vs.-csharp-azure-functions-cold-starts/</loc>
@@ -49,9 +55,6 @@
   </url><url>
     <loc>https://adamcook.io/p/creating-dynamic-azure-arm-templates/</loc>
     <lastmod>2020-07-05T00:00:00+01:00</lastmod>
-  </url><url>
-    <loc>https://adamcook.io/categories/configmgr/</loc>
-    <lastmod>2019-12-12T00:00:00+01:00</lastmod>
   </url><url>
     <loc>https://adamcook.io/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.~~login-failed-for-user-domain%5Cserver/</loc>
     <lastmod>2019-12-12T00:00:00+01:00</lastmod>
