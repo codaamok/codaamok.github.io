@@ -70,7 +70,7 @@ Move-Item -Path &amp;#34;$env:SystemRoot\System32\GroupPolicy\Machine\Registry.p
       
       <guid>https://adamcook.io/p/configmgr-throttling-distribution-point-bandwidth/</guid>
       <description>ℹ️ It looks like as I was writing this Microsoft have just publicly released a former internal document detailing some things that I had claimed to be undocumented (click here): Deep, deep, DEEP dive into content distribution in #SCCM by the great @vinay_pamnani Internal-only content originally, now free for public use! https://t.co/oUPTSzrTmt
-&amp;mdash; Contoto (@_contoto) February 4, 2019   In this post I&amp;rsquo;ll cover ways you can control bandwidth for Configuration Manager using the rate limit config available for each distribution point.</description>
+&amp;mdash; Contoto Ltd. (@_contoto) February 4, 2019   In this post I&amp;rsquo;ll cover ways you can control bandwidth for Configuration Manager using the rate limit config available for each distribution point.</description>
     </item>
     
     <item>
