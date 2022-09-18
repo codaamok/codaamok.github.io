@@ -6,7 +6,17 @@
     <description>Recent content in Azure on Adam Cook</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 05 Oct 2020 21:04:10 +0100</lastBuildDate><atom:link href="https://adamcook.io/categories/azure/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 07 Aug 2021 18:29:18 +0100</lastBuildDate><atom:link href="https://adamcook.io/categories/azure/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>PowerShell vs. CSharp Azure Functions Cold Starts</title>
+      <link>https://adamcook.io/p/powershell-vs.-csharp-azure-functions-cold-starts/</link>
+      <pubDate>Sat, 07 Aug 2021 18:29:18 +0100</pubDate>
+      
+      <guid>https://adamcook.io/p/powershell-vs.-csharp-azure-functions-cold-starts/</guid>
+      <description>It has been a while since I&amp;rsquo;ve written a post. I&amp;rsquo;ve been pretty committed to a new job I started at the start of the year. I need to find more positive outlets and return to doing the things I enjoy in my down-time. I hope to do more tinkering on side projects and giving back to the community.
+The cover image for this post if for our pup, Alfie! He&amp;rsquo;s a beagle and we will be bringing him home in a couple of weeks.</description>
+    </item>
+    
     <item>
       <title>Deploying Hugo Websites in Azure for Pennies or Free on GitHub Pages</title>
       <link>https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/</link>

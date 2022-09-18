@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='It has been a while since I&amp;rsquo;ve written a post. I&amp;rsquo;ve been pretty committed to a new job I started at the start of the year. I need to find more positive outlets and return to doing the things I enjoy in my down-time. I hope to do more tinkering on side projects and giving back to the community.
+The cover image for this post if for our pup, Alfie! He&amp;rsquo;s a beagle and we will be bringing him home in a couple of weeks.'><title>PowerShell vs. CSharp Azure Functions Cold Starts</title>
+
+<link rel='canonical' href='https://adamcook.io/p/powershell-vs.-csharp-azure-functions-cold-starts/'>
+
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='PowerShell vs. CSharp Azure Functions Cold Starts'>
+<meta property='og:description' content='It has been a while since I&amp;rsquo;ve written a post. I&amp;rsquo;ve been pretty committed to a new job I started at the start of the year. I need to find more positive outlets and return to doing the things I enjoy in my down-time. I hope to do more tinkering on side projects and giving back to the community.
+The cover image for this post if for our pup, Alfie! He&amp;rsquo;s a beagle and we will be bringing him home in a couple of weeks.'>
+<meta property='og:url' content='https://adamcook.io/p/powershell-vs.-csharp-azure-functions-cold-starts/'>
+<meta property='og:site_name' content='Adam Cook'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2021-08-07T18:29:18&#43;01:00'/><meta property='article:modified_time' content='2021-08-07T18:29:18&#43;01:00'/><meta property='og:image' content='https://adamcook.io/p/powershell-vs.-csharp-azure-functions-cold-starts/images/cover.jpg' />
+<meta name="twitter:site" content="codaamok"><meta name="twitter:title" content="PowerShell vs. CSharp Azure Functions Cold Starts">
+<meta name="twitter:description" content="It has been a while since I&amp;rsquo;ve written a post. I&amp;rsquo;ve been pretty committed to a new job I started at the start of the year. I need to find more positive outlets and return to doing the things I enjoy in my down-time. I hope to do more tinkering on side projects and giving back to the community.
+The cover image for this post if for our pup, Alfie! He&amp;rsquo;s a beagle and we will be bringing him home in a couple of weeks."><meta name="twitter:card" content="summary">
+	<meta name="twitter:image" content='https://adamcook.io/p/powershell-vs.-csharp-azure-functions-cold-starts/images/cover.jpg' />
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-157232649-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-157232649-3');
+</script>
+
+<style>
+  p a, li a { color: #ff4949 }
+</style>
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+    </head>
+    <body class="">
+        <div class="container flex on-phone--column align-items--flex-start extended article-page with-toolbar">
+            <aside class="sidebar left-sidebar sticky">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header class="site-info">
+        
+            <figure class="site-avatar">
+                
+
+                
+                    
+                    <img src="/img/avatar_hu33281fe808a11e936df63d037cf0d2f3_405287_300x300_resize_box_3.png" width="300"
+                        height="300" class="site-logo" loading="lazy" alt="Avatar">
+                
+
+                
+                    <span class="emoji">🙃</span>
+                
+            </figure>
+        
+        <h1 class="site-name"><a href="https://adamcook.io/">Adam Cook</a></h1>
+        <h2 class="site-description" style="margin: 0;"><span style='font-size: 1.2rem;'>— <a href='https://patchmypc.com'>Patch My PC</a> Support Engineer</span><br/><br/>Passionate about helping people. #PowerShell, #ConfigMgr and #Azure. Misses #Linux.</h2>
+    </header>
+
+    <ol class="menu" id="main-menu">
+        
+        
+        
+
+        <li >
+            <a href='/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='/archives'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://twitter.com/codaamok'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-twitter" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M22 4.01c-1 .49-1.98.689-3 .99-1.121-1.265-2.783-1.335-4.38-.737S11.977 6.323 12 8v1c-3.245.083-6.135-1.395-8-4 0 0-4.182 7.433 4 11-1.872 1.247-3.739 2.088-6 2 3.308 1.803 6.913 2.423 10.034 1.517 3.58-1.04 6.522-3.723 7.651-7.742a13.84 13.84 0 0 0 .497 -3.753C20.18 7.773 21.692 5.25 22 4.009z" />
+</svg>
+                
+                <span>Twitter</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://github.com/codaamok'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+                
+                <span>GitHub</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://linkedin.com/in/adamcharlescook'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-linkedin" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="4" width="16" height="16" rx="2" />
+  <line x1="8" y1="11" x2="8" y2="16" />
+  <line x1="8" y1="8" x2="8" y2="8.01" />
+  <line x1="12" y1="16" x2="12" y2="11" />
+  <path d="M16 16v-3a2 2 0 0 0 -4 0" />
+</svg>
+                
+                <span>LinkedIn</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://www.youracclaim.com/users/adam-cook.e3a67a21/badges'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-award" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <circle cx="12" cy="9" r="6" />
+  <polyline points="9 14.2 9 21 12 19 15 21 15 14.2" transform="rotate(-30 12 9)" />
+  <polyline points="9 14.2 9 21 12 19 15 21 15 14.2" transform="rotate(30 12 9)" />
+</svg>
+                
+                <span>My Acclaims</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://sysmansquad.com/author/codaamok/'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-notebook" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M6 4h11a2 2 0 0 1 2 2v12a2 2 0 0 1 -2 2h-11a1 1 0 0 1 -1 -1v-14a1 1 0 0 1 1 -1m3 0v18" />
+  <line x1="13" y1="8" x2="15" y2="8" />
+  <line x1="13" y1="12" x2="15" y2="12" />
+</svg>
+                
+                <span>SysManSquad</span>
+            </a>
+        </li>
+        
+        
+
+        <li >
+            <a href='https://pssouth.co.uk'>
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-prompt" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <polyline points="5 7 10 12 5 17" />
+  <line x1="13" y1="17" x2="19" y2="17" />
+</svg>
+                
+                <span>PowerShell Southampton</span>
+            </a>
+        </li>
+        
+    </ol>
+</aside>
+
+            <main class="main full-width">
+    <div id="article-toolbar">
+        <a href="https://adamcook.io/" class="back-home">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-chevron-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="15 6 9 12 15 18" />
+</svg>
+
+
+
+            <span>Back</span>
+        </a>
+    </div>
+
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <img srcset="/p/powershell-vs.-csharp-azure-functions-cold-starts/images/cover_hu252e1365207f8310c900d9f433764a28_167198_1024x0_resize_q75_box.jpg 1024w, /p/powershell-vs.-csharp-azure-functions-cold-starts/images/cover_hu252e1365207f8310c900d9f433764a28_167198_2000x0_resize_q75_box.jpg 2000w"
+                    src="/p/powershell-vs.-csharp-azure-functions-cold-starts/images/cover_hu252e1365207f8310c900d9f433764a28_167198_2000x0_resize_q75_box.jpg" width="2048" height="2048" loading="lazy"
+                    alt="Featured image of post PowerShell vs. CSharp Azure Functions Cold Starts" />
+            
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="https://adamcook.io/categories/powershell/" 
+                    class="color-tag"
+                    data-image="/p/powershell-vs.-csharp-azure-functions-cold-starts/images/cover_hu252e1365207f8310c900d9f433764a28_167198_20x20_fill_q75_box_smart1.jpg" 
+                    data-key="" 
+                    data-hash="md5-NpJ4nI2DjYyyoyusKKLocA==">
+                    PowerShell
+                </a>
+            
+        
+            <a href="https://adamcook.io/categories/azure/" 
+                    class="color-tag"
+                    data-image="/p/powershell-vs.-csharp-azure-functions-cold-starts/images/cover_hu252e1365207f8310c900d9f433764a28_167198_20x20_fill_q75_box_smart1.jpg" 
+                    data-key="" 
+                    data-hash="md5-NpJ4nI2DjYyyoyusKKLocA==">
+                    Azure
+                </a>
+            
+        
+    </header>
+    
+
+    <h2 class="article-title">
+        <a href="https://adamcook.io/p/powershell-vs.-csharp-azure-functions-cold-starts/">PowerShell vs. CSharp Azure Functions Cold Starts</a>
+    </h2>
+
+    <table>
+        <tr>
+            <td width="25%">
+                <footer class="article-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="5" width="16" height="16" rx="2" />
+  <line x1="16" y1="3" x2="16" y2="7" />
+  <line x1="8" y1="3" x2="8" y2="7" />
+  <line x1="4" y1="11" x2="20" y2="11" />
+  <line x1="11" y1="15" x2="12" y2="15" />
+  <line x1="12" y1="15" x2="12" y2="18" />
+</svg>
+                    <time class="article-time--published">7 August 2021</time>
+                </footer>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <footer class="article-time">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                    <time class="article-time--published">
+                        Reading time: 3 minutes.
+                    </time>
+                </footer>
+            </td>
+        </tr>
+    </table></div>
+</header>
+
+    <section class="article-content">
+    <p>It has been a while since I&rsquo;ve written a post. I&rsquo;ve been pretty committed to a new job I started at the start of the year. I need to find more positive outlets and return to doing the things I enjoy in my down-time. I hope to do more tinkering on side projects and giving back to the community.</p>
+<p>The cover image for this post if for our pup, Alfie! He&rsquo;s a beagle and we will be bringing him home in a couple of weeks.</p>
+<h1 id="introduction">Introduction</h1>
+<p>In this post I want to show you how PowerShell and C# stack up against each other with their cold start times in Azure Functions.</p>
+<p>A quick recap of Azure Functions if you&rsquo;re unsure:</p>
+<ul>
+<li>Serverless computing (&ldquo;less servers&rdquo; © <a class="link" href="https://twitter.com/jeffhollan"  target="_blank" rel="noopener"
+    >Jeff Hollan</a>)</li>
+<li>Scalable cloud resources where you can execute given code to perform a task on a schedule or trigger, e.g.:
+<ul>
+<li>A website backend API that interacts with internal resources or third party APIs</li>
+<li>Trigger a script to run when a new VM is created in Azure</li>
+<li>Send an email or Teams notification with a given message fed via HTTP POST request</li>
+</ul>
+</li>
+<li>If you want to learn with more examples, check out these resources:
+<ul>
+<li><a class="link" href="https://www.youtube.com/watch?v=499iCgNLDDE"  target="_blank" rel="noopener"
+    >Build serverless APIs with Azure Functions | Azure Friday</a></li>
+<li><a class="link" href="https://docs.microsoft.com/en-us/azure/azure-functions/functions-overview"  target="_blank" rel="noopener"
+    >Introduction to Azure Functions</a></li>
+<li><a class="link" href="https://www.youtube.com/watch?v=zIfxkub7CLY"  target="_blank" rel="noopener"
+    >Intro to Azure Functions - What they are and how to create and deploy them</a></li>
+<li><a class="link" href="https://millerb.co.uk/2019/11/27/Getting-Started-Pwsh-Az-Functions-Part-1.html"  target="_blank" rel="noopener"
+    >PowerShell &amp; Azure Functions - Part 1</a></li>
+</ul>
+</li>
+</ul>
+<p>What is a cold start? A cold start is the process of a function starting up and completing the task. The painful fact here is that if your function is left idle for some period of time, e.g. 15 or 20 minutes, the process of the function is stopped until it is called again. The latency the user experiences calling your function again after it has stopped is high. If the user calls your function again within the idle period, before it is stopped, the latency is low because the function is still running.</p>
+<p>You can mitigate cold starts in Azure with <a class="link" href="https://docs.microsoft.com/en-us/azure/azure-functions/functions-premium-plan?tabs=portal#eliminate-cold-starts"  target="_blank" rel="noopener"
+    >Premium Plan</a> features and a <a class="link" href="https://docs.microsoft.com/en-us/azure/azure-functions/dedicated-plan"  target="_blank" rel="noopener"
+    >App Service</a> plan.</p>
+<h1 id="the-test">The test</h1>
+<p>For me to show you how PowerShell and C# perform against each other in Azure Function Apps, I have two HTTP-trigger functions: <a class="link" href="https://github.com/codaamok/PoSH/tree/master/Azure/AzureFunctions/GraphAPI-Mail-PS"  target="_blank" rel="noopener"
+    >GraphAPI-Mail-PS</a> and <a class="link" href="https://github.com/codaamok/PoSH/tree/master/Azure/AzureFunctions/GraphAPI-Mail-CSharp"  target="_blank" rel="noopener"
+    >GraphAPI-Mail-CSharp</a>.</p>
+<p>When I send a simple HTTP request to either one, they send an email to me, from myself, using Microsoft&rsquo;s Graph API, e.g.:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-powershell" data-lang="powershell"><span style="color:#75715e"># Calls the C# Function App</span>
+Invoke-RestMethod -Uri <span style="color:#e6db74">&#34;https://graphapi-mail-csharp.azurewebsites.net/api/GraphAPI_Mail&#34;</span>
+
+<span style="color:#75715e"># Calls the PowerShell Function App</span>
+Invoke-RestMethod -Uri <span style="color:#e6db74">&#34;https://graphapi-mail-ps.azurewebsites.net/api/GraphAPI-Mail&#34;</span>
+</code></pre></div><p>I intend to run the above, a hundred times for each while recycling the Function App in-between each time to force a cold start, and see what the numbers are. This is what I intend to use to carry out the test: <a class="link" href="https://github.com/codaamok/PoSH/blob/master/Azure/AzureFunctions/Compare-PSCSharpGraphAPIMail.ps1"  target="_blank" rel="noopener"
+    >Compare-PSCSharpGraphAPIMail.ps1</a>.</p>
+<h1 id="the-results">The results</h1>
+<table>
+<thead>
+<tr>
+<th>Function App</th>
+<th>Average (s)</th>
+<th>Minimum (s)</th>
+<th>Maximum (s)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>GraphAPI-Mail-CSharp</td>
+<td>1.564564157</td>
+<td>0.418345</td>
+<td>3.5649865</td>
+</tr>
+<tr>
+<td>GraphAPI-Mail-PS</td>
+<td>18.533579388</td>
+<td>13.5226983</td>
+<td>47.0977745</td>
+</tr>
+</tbody>
+</table>
+<h1 id="discussion">Discussion</h1>
+<p>If you&rsquo;ve been on the fence about trying C# and you consider yourself handy with PowerShell, hopefully this post has given you some motivation to at least give C# some serious thought.</p>
+<p>I have to be honest though, writing code with C# is not as easy as PowerShell. I guess this applies to all new things but I felt a fair bit of frustration while learning C# and trying to apply it. Thankfully I work with some great people that helped me, mainly <a class="link" href="https://twitter.com/CodyMathis123"  target="_blank" rel="noopener"
+    >Cody</a> and a bit of <a class="link" href="https://twitter.com/powers_hell"  target="_blank" rel="noopener"
+    >Ben</a> too!</p>
+<p>I immediately sense that there is a lot of &lsquo;scaffolding&rsquo; involved to write in C# compared to PowerShell, however doing this test has given me a good insight and understanding. For an example of an Azure Function App, C# fits in well because it can ran what you want significantly quicker so if you have anything that involve some user experience, it is for sure superior.</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+    
+</article>
+
+    <aside class="related-contents--wrapper">
+    
+    
+</aside>
+
+
+    
+        
+    <div class="disqus-container">
+    <div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "adam-cook" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</div>
+
+<style>
+    .disqus-container {
+        background-color: var(--card-background);
+        border-radius: var(--card-border-radius);
+        box-shadow: var(--shadow-l1);
+        padding: var(--card-padding);
+    }
+</style>
+
+
+    
+
+    <footer class="site-footer">
+    <section class="copyright">&copy; 2022 Adam Cook</section>
+    <section class="powerby">Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="1.1.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true" style="display:none">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+            </main>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.5/dist/vibrant.min.js"
+    integrity="sha256-5NovOZc4iwiAWTYIFiIM7DxKUXKWvpVEuMEPLzcm5/g=" crossorigin="anonymous"></script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<link rel="stylesheet" href="/css/highlight/light.min.css" media="(prefers-color-scheme: light)">
+<link rel="stylesheet" href="/css/highlight/dark.min.css" media="(prefers-color-scheme: dark)">
+
+    </body>
+</html>

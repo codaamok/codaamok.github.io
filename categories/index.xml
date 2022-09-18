@@ -17,9 +17,18 @@
     </item>
     
     <item>
+      <title>Azure</title>
+      <link>https://adamcook.io/categories/azure/</link>
+      <pubDate>Sat, 07 Aug 2021 18:29:18 +0100</pubDate>
+      
+      <guid>https://adamcook.io/categories/azure/</guid>
+      <description></description>
+    </item>
+    
+    <item>
       <title>PowerShell</title>
       <link>https://adamcook.io/categories/powershell/</link>
-      <pubDate>Mon, 21 Dec 2020 00:00:00 +0000</pubDate>
+      <pubDate>Sat, 07 Aug 2021 18:29:18 +0100</pubDate>
       
       <guid>https://adamcook.io/categories/powershell/</guid>
       <description></description>
@@ -40,15 +49,6 @@
       <pubDate>Sat, 17 Oct 2020 00:00:00 +0100</pubDate>
       
       <guid>https://adamcook.io/categories/presentations/</guid>
-      <description></description>
-    </item>
-    
-    <item>
-      <title>Azure</title>
-      <link>https://adamcook.io/categories/azure/</link>
-      <pubDate>Mon, 05 Oct 2020 21:04:10 +0100</pubDate>
-      
-      <guid>https://adamcook.io/categories/azure/</guid>
       <description></description>
     </item>
     
