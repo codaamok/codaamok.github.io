@@ -17,7 +17,7 @@
 &lt;li&gt;Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&amp;rsquo;t figured out a way?&lt;/li&gt;
 &lt;li&gt;Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles?&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;By &amp;ldquo;special patching&amp;rdquo;, I mean the customer or application owners are terrified of the word &amp;ldquo;patching&amp;rdquo; and demand it be performed manually on a handful of finicky application servers out of fear of downtime. &lt;em&gt;(yeah, because hitting &amp;lsquo;check for updates&amp;rsquo; manually reduces risk&lt;/em&gt; 😒 &lt;em&gt;)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;By &amp;ldquo;special patching,&amp;rdquo; I mean the customer or application owners are terrified of the word &amp;ldquo;patching&amp;rdquo; and demand it be performed manually on a handful of finicky application servers out of fear of downtime. &lt;em&gt;(yeah, because hitting &amp;lsquo;check for updates&amp;rsquo; manually reduces risk&lt;/em&gt; 😒 &lt;em&gt;)&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;This leaves you feeling frustrated in having to perform tedious manual labour. Login, point, click, sit, wait etc.. You&amp;rsquo;re also annoyed the business has invested in a behemoth like ConfigMgr, and aren&amp;rsquo;t using it to its full potential just for these handful of special &amp;ldquo;snowflake&amp;rdquo; servers.&lt;/p&gt;
 &lt;p&gt;This is where I tell you I wrote a PowerShell module that automates this! Which is funny because you can&amp;rsquo;t automate it! You must do it manually! 😆 but hang on let me explain..&lt;/p&gt;
 &lt;h2 id=&#34;pscmsnowflakepatching&#34;&gt;PSCMSnowflakePatching&lt;/h2&gt;
@@ -67,7 +67,7 @@
 &lt;p&gt;Here is another example, if I ran the following command:&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-ps&#34; data-lang=&#34;ps&#34;&gt;&lt;span style=&#34;color:#a6e22e&#34;&gt;$result&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;=&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;Invoke-CMSnowflakePatching&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;-ComputerName&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;&amp;#39;VEEAM&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;-AllowReboot&lt;/span&gt; &lt;span style=&#34;color:#a6e22e&#34;&gt;-Retry&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This time we&amp;rsquo;re just targetting the one server, permitting the server to reboot if an update returned a hard/soft pending reboot, and allow a maximum of 3 retries if there were any installation failures.&lt;/p&gt;
-&lt;p&gt;At the end of the process, you will receive an below output object similar to the below in the &lt;code&gt;$result&lt;/code&gt; variable:&lt;/p&gt;
+&lt;p&gt;At the end of the process, you will receive an output object similar to the below in the &lt;code&gt;$result&lt;/code&gt; variable:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;PS C:\&amp;gt; $result
 
 ComputerName    : VEEAM
@@ -118,7 +118,7 @@ ErrorCode       : 0
 &lt;p&gt;image of failure here&lt;br&gt;
 image of success and no pending reboot here&lt;/p&gt;
 &lt;/blockquote&gt;
-&lt;h2 id=&#34;interatively-use-pscmsnowflakepatching-with-the--choosecollection-parameter&#34;&gt;Interatively use PSCMSnowflakePatching with the &lt;code&gt;-ChooseCollection&lt;/code&gt; Parameter&lt;/h2&gt;
+&lt;h2 id=&#34;interactively-use-pscmsnowflakepatching-with-the--choosecollection-parameter&#34;&gt;Interactively use PSCMSnowflakePatching with the &lt;code&gt;-ChooseCollection&lt;/code&gt; Parameter&lt;/h2&gt;
 &lt;p&gt;The &lt;code&gt;-ChooseCollection&lt;/code&gt; is the only parameter that you can&amp;rsquo;t use in an automated fashion. This is because it produces a pop-up &lt;code&gt;Out-GridView&lt;/code&gt; window prompting you to choose a ConfigMgr device collection.&lt;/p&gt;
 &lt;p&gt;This is just demonstrating that you can still use &lt;code&gt;Invoke-CMSnowflakePatching&lt;/code&gt; to &amp;lsquo;manually&amp;rsquo; patch systems if you wish to, just without the hassle of login, point, click, etc.&lt;/p&gt;
 &lt;blockquote&gt;

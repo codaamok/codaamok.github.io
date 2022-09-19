@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Do you have servers in your environment that require special or manual patching? Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&amp;rsquo;t figured out a way? Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles?  By &amp;ldquo;special patching&amp;rdquo;, I mean the customer or application owners are terrified of the word &amp;ldquo;patching&amp;rdquo; and demand it be performed manually on a handful of finicky application servers out of fear of downtime.'><title>Patching Snowflakes With ConfigMgr and PowerShell</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Do you have servers in your environment that require special or manual patching? Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&amp;rsquo;t figured out a way? Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles?  By &amp;ldquo;special patching,&amp;rdquo; I mean the customer or application owners are terrified of the word &amp;ldquo;patching&amp;rdquo; and demand it be performed manually on a handful of finicky application servers out of fear of downtime.'><title>Patching Snowflakes With ConfigMgr and PowerShell</title>
 
 <link rel='canonical' href='https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/'>
 
 <link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Patching Snowflakes With ConfigMgr and PowerShell'>
-<meta property='og:description' content='Do you have servers in your environment that require special or manual patching? Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&amp;rsquo;t figured out a way? Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles?  By &amp;ldquo;special patching&amp;rdquo;, I mean the customer or application owners are terrified of the word &amp;ldquo;patching&amp;rdquo; and demand it be performed manually on a handful of finicky application servers out of fear of downtime.'>
+<meta property='og:description' content='Do you have servers in your environment that require special or manual patching? Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&amp;rsquo;t figured out a way? Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles?  By &amp;ldquo;special patching,&amp;rdquo; I mean the customer or application owners are terrified of the word &amp;ldquo;patching&amp;rdquo; and demand it be performed manually on a handful of finicky application servers out of fear of downtime.'>
 <meta property='og:url' content='https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/'>
 <meta property='og:site_name' content='Adam Cook'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-09-18T10:22:56&#43;01:00'/><meta property='article:modified_time' content='2022-09-18T10:22:56&#43;01:00'/><meta property='og:image' content='https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/cover.jpg' />
 <meta name="twitter:site" content="codaamok"><meta name="twitter:title" content="Patching Snowflakes With ConfigMgr and PowerShell">
-<meta name="twitter:description" content="Do you have servers in your environment that require special or manual patching? Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&amp;rsquo;t figured out a way? Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles?  By &amp;ldquo;special patching&amp;rdquo;, I mean the customer or application owners are terrified of the word &amp;ldquo;patching&amp;rdquo; and demand it be performed manually on a handful of finicky application servers out of fear of downtime."><meta name="twitter:card" content="summary">
+<meta name="twitter:description" content="Do you have servers in your environment that require special or manual patching? Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&amp;rsquo;t figured out a way? Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles?  By &amp;ldquo;special patching,&amp;rdquo; I mean the customer or application owners are terrified of the word &amp;ldquo;patching&amp;rdquo; and demand it be performed manually on a handful of finicky application servers out of fear of downtime."><meta name="twitter:card" content="summary">
 	<meta name="twitter:image" content='https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/cover.jpg' />
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-157232649-3"></script>
 <script>
@@ -293,7 +293,7 @@
 <li>Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&rsquo;t figured out a way?</li>
 <li>Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles?</li>
 </ul>
-<p>By &ldquo;special patching&rdquo;, I mean the customer or application owners are terrified of the word &ldquo;patching&rdquo; and demand it be performed manually on a handful of finicky application servers out of fear of downtime. <em>(yeah, because hitting &lsquo;check for updates&rsquo; manually reduces risk</em> 😒 <em>)</em></p>
+<p>By &ldquo;special patching,&rdquo; I mean the customer or application owners are terrified of the word &ldquo;patching&rdquo; and demand it be performed manually on a handful of finicky application servers out of fear of downtime. <em>(yeah, because hitting &lsquo;check for updates&rsquo; manually reduces risk</em> 😒 <em>)</em></p>
 <p>This leaves you feeling frustrated in having to perform tedious manual labour. Login, point, click, sit, wait etc.. You&rsquo;re also annoyed the business has invested in a behemoth like ConfigMgr, and aren&rsquo;t using it to its full potential just for these handful of special &ldquo;snowflake&rdquo; servers.</p>
 <p>This is where I tell you I wrote a PowerShell module that automates this! Which is funny because you can&rsquo;t automate it! You must do it manually! 😆 but hang on let me explain..</p>
 <h2 id="pscmsnowflakepatching">PSCMSnowflakePatching</h2>
@@ -343,7 +343,7 @@
 <p>Here is another example, if I ran the following command:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ps" data-lang="ps"><span style="color:#a6e22e">$result</span> <span style="color:#a6e22e">=</span> <span style="color:#a6e22e">Invoke-CMSnowflakePatching</span> <span style="color:#a6e22e">-ComputerName</span> <span style="color:#a6e22e">&#39;VEEAM&#39;</span> <span style="color:#a6e22e">-AllowReboot</span> <span style="color:#a6e22e">-Retry</span> <span style="color:#ae81ff">3</span>
 </code></pre></div><p>This time we&rsquo;re just targetting the one server, permitting the server to reboot if an update returned a hard/soft pending reboot, and allow a maximum of 3 retries if there were any installation failures.</p>
-<p>At the end of the process, you will receive an below output object similar to the below in the <code>$result</code> variable:</p>
+<p>At the end of the process, you will receive an output object similar to the below in the <code>$result</code> variable:</p>
 <pre><code>PS C:\&gt; $result
 
 ComputerName    : VEEAM
@@ -394,7 +394,7 @@ ErrorCode       : 0
 <p>image of failure here<br>
 image of success and no pending reboot here</p>
 </blockquote>
-<h2 id="interatively-use-pscmsnowflakepatching-with-the--choosecollection-parameter">Interatively use PSCMSnowflakePatching with the <code>-ChooseCollection</code> Parameter</h2>
+<h2 id="interactively-use-pscmsnowflakepatching-with-the--choosecollection-parameter">Interactively use PSCMSnowflakePatching with the <code>-ChooseCollection</code> Parameter</h2>
 <p>The <code>-ChooseCollection</code> is the only parameter that you can&rsquo;t use in an automated fashion. This is because it produces a pop-up <code>Out-GridView</code> window prompting you to choose a ConfigMgr device collection.</p>
 <p>This is just demonstrating that you can still use <code>Invoke-CMSnowflakePatching</code> to &lsquo;manually&rsquo; patch systems if you wish to, just without the hassle of login, point, click, etc.</p>
 <blockquote>

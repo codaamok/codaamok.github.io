@@ -13,7 +13,7 @@
       <pubDate>Sun, 18 Sep 2022 10:22:56 +0100</pubDate>
       
       <guid>https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/</guid>
-      <description>Do you have servers in your environment that require special or manual patching? Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&amp;rsquo;t figured out a way? Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles?  By &amp;ldquo;special patching&amp;rdquo;, I mean the customer or application owners are terrified of the word &amp;ldquo;patching&amp;rdquo; and demand it be performed manually on a handful of finicky application servers out of fear of downtime.</description>
+      <description>Do you have servers in your environment that require special or manual patching? Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&amp;rsquo;t figured out a way? Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles?  By &amp;ldquo;special patching,&amp;rdquo; I mean the customer or application owners are terrified of the word &amp;ldquo;patching&amp;rdquo; and demand it be performed manually on a handful of finicky application servers out of fear of downtime.</description>
     </item>
     
     <item>
