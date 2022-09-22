@@ -1,17 +1,17 @@
 <!DOCTYPE html>
 <html lang="en-us">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Do you have servers in your environment that require special or manual patching? Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&amp;rsquo;t figured out a way? Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles?  By &amp;ldquo;special patching,&amp;rdquo; I mean the customer or application owners are terrified of the word &amp;ldquo;patching&amp;rdquo; and demand it be performed manually on a handful of finicky application servers out of fear of downtime.'><title>Patching Snowflakes With ConfigMgr and PowerShell</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Do you have servers in your environment that require special or manual patching? Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&amp;rsquo;t figured out a way? Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles?  By &amp;ldquo;special patching,&amp;rdquo; I mean the customer or application owners are terrified of the word &amp;ldquo;patching&amp;rdquo;, and they demand it be performed manually on a handful of finicky application servers out of fear of downtime.'><title>Patching Snowflakes with ConfigMgr and PowerShell</title>
 
 <link rel='canonical' href='https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/'>
 
-<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Patching Snowflakes With ConfigMgr and PowerShell'>
-<meta property='og:description' content='Do you have servers in your environment that require special or manual patching? Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&amp;rsquo;t figured out a way? Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles?  By &amp;ldquo;special patching,&amp;rdquo; I mean the customer or application owners are terrified of the word &amp;ldquo;patching&amp;rdquo; and demand it be performed manually on a handful of finicky application servers out of fear of downtime.'>
+<link rel="stylesheet" href="/scss/style.min.css"><meta property='og:title' content='Patching Snowflakes with ConfigMgr and PowerShell'>
+<meta property='og:description' content='Do you have servers in your environment that require special or manual patching? Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&amp;rsquo;t figured out a way? Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles?  By &amp;ldquo;special patching,&amp;rdquo; I mean the customer or application owners are terrified of the word &amp;ldquo;patching&amp;rdquo;, and they demand it be performed manually on a handful of finicky application servers out of fear of downtime.'>
 <meta property='og:url' content='https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/'>
 <meta property='og:site_name' content='Adam Cook'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-09-18T10:22:56&#43;01:00'/><meta property='article:modified_time' content='2022-09-18T10:22:56&#43;01:00'/><meta property='og:image' content='https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/cover.jpg' />
-<meta name="twitter:site" content="codaamok"><meta name="twitter:title" content="Patching Snowflakes With ConfigMgr and PowerShell">
-<meta name="twitter:description" content="Do you have servers in your environment that require special or manual patching? Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&amp;rsquo;t figured out a way? Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles?  By &amp;ldquo;special patching,&amp;rdquo; I mean the customer or application owners are terrified of the word &amp;ldquo;patching&amp;rdquo; and demand it be performed manually on a handful of finicky application servers out of fear of downtime."><meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="codaamok"><meta name="twitter:title" content="Patching Snowflakes with ConfigMgr and PowerShell">
+<meta name="twitter:description" content="Do you have servers in your environment that require special or manual patching? Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&amp;rsquo;t figured out a way? Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles?  By &amp;ldquo;special patching,&amp;rdquo; I mean the customer or application owners are terrified of the word &amp;ldquo;patching&amp;rdquo;, and they demand it be performed manually on a handful of finicky application servers out of fear of downtime."><meta name="twitter:card" content="summary">
 	<meta name="twitter:image" content='https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/cover.jpg' />
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-157232649-3"></script>
 <script>
@@ -216,7 +216,7 @@
         <div class="article-image">
             <img srcset="/p/patching-snowflakes-with-configmgr-and-powershell/images/cover_hu276f12c0412788f02151f6c975d3c309_51098_1024x0_resize_q75_box.jpg 1024w, /p/patching-snowflakes-with-configmgr-and-powershell/images/cover_hu276f12c0412788f02151f6c975d3c309_51098_2000x0_resize_q75_box.jpg 2000w"
                     src="/p/patching-snowflakes-with-configmgr-and-powershell/images/cover_hu276f12c0412788f02151f6c975d3c309_51098_2000x0_resize_q75_box.jpg" width="868" height="257" loading="lazy"
-                    alt="Featured image of post Patching Snowflakes With ConfigMgr and PowerShell" />
+                    alt="Featured image of post Patching Snowflakes with ConfigMgr and PowerShell" />
             
         </div>
     
@@ -247,7 +247,7 @@
     
 
     <h2 class="article-title">
-        <a href="https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/">Patching Snowflakes With ConfigMgr and PowerShell</a>
+        <a href="https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/">Patching Snowflakes with ConfigMgr and PowerShell</a>
     </h2>
 
     <table>
@@ -293,9 +293,9 @@
 <li>Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&rsquo;t figured out a way?</li>
 <li>Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles?</li>
 </ul>
-<p>By &ldquo;special patching,&rdquo; I mean the customer or application owners are terrified of the word &ldquo;patching&rdquo; and demand it be performed manually on a handful of finicky application servers out of fear of downtime. <em>(yeah, because hitting &lsquo;check for updates&rsquo; manually reduces risk</em> 😒 <em>)</em></p>
+<p>By &ldquo;special patching,&rdquo; I mean the customer or application owners are terrified of the word &ldquo;patching&rdquo;, and they demand it be performed manually on a handful of finicky application servers out of fear of downtime. <em>(yeah, because hitting &lsquo;check for updates&rsquo; manually reduces risk</em> 😒 <em>)</em></p>
 <p>This leaves you feeling frustrated in having to perform tedious manual labour. Login, point, click, sit, wait etc.. You&rsquo;re also annoyed the business has invested in a behemoth like ConfigMgr, and aren&rsquo;t using it to its full potential just for these handful of special &ldquo;snowflake&rdquo; servers.</p>
-<p>This is where I tell you I wrote a PowerShell module that automates this! Which is funny because you can&rsquo;t automate it! You must do it manually! 😆 but hang on let me explain..</p>
+<p>This is where I tell you I wrote a PowerShell module that automates this! Which is funny because you apparently shouldn&rsquo;t automate it! You must do it manually! 😆 but hang on let me explain..</p>
 <h2 id="pscmsnowflakepatching">PSCMSnowflakePatching</h2>
 <p><a class="link" href="https://github.com/codaamok/PSCMSnowflakePatching"  target="_blank" rel="noopener"
     >PSCMSnowflakePatching</a> is a PowerShell module which contains a few functions but the primary interest is in <a class="link" href="https://github.com/codaamok/PSCMSnowflakePatching/blob/main/docs/Invoke-CMSoftwareUpdateInstall.md"  target="_blank" rel="noopener"
@@ -307,17 +307,18 @@
 <li>b) give it a ConfigMgr device collection ID via the <code>-CollectionId</code> parameter</li>
 <li>c) use the <code>-ChooseCollection</code> parameter and select a device collection from your environment</li>
 </ul>
-<p>For each host, it will remotely start the software update installation for all updates deployed to it. By default it doesn&rsquo;t reboot or make any retry attempts, but there parameters for this if you need it:</p>
+<p>For each host, it will remotely start the software update installation for all updates deployed to it.</p>
+<p>By default it doesn&rsquo;t reboot or make any retry attempts, but there are parameters for this if you need it:</p>
 <ul>
-<li><code>-AllowReboot</code> switch will reboot the system(s) if any update returned an exit code indicating a reboot is required</li>
+<li><code>-AllowReboot</code> switch will reboot the system(s) if any updates require a restart</li>
 <li><code>-Attempts</code> parameter will let you indicate the maximum number of retries you would like the function to install updates if there was a failure in the previous attempt</li>
 </ul>
 <p>All hosts are processed in parallel, and you will get a live progress update from each host as it has finished patching with a break down of what updates were installed, success or failure.</p>
 <p>If you use the either the <code>-ComputerName</code> or <code>-CollectionId</code> parameters, an output object is returned at the end with the result of patching for each host. This is great because if you want to orchestrate a complex patching routine with tools such as System Center Orchestrator or Azure Automation, you can absolutely do this with the feedback from the function.</p>
 <p><figure>
-		<a href="/p/patching-snowflakes-with-configmgr-and-powershell/images/1-1.png" data-size="1333x451">
-			<img srcset="/p/patching-snowflakes-with-configmgr-and-powershell/images/1-1_hu7df275bf727f225859fa01d8cd52f7e0_180910_480x0_resize_box_3.png 480w, /p/patching-snowflakes-with-configmgr-and-powershell/images/1-1_hu7df275bf727f225859fa01d8cd52f7e0_180910_1024x0_resize_box_3.png 1024w"
-				src="/p/patching-snowflakes-with-configmgr-and-powershell/images/1-1.png" width="1333" height="451" loading="lazy"
+		<a href="/p/patching-snowflakes-with-configmgr-and-powershell/images/1-1.png" data-size="1353x471">
+			<img srcset="/p/patching-snowflakes-with-configmgr-and-powershell/images/1-1_hued2ad1d1ad75bdb6235311e959cac6eb_173747_480x0_resize_box_3.png 480w, /p/patching-snowflakes-with-configmgr-and-powershell/images/1-1_hued2ad1d1ad75bdb6235311e959cac6eb_173747_1024x0_resize_box_3.png 1024w"
+				src="/p/patching-snowflakes-with-configmgr-and-powershell/images/1-1.png" width="1353" height="471" loading="lazy"
 				alt="Live progress written to console">
 		</a>
 		
@@ -329,9 +330,9 @@
 <p>Beyond the first few lines revolving around startup, you can see essential information as the jobs finish patching each host. We can see the list of updates that successfully installed, and a yellow text warning indicating one of the updates put the system in a pending reboot state.</p>
 <p>If you were running this ad-hoc and interactively, I suspect you might find this realtime information helpful. This output likely can&rsquo;t easily be captured by most automation tools as it&rsquo;s just <code>Write-Host</code>. However, this is why an output object is returned instead (see below) - this output can be captured and used however you please.</p>
 <p><figure>
-		<a href="/p/patching-snowflakes-with-configmgr-and-powershell/images/1-2.png" data-size="1343x467">
-			<img srcset="/p/patching-snowflakes-with-configmgr-and-powershell/images/1-2_hue6073ed9b45b75b8cde726c8a2cd244d_310001_480x0_resize_box_3.png 480w, /p/patching-snowflakes-with-configmgr-and-powershell/images/1-2_hue6073ed9b45b75b8cde726c8a2cd244d_310001_1024x0_resize_box_3.png 1024w"
-				src="/p/patching-snowflakes-with-configmgr-and-powershell/images/1-2.png" width="1343" height="467" loading="lazy"
+		<a href="/p/patching-snowflakes-with-configmgr-and-powershell/images/1-2.png" data-size="1363x487">
+			<img srcset="/p/patching-snowflakes-with-configmgr-and-powershell/images/1-2_hu05a6692c2cb31f334affe228a3b178d2_314016_480x0_resize_box_3.png 480w, /p/patching-snowflakes-with-configmgr-and-powershell/images/1-2_hu05a6692c2cb31f334affe228a3b178d2_314016_1024x0_resize_box_3.png 1024w"
+				src="/p/patching-snowflakes-with-configmgr-and-powershell/images/1-2.png" width="1363" height="487" loading="lazy"
 				alt="Output object in the $result variable">
 		</a>
 		
@@ -341,8 +342,8 @@
 <p>Looking at the above screenshot, this is where more automation possibilities become available for you.</p>
 <p>The function returned a summary of the patch jobs for each host as output objects, and we captured this in the <code>$result</code> variable from the last screenshot. Here we can see valuable information that might help feed as input to other automation things.</p>
 <p>Here is another example, if I ran the following command:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-ps" data-lang="ps"><span style="color:#a6e22e">$result</span> <span style="color:#a6e22e">=</span> <span style="color:#a6e22e">Invoke-CMSnowflakePatching</span> <span style="color:#a6e22e">-ComputerName</span> <span style="color:#a6e22e">&#39;VEEAM&#39;</span> <span style="color:#a6e22e">-AllowReboot</span> <span style="color:#a6e22e">-Attempts</span> <span style="color:#ae81ff">3</span>
-</code></pre></div><p>This time we&rsquo;re just targetting the one server, permitting the server to reboot if an update returned a hard/soft pending reboot, and allow a maximum of 3 retries if there were any installation failures.</p>
+<pre><code>PS C:\&gt; $result = Invoke-CMSnowflakePatching -ComputerName 'VEEAM' -AllowReboot -Attempts 3
+</code></pre><p>This time we&rsquo;re just targetting the one server, permitting the server to reboot if an update returned a hard/soft pending reboot, and allow a maximum of 3 retries if there were any installation failures.</p>
 <p>At the end of the process, you will receive an output object similar to the below in the <code>$result</code> variable:</p>
 <pre><code>PS C:\&gt; $result
 
@@ -390,16 +391,38 @@ ErrorCode       : 0
 </ul>
 <p>Another benefit here is that you are using what you&rsquo;ve paid for - ConfigMgr! With this approach, there will be no need to abandon usual deployment, content delivery, and reporting capabilities. The function is installing the software updates deployed to the client by ConfigMgr.</p>
 <p>Here are a couple more example screenshots:</p>
-<blockquote>
-<p>image of failure here<br>
-image of success and no pending reboot here</p>
-</blockquote>
+<p><figure>
+		<a href="/p/patching-snowflakes-with-configmgr-and-powershell/images/2.png" data-size="1460x824">
+			<img srcset="/p/patching-snowflakes-with-configmgr-and-powershell/images/2_hu1b5c773921c451cbc7f4baed43cb1b48_352975_480x0_resize_box_3.png 480w, /p/patching-snowflakes-with-configmgr-and-powershell/images/2_hu1b5c773921c451cbc7f4baed43cb1b48_352975_1024x0_resize_box_3.png 1024w"
+				src="/p/patching-snowflakes-with-configmgr-and-powershell/images/2.png" width="1460" height="824" loading="lazy"
+				alt="Successful installation without any pending reboots">
+		</a>
+		
+		<figcaption>Successful installation without any pending reboots</figcaption>
+		
+	</figure> <figure>
+		<a href="/p/patching-snowflakes-with-configmgr-and-powershell/images/3.png" data-size="1460x929">
+			<img srcset="/p/patching-snowflakes-with-configmgr-and-powershell/images/3_hu474dfd00101a303316becadf49821752_470678_480x0_resize_box_3.png 480w, /p/patching-snowflakes-with-configmgr-and-powershell/images/3_hu474dfd00101a303316becadf49821752_470678_1024x0_resize_box_3.png 1024w"
+				src="/p/patching-snowflakes-with-configmgr-and-powershell/images/3.png" width="1460" height="929" loading="lazy"
+				alt="Failed installation and pending reboots">
+		</a>
+		
+		<figcaption>Failed installation and pending reboots</figcaption>
+		
+	</figure></p>
 <h2 id="interactively-use-pscmsnowflakepatching-with-the--choosecollection-parameter">Interactively use PSCMSnowflakePatching with the <code>-ChooseCollection</code> Parameter</h2>
 <p>The <code>-ChooseCollection</code> is the only parameter that you can&rsquo;t use in an automated fashion. This is because it produces a pop-up <code>Out-GridView</code> window prompting you to choose a ConfigMgr device collection.</p>
 <p>This is just demonstrating that you can still use <code>Invoke-CMSnowflakePatching</code> to &lsquo;manually&rsquo; patch systems if you wish to, just without the hassle of login, point, click, etc.</p>
-<blockquote>
-<p>gif image of <code>-ChooseCollection</code></p>
-</blockquote>
+<p><figure>
+		<a href="/p/patching-snowflakes-with-configmgr-and-powershell/images/4.gif" data-size="1571x1105">
+			<img srcset="/p/patching-snowflakes-with-configmgr-and-powershell/images/4_hu6866cb3f5a1f46a6b95d1f2ca98fd465_487272_480x0_resize_box.gif 480w, /p/patching-snowflakes-with-configmgr-and-powershell/images/4_hu6866cb3f5a1f46a6b95d1f2ca98fd465_487272_1024x0_resize_box.gif 1024w"
+				src="/p/patching-snowflakes-with-configmgr-and-powershell/images/4.gif" width="1571" height="1105" loading="lazy"
+				alt="Animated gif to show the -ChooseCollection parameter">
+		</a>
+		
+		<figcaption>Animated gif to show the -ChooseCollection parameter</figcaption>
+		
+	</figure></p>
 <h2 id="why-a-module-why-not-just-a-script">Why a module? Why not just a script?</h2>
 <p>This could just be my subconscious self playing games in my mind, but I feel the need to justify why this ended up being a module and not a single script file. An irrational pressure builds in my mind when I publish code online - &ldquo;it must be perfect and justified!&rdquo;</p>
 <p>Jobs are used to process multiple hosts at once for patching, and I found I was re-using code to account for things like loop waiting, timeouts, and retries. You can&rsquo;t easily use nor pass functions to jobs, so instead, for better management and readability, I opted for a module and for each job, I leverage the module for reusing code.</p>
