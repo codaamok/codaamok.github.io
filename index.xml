@@ -162,7 +162,8 @@ ErrorCode       : 0
 
 &lt;iframe src=&#34;https://giphy.com/embed/3cXmze4Y8igXdnkc3U&#34; width=&#34;480&#34; height=&#34;360&#34; frameBorder=&#34;0&#34; class=&#34;giphy-embed&#34; allowFullScreen style=&#34;display: block; margin: 0 auto;&#34;&gt;&lt;/iframe&gt;
 
-&lt;p&gt;Andrew Porter pinged me asking if I would help making one. He found a few scripts online here and there which collectively sort of did what he wanted but not quite.&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://twitter.com/0AndrewPorter0&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Andrew Porter&lt;/a&gt; pinged me asking if I would help making one. He found a few scripts online here and there which collectively sort of did what he wanted but not quite.&lt;/p&gt;
 &lt;p&gt;These are the scripts which he found:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
