@@ -111,7 +111,8 @@ EvaluationState : InstallComplete
 ErrorCode       : 0
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;With this output, you have a lot of opportunities. For example, you could feed this output to other scripts to:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Send an email as a report with the result&lt;/li&gt;
+&lt;li&gt;Send an email as a report with the result (&lt;a class=&#34;link&#34; href=&#34;https://github.com/codaamok/PSCMSnowflakePatching/blob/main/examples/SendMail.ps1&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;see this example here&lt;/a&gt;)&lt;/li&gt;
 &lt;li&gt;Invoke some other custom remedial actions on the server or application it hosts&lt;/li&gt;
 &lt;li&gt;Send the data to a ticketing system using some web API, or raise an alert somewhere&lt;/li&gt;
 &lt;/ul&gt;
