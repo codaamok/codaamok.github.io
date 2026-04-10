@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=" Do you have servers in your environment that require special or manual patching? Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&rsquo;t figured out a way? Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles? By &ldquo;special patching,&rdquo; I mean the customer or application owners are terrified of the word &ldquo;patching&rdquo;, and they demand it be performed manually on a handful of finicky application servers out of fear of downtime. (yeah, because hitting &lsquo;check for updates&rsquo; manually reduces risk &#x1f612; )\n">
+<title>Patching Snowflakes with ConfigMgr and PowerShell</title>
+
+<link rel='canonical' href='https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/'>
+
+<link rel="stylesheet" href="/scss/style.min.86591c898bd806857815fbb8c47e8d3fed97c133b78e83d9bfc27b164dd0aa2b.css"><meta property='og:title' content="Patching Snowflakes with ConfigMgr and PowerShell">
+<meta property='og:description' content=" Do you have servers in your environment that require special or manual patching? Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&rsquo;t figured out a way? Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles? By &ldquo;special patching,&rdquo; I mean the customer or application owners are terrified of the word &ldquo;patching&rdquo;, and they demand it be performed manually on a handful of finicky application servers out of fear of downtime. (yeah, because hitting &lsquo;check for updates&rsquo; manually reduces risk &#x1f612; )\n">
+<meta property='og:url' content='https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/'>
+<meta property='og:site_name' content='Adam Cook'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2022-09-18T10:22:56&#43;01:00'/><meta property='article:modified_time' content='2022-09-18T10:22:56&#43;01:00'/><meta property='og:image' content='https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/cover.jpg' />
+<meta name="twitter:site" content="@codaamok">
+    <meta name="twitter:creator" content="@codaamok"><meta name="twitter:title" content="Patching Snowflakes with ConfigMgr and PowerShell">
+<meta name="twitter:description" content=" Do you have servers in your environment that require special or manual patching? Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&rsquo;t figured out a way? Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles? By &ldquo;special patching,&rdquo; I mean the customer or application owners are terrified of the word &ldquo;patching&rdquo;, and they demand it be performed manually on a handful of finicky application servers out of fear of downtime. (yeah, because hitting &lsquo;check for updates&rsquo; manually reduces risk &#x1f612; )\n"><meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content='https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/cover.jpg' />
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-157232649-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-157232649-3');
+</script>
+
+<style>
+  p a, li a { color: #ff4949 }
+</style>
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky compact">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_b3f0feb1c7ec8741.jpg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Adam Cook</a></h1>
+            <h2 class="site-description">— Patch My PC Customer Engineer</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='https://github.com/codaamok' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+                
+                <span>GitHub</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='https://linkedin.com/in/adamcharlescook' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-linkedin" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="4" width="16" height="16" rx="2" />
+  <line x1="8" y1="11" x2="8" y2="16" />
+  <line x1="8" y1="8" x2="8" y2="8.01" />
+  <line x1="12" y1="16" x2="12" y2="11" />
+  <path d="M16 16v-3a2 2 0 0 0 -4 0" />
+</svg>
+                
+                <span>LinkedIn</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/patching-snowflakes-with-configmgr-and-powershell/">
+                <img src="/p/patching-snowflakes-with-configmgr-and-powershell/images/cover_hu_e0aaf5efd8c7d435.jpg"
+                        srcset="/p/patching-snowflakes-with-configmgr-and-powershell/images/cover_hu_e0aaf5efd8c7d435.jpg 800w, /p/patching-snowflakes-with-configmgr-and-powershell/images/cover_hu_b731566bd5e2474d.jpg 1600w"
+                        width="800" 
+                        height="237" 
+                        loading="lazy"
+                        alt="Featured image of post Patching Snowflakes with ConfigMgr and PowerShell" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            
+            
+            
+            <a href="/categories/powershell/" style="background-color: hsl(32, 60%, 84%); color: hsl(32, 60%, 15%);">
+                PowerShell
+            </a>
+        
+            
+            
+            
+            <a href="/categories/configmgr/" style="background-color: hsl(59, 60%, 84%); color: hsl(59, 60%, 15%);">
+                ConfigMgr
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/patching-snowflakes-with-configmgr-and-powershell/">Patching Snowflakes with ConfigMgr and PowerShell</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published" datetime='2022-09-18T10:22:56&#43;01:00'>18 September 2022</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    8 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <ul>
+<li>Do you have servers in your environment that require special or manual patching?</li>
+<li>Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&rsquo;t figured out a way?</li>
+<li>Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles?</li>
+</ul>
+<p>By &ldquo;special patching,&rdquo; I mean the customer or application owners are terrified of the word &ldquo;patching&rdquo;, and they demand it be performed manually on a handful of finicky application servers out of fear of downtime. <em>(yeah, because hitting &lsquo;check for updates&rsquo; manually reduces risk</em> &#x1f612; <em>)</em></p>
+<p>This leaves you feeling frustrated in having to perform tedious manual labour. Login, point, click, sit, wait etc.. You&rsquo;re also annoyed the business has invested in a behemoth like ConfigMgr, and aren&rsquo;t using it to its full potential just for these handful of special &ldquo;snowflake&rdquo; servers.</p>
+<p>This is where I tell you I wrote a PowerShell module that automates this! Which is funny because you apparently shouldn&rsquo;t automate it! You must do it manually! &#x1f606; but hang on let me explain..</p>
+<p>Quick shout out to <a class="link" href="https://twitter.com/CodyMathis123"  target="_blank" rel="noopener"
+    >Cody Mathis</a> who helped me soundboard a fair bit and provide some support on this &#x1f44d;</p>
+<h2 id="pscmsnowflakepatching"><a href="#pscmsnowflakepatching" class="header-anchor"></a>PSCMSnowflakePatching
+</h2><p><a class="link" href="https://github.com/codaamok/PSCMSnowflakePatching"  target="_blank" rel="noopener"
+    >PSCMSnowflakePatching</a> is a PowerShell module which contains a few functions but the primary interest is in <a class="link" href="https://github.com/codaamok/PSCMSnowflakePatching/blob/main/docs/Invoke-CMSoftwareUpdateInstall.md"  target="_blank" rel="noopener"
+    ><code>Invoke-CMSnowflakePatching</code></a>.</p>
+<p>In this post I want to show you why I think this function will help you patch these snowflake systems without needing to sacrifice the use of ConfigMgr. It can streamline your manual labour, or your existing automation process, or hopefully inspire you to automate a complex patching routine with it.</p>
+<p>Using <code>Invoke-CMSnowflakePatching</code>, you can either:</p>
+<ul>
+<li>a) give it one or more hostnames via the <code>-ComputerName</code> parameter</li>
+<li>b) give it a ConfigMgr device collection ID via the <code>-CollectionId</code> parameter</li>
+<li>c) use the <code>-ChooseCollection</code> parameter and select a device collection from your environment</li>
+</ul>
+<p>For each host, it will remotely start the software update installation for all updates deployed to it.</p>
+<p>By default it doesn&rsquo;t reboot or make any retry attempts, but there are parameters for this if you need it:</p>
+<ul>
+<li><code>-AllowReboot</code> switch will reboot the system(s) if any updates require a restart</li>
+<li><code>-Attempts</code> parameter will let you indicate the maximum number of retries you would like the function to install updates if there was a failure in the previous attempt</li>
+</ul>
+<p>All hosts are processed in parallel, and you will get a live progress update from each host as it has finished patching with a break down of what updates were installed, success or failure.</p>
+<p>If you use the either the <code>-ComputerName</code> or <code>-CollectionId</code> parameters, an output object is returned at the end with the result of patching for each host. This is great because if you want to orchestrate a complex patching routine with tools such as System Center Orchestrator or Azure Automation, you can absolutely do this with the feedback from the function.</p>
+<p><img src="/p/patching-snowflakes-with-configmgr-and-powershell/images/1-1.png"
+	width="1353"
+	height="471"
+	srcset="/p/patching-snowflakes-with-configmgr-and-powershell/images/1-1_hu_fef8f6b44aa08b3e.png 480w, /p/patching-snowflakes-with-configmgr-and-powershell/images/1-1_hu_a6342916aa7d597a.png 1024w"
+	loading="lazy"
+	
+		alt="Live progress written to console"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="287"
+		data-flex-basis="689px"
+	
+></p>
+<p>In the above screenshot, you can see we&rsquo;re calling <code>Invoke-CMSnowflakePatching</code> and giving it a ConfigMgr device collection ID. We&rsquo;re capturing the output of the command by assigning it to the <code>$result</code> variable.</p>
+<p>It&rsquo;s worth calling out the two time columns seen on all lines: the first column is the time when that line was written, and the second column is the elapsed time since the start of execution.</p>
+<p>Beyond the first few lines revolving around startup, you can see essential information as the jobs finish patching each host. We can see the list of updates that successfully installed, and a yellow text warning indicating one of the updates put the system in a pending reboot state.</p>
+<p>If you were running this ad-hoc and interactively, I suspect you might find this realtime information helpful. This output likely can&rsquo;t easily be captured by most automation tools as it&rsquo;s just <code>Write-Host</code>. However, this is why an output object is returned instead (see below) - this output can be captured and used however you please.</p>
+<p><img src="/p/patching-snowflakes-with-configmgr-and-powershell/images/1-2.png"
+	width="1363"
+	height="487"
+	srcset="/p/patching-snowflakes-with-configmgr-and-powershell/images/1-2_hu_b5e0e6f7a5b866f.png 480w, /p/patching-snowflakes-with-configmgr-and-powershell/images/1-2_hu_9a9f4279eb9c4143.png 1024w"
+	loading="lazy"
+	
+		alt="Output object in the $result variable"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="279"
+		data-flex-basis="671px"
+	
+></p>
+<p>Looking at the above screenshot, this is where more automation possibilities become available for you.</p>
+<p>The function returned a summary of the patch jobs for each host as output objects, and we captured this in the <code>$result</code> variable from the last screenshot. Here we can see valuable information that might help feed as input to other automation things.</p>
+<p>Here is another example, if I ran the following command:</p>
+<pre tabindex="0"><code>PS C:\&gt; $result = Invoke-CMSnowflakePatching -ComputerName &#39;VEEAM&#39; -AllowReboot -Attempts 3
+</code></pre><p>This time we&rsquo;re just targetting the one server, permitting the server to reboot if an update returned a hard/soft pending reboot, and allow a maximum of 3 retries if there were any installation failures.</p>
+<p>At the end of the process, you will receive an output object similar to the below in the <code>$result</code> variable:</p>
+<pre tabindex="0"><code>PS C:\&gt; $result
+
+ComputerName     : VEEAM
+Result           : Failure
+Updates          : {@{Name=7-Zip 22.01 (MSI-x64); ArticleID=PMPC-2022-07-18; EvaluationState=Error;
+                   ErrorCode=2147944003}, @{Name=2022-08 Security Update for Microsoft server operating system version 21H2 for x64-based Systems
+                   (KB5012170); ArticleID=5012170; EvaluationState=InstallComplete; ErrorCode=0}, @{Name=2022-08 Cumulative Update for .NET Framework 3.5 and 4.8 for
+                   Microsoft server operating system version 21H2 for x64 (KB5015733); ArticleID=5015733; EvaluationState=InstallComplete; ErrorCode=0},
+                   @{Name=Microsoft Edge 105.0.1343.33 (x64); ArticleID=PMPC-2022-09-09; EvaluationState=InstallComplete; ErrorCode=0}}
+IsPendingReboot  : False
+NumberOfReboots  : 1
+NumberOfAttempts : 3
+RunspaceId       : af37488e-dad9-4d56-b72a-5aa642e589e4
+</code></pre><p>From the output above you can see the overall result from patching my Veeam server; the list of updates that were installed, whether there is a pending reboot, how many times the server was rebooted during patching, and how many times it retried.</p>
+<p>We can see <code>NumberOfRetries</code> is 3, and that <code>7-Zip 22.01 (MSI-x64)</code> finished in a state of <code>Error</code> - it failed to install the update despite 3 attempts.</p>
+<p>It looks like it installed all updates, and likely one of the Windows updates returned a pending reboot so the server rebooted. As the 7-Zip update failed in the previous attempt, it was retried. It retried for a maximum of 3 attempts before returning.</p>
+<p>Here is the full content of the <code>Updates</code> property from the output object in list view:</p>
+<pre tabindex="0"><code>PS C:\&gt; $result.Updates | fl
+
+Name            : 7-Zip 22.01 (MSI-x64) - (Republished on 2022-09-15 at 17:52)
+ArticleID       : PMPC-2022-07-18
+EvaluationState : Error
+ErrorCode       : 2147944003
+
+Name            : 2022-08 Security Update for Microsoft server operating system version 21H2 for x64-based Systems (KB5012170)
+ArticleID       : KB5012170
+EvaluationState : InstallComplete
+ErrorCode       : 0
+
+Name            : 2022-08 Cumulative Update for .NET Framework 3.5 and 4.8 for Microsoft server operating system version 21H2 for x64 (KB5015733)
+ArticleID       : KB5015733
+EvaluationState : InstallComplete
+ErrorCode       : 0
+
+Name            : Microsoft Edge 105.0.1343.33 (x64)
+ArticleID       : PMPC-2022-09-09
+EvaluationState : InstallComplete
+ErrorCode       : 0
+</code></pre><p>With this output, you have a lot of opportunities. For example, you could feed this output to other scripts to:</p>
+<ul>
+<li>Send an email as a report with the result (<a class="link" href="https://github.com/codaamok/PSCMSnowflakePatching/blob/main/examples/SendMail.ps1"  target="_blank" rel="noopener"
+    >see this example here</a>)</li>
+<li>Invoke some other custom remedial actions on the server or application it hosts</li>
+<li>Send the data to a ticketing system using some web API, or raise an alert somewhere</li>
+</ul>
+<p>Another benefit here is that you are using what you&rsquo;ve paid for - ConfigMgr! With this approach, there will be no need to abandon usual deployment, content delivery, and reporting capabilities. The function is installing the software updates deployed to the client by ConfigMgr.</p>
+<p>Here are a couple more example screenshots:</p>
+<p><img src="/p/patching-snowflakes-with-configmgr-and-powershell/images/2.png"
+	width="1460"
+	height="824"
+	srcset="/p/patching-snowflakes-with-configmgr-and-powershell/images/2_hu_c0905f0de1755322.png 480w, /p/patching-snowflakes-with-configmgr-and-powershell/images/2_hu_6d7fb83c4d09b942.png 1024w"
+	loading="lazy"
+	
+		alt="Successful installation without any pending reboots"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="177"
+		data-flex-basis="425px"
+	
+> <img src="/p/patching-snowflakes-with-configmgr-and-powershell/images/3.png"
+	width="1460"
+	height="929"
+	srcset="/p/patching-snowflakes-with-configmgr-and-powershell/images/3_hu_d1f2eef6a9dbf470.png 480w, /p/patching-snowflakes-with-configmgr-and-powershell/images/3_hu_aa099c3ab21a7d39.png 1024w"
+	loading="lazy"
+	
+		alt="Failed installation and pending reboots"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="157"
+		data-flex-basis="377px"
+	
+></p>
+<h2 id="interactively-use-pscmsnowflakepatching-with-the--choosecollection-parameter"><a href="#interactively-use-pscmsnowflakepatching-with-the--choosecollection-parameter" class="header-anchor"></a>Interactively use PSCMSnowflakePatching with the <code>-ChooseCollection</code> Parameter
+</h2><p>The <code>-ChooseCollection</code> is the only parameter that you can&rsquo;t use in an automated fashion. This is because it produces a pop-up <code>Out-GridView</code> window prompting you to choose a ConfigMgr device collection.</p>
+<p>This is just demonstrating that you can still use <code>Invoke-CMSnowflakePatching</code> to &lsquo;manually&rsquo; patch systems if you wish to, just without the hassle of login, point, click, etc.</p>
+<p><img src="/p/patching-snowflakes-with-configmgr-and-powershell/images/4.gif"
+	width="1571"
+	height="1105"
+	srcset="/p/patching-snowflakes-with-configmgr-and-powershell/images/4_hu_96b0d08b204c7227.gif 480w, /p/patching-snowflakes-with-configmgr-and-powershell/images/4_hu_7b305f0fc229e803.gif 1024w"
+	loading="lazy"
+	
+		alt="Animated gif to show the -ChooseCollection parameter"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="142"
+		data-flex-basis="341px"
+	
+></p>
+<h2 id="why-a-module-why-not-just-a-script"><a href="#why-a-module-why-not-just-a-script" class="header-anchor"></a>Why a module? Why not just a script?
+</h2><p>This could just be my subconscious self playing games in my mind, but I feel the need to justify why this ended up being a module and not a single script file. An irrational pressure builds in my mind when I publish code online - &ldquo;it must be perfect and justified!&rdquo;</p>
+<p>Jobs are used to process multiple hosts at once for patching, and I found I was re-using code to account for things like loop waiting, timeouts, and retries. You can&rsquo;t easily use nor pass functions to jobs, so instead, for better management and readability, I opted for a module and for each job, I leverage the module for reusing code.</p>
+<h2 id="why-not-use-a-task-sequence"><a href="#why-not-use-a-task-sequence" class="header-anchor"></a>Why not use a task sequence?
+</h2><p>I guess there could be an argument made to use a task sequence if you needed to orchestrate complex patching routines. I wouldn&rsquo;t disagree with the idea, whatever floats your boat. For me personally, code offers more flexibility.</p>
+<p>For instance, in a task sequence I don&rsquo;t think it&rsquo;s trivial to perform actions in a loop on a timer until it eventually succeeds. This sort of logic is littered within <code>Invoke-CMSnowflakePatching</code>, with thanks to <a class="link" href="http://twitter.com/codymathis123"  target="_blank" rel="noopener"
+    >Cody Mathis</a> and <a class="link" href="https://github.com/CodyMathis123/CM-Ramblings/blob/master/New-LoopAction.ps1"  target="_blank" rel="noopener"
+    ><code>New-LoopAction</code></a> &#x2764;&#xfe0f;</p>
+<h2 id="why"><a href="#why" class="header-anchor"></a>Why?
+</h2>
+<iframe src="https://giphy.com/embed/3cXmze4Y8igXdnkc3U" width="480" height="360" frameBorder="0" class="giphy-embed" allowFullScreen style="display: block; margin: 0 auto;"></iframe>
+
+<p><a class="link" href="https://twitter.com/0AndrewPorter0"  target="_blank" rel="noopener"
+    >Andrew Porter</a> pinged me asking if I would help making one. He found a few scripts online here and there which collectively sort of did what he wanted but not quite.</p>
+<p>These are the scripts which he found:</p>
+<ul>
+<li>
+<p>Only installs updates, doesn’t reboot or cycle through
+<a class="link" href="https://timmyit.com/2016/08/01/sccm-and-powershell-force-install-of-software-updates-thats-available-on-client-through-wmi/"  target="_blank" rel="noopener"
+    >https://timmyit.com/2016/08/01/sccm-and-powershell-force-install-of-software-updates-thats-available-on-client-through-wmi/</a></p>
+</li>
+<li>
+<p>Triggers up0dates remotely and reboots but doesn’t cycle through again or notify results
+<a class="link" href="https://eskonr.com/2021/05/using-scripts-to-trigger-software-updates-remotely-from-the-sccm-console/"  target="_blank" rel="noopener"
+    >https://eskonr.com/2021/05/using-scripts-to-trigger-software-updates-remotely-from-the-sccm-console/</a></p>
+</li>
+<li>
+<p>Install updates, reboot and loops to install further updates – not completely working
+<a class="link" href="https://docs.microsoft.com/en-us/answers/questions/642405/powershell-loop-install-of-available-software-upda.html"  target="_blank" rel="noopener"
+    >https://docs.microsoft.com/en-us/answers/questions/642405/powershell-loop-install-of-available-software-upda.html</a></p>
+</li>
+<li>
+<p>Installs updates on all servers in a collection, reboots and loops to install further updates
+<a class="link" href="https://www.itreliable.com/wp/powershell-script-to-install-software-updates-deployed-by-sccm-and-reboot-the-computer-remotely/"  target="_blank" rel="noopener"
+    >https://www.itreliable.com/wp/powershell-script-to-install-software-updates-deployed-by-sccm-and-reboot-the-computer-remotely/</a></p>
+</li>
+</ul>
+<p>Method 4 seem ideal as its code was more or less complete. I personally wasn&rsquo;t a fan of the style of code, so I decided to rewrite it.</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2018 - 
+        
+        2026 Adam Cook
+    </section>
+    
+    <section class="powerby">
+        
+            Something should go here. <br/>
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.34.2">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+    
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.c922af694cc257bf1ecc41c0dd7b0430f9114ec280ccf67cd2c6ad55f5316c4e.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

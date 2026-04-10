@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="In this post I will share with you how to install Inedo&rsquo;s ProGet to host your own NuGet feed (effectively your own PowerShell Gallery). This will let you share PowerShell modules and scripts amongst other systems and colleagues from an internal resource, using cmdlets from the PowerShellGet module e.g. Install-Module, Install-Script, Find-Module, Find-Script etc.\nWhy might you want to do this? Remember when PowerShell Gallery went down for a while in October? That&rsquo;s a pretty good reason. Another reason might be if you like or need the use of the PowerShellGet cmdlets when interacting with the PowerShell Gallery, but do not want to store your code publicly.\n">
+<title>Hosting and Protecting Your Own NuGet Feed with ProGet</title>
+
+<link rel='canonical' href='https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/'>
+
+<link rel="stylesheet" href="/scss/style.min.86591c898bd806857815fbb8c47e8d3fed97c133b78e83d9bfc27b164dd0aa2b.css"><meta property='og:title' content="Hosting and Protecting Your Own NuGet Feed with ProGet">
+<meta property='og:description' content="In this post I will share with you how to install Inedo&rsquo;s ProGet to host your own NuGet feed (effectively your own PowerShell Gallery). This will let you share PowerShell modules and scripts amongst other systems and colleagues from an internal resource, using cmdlets from the PowerShellGet module e.g. Install-Module, Install-Script, Find-Module, Find-Script etc.\nWhy might you want to do this? Remember when PowerShell Gallery went down for a while in October? That&rsquo;s a pretty good reason. Another reason might be if you like or need the use of the PowerShellGet cmdlets when interacting with the PowerShell Gallery, but do not want to store your code publicly.\n">
+<meta property='og:url' content='https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/'>
+<meta property='og:site_name' content='Adam Cook'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2020-12-13T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2020-12-13T00:00:00&#43;00:00'/><meta property='og:image' content='https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/cover.jpg' />
+<meta name="twitter:site" content="@codaamok">
+    <meta name="twitter:creator" content="@codaamok"><meta name="twitter:title" content="Hosting and Protecting Your Own NuGet Feed with ProGet">
+<meta name="twitter:description" content="In this post I will share with you how to install Inedo&rsquo;s ProGet to host your own NuGet feed (effectively your own PowerShell Gallery). This will let you share PowerShell modules and scripts amongst other systems and colleagues from an internal resource, using cmdlets from the PowerShellGet module e.g. Install-Module, Install-Script, Find-Module, Find-Script etc.\nWhy might you want to do this? Remember when PowerShell Gallery went down for a while in October? That&rsquo;s a pretty good reason. Another reason might be if you like or need the use of the PowerShellGet cmdlets when interacting with the PowerShell Gallery, but do not want to store your code publicly.\n"><meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content='https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/cover.jpg' />
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-157232649-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-157232649-3');
+</script>
+
+<style>
+  p a, li a { color: #ff4949 }
+</style>
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky compact">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_b3f0feb1c7ec8741.jpg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Adam Cook</a></h1>
+            <h2 class="site-description">— Patch My PC Customer Engineer</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='https://github.com/codaamok' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+                
+                <span>GitHub</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='https://linkedin.com/in/adamcharlescook' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-linkedin" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="4" width="16" height="16" rx="2" />
+  <line x1="8" y1="11" x2="8" y2="16" />
+  <line x1="8" y1="8" x2="8" y2="8.01" />
+  <line x1="12" y1="16" x2="12" y2="11" />
+  <path d="M16 16v-3a2 2 0 0 0 -4 0" />
+</svg>
+                
+                <span>LinkedIn</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/">
+                <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/cover_hu_77e49497bb5b08b6.jpg"
+                        srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/cover_hu_77e49497bb5b08b6.jpg 800w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/cover_hu_f17536b252828171.jpg 1600w"
+                        width="800" 
+                        height="850" 
+                        loading="lazy"
+                        alt="Featured image of post Hosting and Protecting Your Own NuGet Feed with ProGet" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            
+            
+            
+            <a href="/categories/powershell/" style="background-color: hsl(32, 60%, 84%); color: hsl(32, 60%, 15%);">
+                PowerShell
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/">Hosting and Protecting Your Own NuGet Feed with ProGet</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published" datetime='2020-12-13T00:00:00Z'>13 December 2020</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    15 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>In this post I will share with you how to install <a class="link" href="https://inedo.com/proget"  target="_blank" rel="noopener"
+    >Inedo&rsquo;s ProGet</a> to host your own NuGet feed (effectively your own PowerShell Gallery). This will let you share PowerShell modules and scripts amongst other systems and colleagues from an internal resource, using cmdlets from the PowerShellGet module e.g. <code>Install-Module</code>, <code>Install-Script</code>, <code>Find-Module</code>, <code>Find-Script</code> etc.</p>
+<p>Why might you want to do this? Remember when PowerShell Gallery went down for a while in October? That&rsquo;s a pretty good reason. Another reason might be if you like or need the use of the PowerShellGet cmdlets when interacting with the PowerShell Gallery, but do not want to store your code publicly.</p>
+<p>By hosting your own, you can be in full control of its availability (<a class="link" href="https://docs.inedo.com/docs/proget/administration/license"  target="_blank" rel="noopener"
+    >ProGet Enterprise</a> offers high-availability and load balancing features). Perhaps instead maybe you could treat it as a secondary source in the event of PowerShell Gallery going down.</p>
+<p>What I wanted to do differently in this post, compared to others which I&rsquo;ve seen cover installing ProGet, is that I wanted to add an authentication layer when trying to pull packages. In other words, I needed my NuGet feed to be widely open in terms of network access and because of that I wanted to protect it by requiring the <code>-Credential</code> parameter with cmdlets like <code>Install-Module</code>, <code>Find-Module</code> etc.</p>
+<p>Here is what I will be covering in this post:</p>
+<ul>
+<li><a class="link" href="#what-is-nuget" >What is NuGet?</a></li>
+<li><a class="link" href="#proget" >ProGet</a></li>
+<li><a class="link" href="#installing-proget" >Installing ProGet</a></li>
+<li><a class="link" href="#create-api-key-for-publishing" >Create API key for publishing</a></li>
+<li><a class="link" href="#create-user-for-downloading-modules-or-scripts" >Create user for downloading modules or scripts</a></li>
+<li><a class="link" href="#create-the-powershell-feed" >Create the PowerShell feed</a></li>
+<li><a class="link" href="#configure-proget-to-use-https" >Configure ProGet to use HTTPS</a></li>
+<li><a class="link" href="#registering-the-feed-on-a-system-and-publishing-a-test-module" >Registering the feed on a system and publishing a test module</a></li>
+<li><a class="link" href="#installing-modules-or-scripts-from-the-feed" >Installing modules or scripts from the feed</a></li>
+<li><a class="link" href="#basic-authentication" >Basic authentication</a></li>
+<li><a class="link" href="#endpoint-dependency-requirements" >Endpoint dependency requirements</a></li>
+<li><a class="link" href="#conclusion" >Conclusion</a></li>
+<li><a class="link" href="#additional-resources" >Additional resources</a></li>
+</ul>
+<h2 id="what-is-nuget"><a href="#what-is-nuget" class="header-anchor"></a>What is NuGet?
+</h2><p>Here I&rsquo;ll quickly breakdown why &ldquo;NuGet&rdquo; is a thing. It should give you an insight when trying to understand how or why it is relevant to PowerShell, especially in this context of trying to host our own PowerShell Gallery.</p>
+<p>NuGet is a package management protocol developed by Microsoft. It was intended for .NET packages on <a class="link" href="https://nuget.org"  target="_blank" rel="noopener"
+    >NuGet.org</a>. Developers for .NET use NuGet to pull their project&rsquo;s package dependencies from NuGet.org. This is very much like how PowerShell users use <code>Install-Module</code> from the PowerShell Gallery for their scripts, or dependencies for other PowerShell workflows.</p>
+<p>NuGet is the binary which is behind the scenes of the PowerShellGet module to make commands like <code>Install-Module</code>, <code>Install-Script</code>, <code>Find-Module</code>, <code>Find-Script</code> etc pull content from the PowerShell Gallery, or other NuGet feeds e.g. your self-hosted one with products like ProGet.</p>
+<p>It makes sense that Microsoft leveraged the existing NuGet protocol for PowerShell&rsquo;s package management (scripts and modules). Doing so means they did not have to reinvent the wheel by producing and maintaining another package management system.</p>
+<p>I found the below 5 video YouTube series very insightful as it explains how and why it is used for .NET developers. Don&rsquo;t worry if you don&rsquo;t know .NET, it&rsquo;s still useful. All 5 videos will take about ~30 mins of your time. <a class="link" href="https://www.youtube.com/watch?v=WW3bO1lNDmo&amp;list=PLdo4fOcmZ0oVLvfkFk8O9h6v2Dcdh2bh_"  target="_blank" rel="noopener"
+    >Here is the playlist link</a>.</p>
+<div class="video-wrapper">
+    <iframe loading="lazy" 
+            src="https://www.youtube.com/embed/WW3bO1lNDmo" 
+            allowfullscreen 
+            title="YouTube Video"
+    >
+    </iframe>
+</div>
+
+<h2 id="proget"><a href="#proget" class="header-anchor"></a>ProGet
+</h2><p>ProGet is a proprietary product of <a class="link" href="https://inedo.com/"  target="_blank" rel="noopener"
+    >Inedo</a>. You can <a class="link" href="https://inedo.com/open/source-code-request"  target="_blank" rel="noopener"
+    >request to view their source code</a> if you want to.</p>
+<p>They offer three support tiers of ProGet: <a class="link" href="https://docs.inedo.com/docs/proget/administration/license"  target="_blank" rel="noopener"
+    >free, basic and enterprise</a>.</p>
+<p>It&rsquo;s worth mentioning that it can host a lot more than just NuGet feeds.</p>
+<p>I chose ProGet after fumbling around with <a class="link" href="https://docs.microsoft.com/en-us/nuget/hosting-packages/nuget-server"  target="_blank" rel="noopener"
+    >NuGet.Server</a> and expressing a little frustration about in the <a class="link" href="https://winadmins.io"  target="_blank" rel="noopener"
+    >WinAdmins Discord</a>. <a class="link" href="https://twitter.com/BrettMiller_IT"  target="_blank" rel="noopener"
+    >Brett Miller</a> suggested to me he uses ProGet, and well, here we are. After much playing and reading, I found the free tier met my needs nicely. It&rsquo;s absolutely worth pointing out there are <a class="link" href="https://docs.microsoft.com/en-us/nuget/hosting-packages/overview"  target="_blank" rel="noopener"
+    >many other alternatives</a> available.</p>
+<h2 id="installing-proget"><a href="#installing-proget" class="header-anchor"></a>Installing ProGet
+</h2><p>Let&rsquo;s jump straight in and start installing ProGet. If at any point you get stuck on installing ProGet, <a class="link" href="https://docs.inedo.com/docs/proget/installation/installation-guide"  target="_blank" rel="noopener"
+    >they do offer some docs</a> of their own.</p>
+<ol>
+<li>Head over to the <a class="link" href="https://inedo.com/proget/download"  target="_blank" rel="noopener"
+    >Downloads</a> page and click <strong>Download Inedo Hub</strong>.</li>
+</ol>
+<p>This is its web installer and it also installs a separate <strong>Inedo Hub</strong> application where you can launch, reinstall, reconfigure or upgrade ProGet. It&rsquo;s reasonably lightweight, so it&rsquo;s not offensive by any means. It&rsquo;s actually really helpful. They do offer an <a class="link" href="https://my.inedo.com/downloads?_ga=2.17971129.1219962463.1607855304-1273722551.1607855304"  target="_blank" rel="noopener"
+    >offline installer</a> but its <a class="link" href="https://inedo.com/support/documentation/proget/installation/installation-guide/traditional-installer"  target="_blank" rel="noopener"
+    >installation instructions</a> are different, so bear that in mind.</p>
+<ol start="2">
+<li>Launch the installer. Once the downloading and prerequisites scanning is complete:</li>
+</ol>
+<p>Choosing <strong>Specify instance&hellip;</strong> gave me the &ldquo;localhost&rdquo; option. On this VM I have SQL Server installed. If you don&rsquo;t have SQL Server installed locally and do not want to use a remote database, choose &ldquo;Install Inedo Instance&rdquo; and it installs SQL Express instead for you.</p>
+<p>Optionally change the <strong>Database Name</strong> if you want to.</p>
+<p>I chose <strong>IIS</strong> as the web server, instead of the <strong>Integrated Web Server</strong>. You can later switch from the integrated web server to IIS if you <a class="link" href="https://docs.inedo.com/docs/various/iis/switching-to-iis"  target="_blank" rel="noopener"
+    >following this doc</a>. Although it seems they recommend IIS for load-balancing / HA config and also for configuring HTTPS. Later on in this doc we will be configuring the feed to use HTTPS with a web certificate so I recommend you do this too.</p>
+<blockquote>
+<p>&#x26a0;&#xfe0f; Some API endpoints for ProGet use HTTP methods PUT and DELETE. If WebDAV is installed on IIS, it is recommended to disable it. See <a class="link" href="https://docs.inedo.com/docs/various/iis/disabling-webdav"  target="_blank" rel="noopener"
+    >Disabling WebDAV in IIS</a>.</p>
+</blockquote>
+<p><img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01a.jpg"
+	width="785"
+	height="576"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01a_hu_98a902e43c48fabd.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01a_hu_48ea43eeaa782f36.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="136"
+		data-flex-basis="327px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01b.jpg"
+	width="783"
+	height="574"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01b_hu_4910ffc4a6cf3823.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01b_hu_2a90087b84ef8237.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="136"
+		data-flex-basis="327px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01c.jpg"
+	width="785"
+	height="576"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01c_hu_61df88ca9f8b8fa6.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01c_hu_bb3475d41e713d6.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="136"
+		data-flex-basis="327px"
+	
+></p>
+<ol start="3">
+<li>
+<p>Click <strong>Install</strong> to get rolling. You&rsquo;ll be prompted to provide name and email address to sign up, even for a free license. You will then be emailed a license key.</p>
+</li>
+<li>
+<p>Once install completes, I recommend either rebooting or just bouncing the <strong>ProGet Service</strong></p>
+</li>
+<li>
+<p>Close and re-open the Inedo Hub and click <strong>Launch</strong>. You will be taken to the Web UI:</p>
+</li>
+</ol>
+<p><img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01d.jpg"
+	width="785"
+	height="576"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01d_hu_98dc5defa00c3c54.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01d_hu_fc75073f3a7338c9.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="136"
+		data-flex-basis="327px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01e.jpg"
+	width="1325"
+	height="768"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01e_hu_29fed6ff82760c5d.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01e_hu_3706a6e0031fa37e.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="172"
+		data-flex-basis="414px"
+	
+></p>
+<p>After you&rsquo;ve successfully installed ProGet and can see the web UI successfully load (default credentials are <strong>Admin</strong>/<strong>Admin</strong>, by the way), we need to lock it down a little bit. We will change the default credentials and remove the built-it Anonymous identity object access to all feeds.</p>
+<ol start="6">
+<li>Click the settings cog at the top right to access the settings and choose <strong>Users &amp; Tasks</strong> under <strong>Security &amp; Authentication</strong></li>
+<li>Click the <strong>Admin</strong> user and change the password to be something complex</li>
+<li>Go to the <strong>Tasks</strong> tab and remove <strong>Anonymous</strong> from the task <strong>Administer</strong> and <strong>View &amp; Download Packages</strong></li>
+</ol>
+<blockquote>
+<p>&#x26a0;&#xfe0f; After removing the <strong>Anonymous</strong> identity from the <strong>Administer</strong> task, you will likely be prompted to log in using your new Admin credential.</p>
+</blockquote>
+<p><img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02a.jpg"
+	width="1325"
+	height="768"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02a_hu_5fed480fd898481b.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02a_hu_1265e8bd9d445e1e.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="172"
+		data-flex-basis="414px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02b.jpg"
+	width="1325"
+	height="586"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02b_hu_4206bed06dbc7e5a.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02b_hu_141a8151db433d0b.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="226"
+		data-flex-basis="542px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02c.jpg"
+	width="1325"
+	height="848"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02c_hu_9d5fd8b6af281dc8.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02c_hu_4c9f8ef9741486ad.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="156"
+		data-flex-basis="375px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02d.jpg"
+	width="1325"
+	height="848"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02d_hu_53b8d0ccc1365f69.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02d_hu_a0c6b7c9fc75ab98.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="156"
+		data-flex-basis="375px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02e.jpg"
+	width="1325"
+	height="848"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02e_hu_668602a15ffed618.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02e_hu_e90b41844c1bc562.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="156"
+		data-flex-basis="375px"
+	
+></p>
+<h2 id="create-api-key-for-publishing"><a href="#create-api-key-for-publishing" class="header-anchor"></a>Create API key for publishing
+</h2><p>Let&rsquo;s create an API key. This key will be needed for when we publish modules or scripts using either of the <code>Publish-Module</code> or <code>Publish-Script</code> cmdlets.</p>
+<ol>
+<li>Go back to the settings via the cog at the top right, under <strong>Integration &amp; Extensibility</strong> select <strong>API Keys</strong> and click <strong>Create API Key</strong></li>
+<li>Check the box which reads <strong>Grant access to Feed API</strong> and click <strong>Save API Key</strong>. The key will display in clear text in the UI. Make note of this as we will need it later on.</li>
+</ol>
+<p><img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03a.jpg"
+	width="1325"
+	height="848"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03a_hu_fc399eede97fb523.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03a_hu_81324f7386fdc72.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="156"
+		data-flex-basis="375px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03b.jpg"
+	width="1325"
+	height="848"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03b_hu_fdb053032801affe.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03b_hu_d1b7b2e8ba05a3e7.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="156"
+		data-flex-basis="375px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03c.jpg"
+	width="1325"
+	height="890"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03c_hu_c22afb58794bef37.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03c_hu_eb0b8bc6ed57ab64.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="148"
+		data-flex-basis="357px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03d.jpg"
+	width="1325"
+	height="621"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03d_hu_81ae4ccf2802dd2a.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03d_hu_8338e32453e42a69.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="213"
+		data-flex-basis="512px"
+	
+></p>
+<h2 id="create-user-for-downloading-modules-or-scripts"><a href="#create-user-for-downloading-modules-or-scripts" class="header-anchor"></a>Create user for downloading modules or scripts
+</h2><p>Now we will create a user which will be used for basic authentication in the <code>-Credential</code> parameter of cmdlets like <code>Find-Module</code>, <code>Find-Script</code>, <code>Install-Module</code> and <code>Install-Script</code> etc.</p>
+<ol>
+<li>Again, work your way back to settings. This time click <strong>Users &amp; Tasks</strong> and click <strong>Create User</strong></li>
+<li>Set a username and password and click <strong>Save</strong></li>
+<li>Change to the <strong>Tasks</strong> tab and we will give the newly created user access to only <strong>View &amp; Download Packages</strong> by clicking on <strong>Add Restriction</strong></li>
+<li>Enter the user name created in step 2 in the <strong>Principles</strong> field and enter <strong>View &amp; Download Packages</strong> in the <strong>Tasks</strong> field - don&rsquo;t forget to click <strong>Save Privilege</strong></li>
+</ol>
+<p><img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04a.jpg"
+	width="1325"
+	height="810"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04a_hu_cc5a5cfeecfe7378.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04a_hu_ae3da14c2bd774cf.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="163"
+		data-flex-basis="392px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04b.jpg"
+	width="1325"
+	height="810"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04b_hu_dc84a7366c083bc0.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04b_hu_3c856d8e7c802d02.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="163"
+		data-flex-basis="392px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04c.jpg"
+	width="1325"
+	height="810"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04c_hu_a62279ee19b68d17.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04c_hu_a4986f85e9145c65.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="163"
+		data-flex-basis="392px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04d.jpg"
+	width="1325"
+	height="810"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04d_hu_b63bd48301cf302b.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04d_hu_c0207d5b4c9bed6c.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="163"
+		data-flex-basis="392px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04e.jpg"
+	width="1325"
+	height="810"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04e_hu_88eba9e2d2006036.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04e_hu_81125a6f803d43ac.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="163"
+		data-flex-basis="392px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04f.jpg"
+	width="1325"
+	height="810"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04f_hu_48824e2314adf413.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04f_hu_2dfddfa5b0db3619.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="163"
+		data-flex-basis="392px"
+	
+></p>
+<h2 id="create-the-powershell-feed"><a href="#create-the-powershell-feed" class="header-anchor"></a>Create the PowerShell feed
+</h2><p>Good stuff, next we will create a new PowerShell feed which will contain our published modules and scripts.</p>
+<ol>
+<li>Navigate to <strong>Feeds</strong> from the top navigation bar and click <strong>Create New Feed</strong></li>
+<li>Scroll down and choose <strong>PowerShell Modules</strong> as the feed type</li>
+<li>Give your feed a name and select the radio button which reads <strong>Private/Internal packages</strong>, click <strong>Create New Feed</strong></li>
+</ol>
+<p><img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05a.jpg"
+	width="1325"
+	height="810"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05a_hu_735367dc1d64c1fb.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05a_hu_1cf489e8e5877af5.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="163"
+		data-flex-basis="392px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05b.jpg"
+	width="1325"
+	height="730"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05b_hu_891691009c1cc878.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05b_hu_6bd90b91691ea59f.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="181"
+		data-flex-basis="435px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05c.jpg"
+	width="1325"
+	height="810"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05c_hu_c95bbe31a9eb1b1c.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05c_hu_692c9cc92b4685e6.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="163"
+		data-flex-basis="392px"
+	
+></p>
+<h2 id="configure-proget-to-use-https"><a href="#configure-proget-to-use-https" class="header-anchor"></a>Configure ProGet to use HTTPS
+</h2><p>Now we will configure ProGet to listen on an additional alternative port with a web certificate. This is optional for you; perhaps you&rsquo;re running this internally and you are OK with non-encrypted traffic. However in any case I still think it&rsquo;s a good idea to use TLS.</p>
+<p>You will need a web certificate which we will configure in IIS to use. As this is in my lab, things are like the wild west around here so I&rsquo;m just going to yolo it with a LetsEncrypt certificate using the <a class="link" href="https://github.com/rmbolger/Posh-ACME"  target="_blank" rel="noopener"
+    >Posh-ACME module</a>.</p>
+<ol>
+<li>Generate or obtain web certificate. Here I&rsquo;ll quickly demo how I do this with the Posh-ACME module.</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>Install-Module <span style="color:#e6db74">&#34;Posh-ACME&#34;</span>
+</span></span><span style="display:flex;"><span>Import-Module <span style="color:#e6db74">&#34;Posh-ACME&#34;</span>
+</span></span><span style="display:flex;"><span>$Params = @{
+</span></span><span style="display:flex;"><span>    Domain = <span style="color:#e6db74">&#34;nuget.adamcook.io&#34;</span>
+</span></span><span style="display:flex;"><span>    Contact = <span style="color:#e6db74">&#34;myemail@address.com&#34;</span>
+</span></span><span style="display:flex;"><span>    DnsPlugin = <span style="color:#e6db74">&#34;Cloudflare&#34;</span>
+</span></span><span style="display:flex;"><span>    PluginArgs = @{
+</span></span><span style="display:flex;"><span>        CFToken = ConvertTo-SecureString <span style="color:#e6db74">&#34;MySuperSecretCloudflareAPIKey&#34;</span> -AsPlainText -Force
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>New-PACertificate @Params
+</span></span></code></pre></div><ol>
+<li>Create a DNS record to point to your ProGet server&rsquo;s IP</li>
+<li>Load the certificate in to the Local System&rsquo;s Personal or Web Hosting certificate store.</li>
+</ol>
+<p>If you used Posh-ACME, you will find the <code>.pfx</code> in <strong>%LOCALAPPDATA%\Posh-ACME</strong>. Simply right click, choose <strong>Install PFX</strong> and complete the wizard. The default password protecting the certificate is <code>poshacme</code>.</p>
+<ol start="3">
+<li>Open IIS and navigate through: <strong>Sites</strong> &gt; <strong>ProGet</strong> &gt; <strong>Bindings</strong> &gt; <strong>Add</strong></li>
+<li>Change <strong>Type</strong> to <strong>https</strong></li>
+<li>By default the port is 443. If you have another site or service bound to this port on the host you&rsquo;re currently configuring, choose a different port. For this demo I chose port <strong>8625</strong>.</li>
+<li>In the drop down for <strong>SSL certificate</strong> you should see our certificate</li>
+</ol>
+<p><img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06a.jpg"
+	width="1551"
+	height="920"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06a_hu_e14097013d7e6579.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06a_hu_fef3b286305932fc.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="168"
+		data-flex-basis="404px"
+	
+></p>
+<ol start="7">
+<li>Click OK!</li>
+<li>Go to Settings of ProGet and under <strong>System Configuration</strong> choose <strong>Advanced Settings</strong></li>
+<li>Scroll down to <code>Web.BaseUrl</code> and populate the field with your full root URL. For example, for me I have set it to <code>https://nuget.adamcook.io:8625</code>. This part is important if you are serving ProGet under a different path in the URL or port, e.g. I could have used <code>https://adamcook.io:8625/nuget</code></li>
+<li>Click <strong>Save Changes</strong></li>
+<li>At this point you will need to make sure DNS is correctly configured for whatever domain you used for your certificate. All should be well once you can browse to the domain and not receive any certificate errors. For example:</li>
+</ol>
+<p><img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06b.jpg"
+	width="1325"
+	height="1081"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06b_hu_34fed83ee689f0b5.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06b_hu_479e60c4c91076e1.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="122"
+		data-flex-basis="294px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06c.jpg"
+	width="1325"
+	height="889"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06c_hu_afcd1ef94b39fb80.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06c_hu_93eec90a16182e35.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="149"
+		data-flex-basis="357px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06d.jpg"
+	width="1321"
+	height="759"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06d_hu_a7fc3133e3a7cf07.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06d_hu_7e6826d997ec1013.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="174"
+		data-flex-basis="417px"
+	
+></p>
+<h2 id="registering-the-feed-on-a-system-and-publishing-a-test-module"><a href="#registering-the-feed-on-a-system-and-publishing-a-test-module" class="header-anchor"></a>Registering the feed on a system and publishing a test module
+</h2><p>At this point, you are good to go to start publishing scripts or modules to this feed. As an example, let&rsquo;s save a module from the PowerShell Gallery and publish it to our newly created NuGet feed.</p>
+<p>For a laugh we&rsquo;ll demo with the <code>Az</code> module, which has 62 other dependent modules. As a result we will be downloading 63 modules from the PowerShell Gallery and publishing them all to our new self-hosted NuGet feed.</p>
+<ol>
+<li>Register the NuGet feed on your system using the below. This can be from your desktop or even the server running ProGet itself.</li>
+</ol>
+<p>I&rsquo;ll be honest.. I have no idea why we need to configure a package source before we can register the repository, but I couldn&rsquo;t get it to work otherwise. <a class="link" href="https://github.com/OneGet/oneget/issues/403"  target="_blank" rel="noopener"
+    >More info here on that</a>!</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span><span style="color:#75715e"># Set the URL to match your config from the section &#39;Configure ProGet to use HTTPS&#39;</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># i.e. https/http, domain and port</span>
+</span></span><span style="display:flex;"><span>$URL = <span style="color:#e6db74">&#34;https://nuget.adamcook.io:8625/nuget/MyPrivateRepo&#34;</span> 
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Enter the username and password created from the section </span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># &#39;Create user for downloading modules or scripts&#39;</span>
+</span></span><span style="display:flex;"><span>$Cred = Get-Credential
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$Params = @{
+</span></span><span style="display:flex;"><span>	Name = <span style="color:#e6db74">&#34;MyPrivateRepo&#34;</span>
+</span></span><span style="display:flex;"><span>	Location = $URL
+</span></span><span style="display:flex;"><span>	ProviderName = <span style="color:#e6db74">&#34;NuGet&#34;</span>
+</span></span><span style="display:flex;"><span>	Credential = $Cred
+</span></span><span style="display:flex;"><span>	Trusted = $true
+</span></span><span style="display:flex;"><span>	SkipValidate = $true
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>Register-PackageSource @Params
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$Params = @{
+</span></span><span style="display:flex;"><span>	Name = <span style="color:#e6db74">&#34;MyPrivateRepo&#34;</span>
+</span></span><span style="display:flex;"><span>	SourceLocation = $URL
+</span></span><span style="display:flex;"><span>    PublishLocation = $URL
+</span></span><span style="display:flex;"><span>    ScriptSourceLocation = $URL
+</span></span><span style="display:flex;"><span>    ScriptPublishLocation = $URL
+</span></span><span style="display:flex;"><span>    PackageManagementProvider = <span style="color:#e6db74">&#34;NuGet&#34;</span>
+</span></span><span style="display:flex;"><span>	Credential = $Cred
+</span></span><span style="display:flex;"><span>    InstallationPolicy = <span style="color:#e6db74">&#34;Trusted&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>Register-PSRepository @Params
+</span></span></code></pre></div><p>You will notice that if you now run <code>Get-PackageSource</code> and <code>Get-PSRepository</code>, you will see our new NuGet repository. It is important to note that this is not a system-wide config, it is per-user. In other words, if you intend to register the package source and repository, and you want another security context on the same system the leverage this registration, you will need to register them in that context. <a class="link" href="https://github.com/PowerShell/PowerShellGet/issues/84"  target="_blank" rel="noopener"
+    >Here&rsquo;s a GitHub issue requesting this to change</a>.</p>
+<ol start="2">
+<li>Issue the following command to grab all of the modules and save them to <code>C:\temp\Az</code> locally</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>Save-Module -Name <span style="color:#e6db74">&#34;Az&#34;</span> -Path <span style="color:#e6db74">&#34;C:\temp\Az&#34;</span> -Repository PSGallery
+</span></span></code></pre></div><blockquote>
+<p>&#x26a0;&#xfe0f; If you receive an error along the lines of:</p>
+<pre tabindex="0"><code>Failed to generate the compressed file for module &#39;C:\Program Files\dotnet\dotnet.exe failed to pack
+</code></pre><p>Run the below. Close and re-open the console, then try again. <a class="link" href="https://github.com/PowerShell/PowerShellGetv2/issues/303"  target="_blank" rel="noopener"
+    >Credit</a>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>Invoke-WebRequest -Uri <span style="color:#e6db74">&#34;https://dist.nuget.org/win-x86-commandline/latest/nuget.exe&#34;</span> -OutFile <span style="color:#e6db74">&#34;</span>$env:LOCALAPPDATA<span style="color:#e6db74">\Microsoft\Windows\PowerShell\PowerShellGet\NuGet.exe&#34;</span>
+</span></span></code></pre></div><p>&#x26a0;&#xfe0f; Also note that we are now explicitly specifying to use the <strong>PSGallery</strong> registered repository using the <code>-Repository</code> parameter, because we now have multiple registered repositories (or at least you should, the PowerShell Gallery is configured by default on most systems).</p>
+</blockquote>
+<p><img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07a.jpg"
+	width="1113"
+	height="1002"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07a_hu_9546543ba9c84b1a.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07a_hu_1d16187187513c58.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="111"
+		data-flex-basis="266px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07b.jpg"
+	width="1113"
+	height="1002"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07b_hu_38fa614d371b328e.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07b_hu_9b64b4f6d0199d28.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="111"
+		data-flex-basis="266px"
+	
+></p>
+<ol start="3">
+<li>Using the API key we gathered from the section <a class="link" href="#create-api-key-for-publishing" >Create API key for publishing</a>, we can now publish all the modules which are in the <code>C:\temp\Az</code> directory:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>Get-ChildItem -Path <span style="color:#e6db74">&#34;C:\temp\Az&#34;</span> | ForEach-Object {
+</span></span><span style="display:flex;"><span>    Publish-Module -Path $_.FullName -NuGetApiKey <span style="color:#e6db74">&#34;MySuperSecretAPIKey&#34;</span> -Repository <span style="color:#e6db74">&#34;MyPrivateRepo&#34;</span>
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><ol start="4">
+<li>After a couple of minutes, all of the modules will finish publishing. The web UI of ProGet will reflect this and we can also see this with <code>Find-Module</code> too. Don&rsquo;t forget, you will also need to use the <code>-Credential</code> parameter with <code>Find-Module</code>.</li>
+</ol>
+<p><em>Forgot what credential to use? It&rsquo;s the one we set from the section <a class="link" href="#create-user-for-downloading-modules-or-scripts" >Create user for downloading modules or scripts</a>.</em></p>
+<p><img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07c.jpg"
+	width="1113"
+	height="508"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07c_hu_77f79c40a715255.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07c_hu_f0f68ce9627bc5eb.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="219"
+		data-flex-basis="525px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07d.jpg"
+	width="1428"
+	height="828"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07d_hu_1b38bf40614ba96a.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07d_hu_644d7387a63db3f.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="172"
+		data-flex-basis="413px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07e.jpg"
+	width="1428"
+	height="828"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07e_hu_704d8c62c5b42392.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07e_hu_209b3b9d725390.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="172"
+		data-flex-basis="413px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07f.jpg"
+	width="968"
+	height="1344"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07f_hu_44263bc2a86ab9ed.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07f_hu_dc9118cfd793bc3f.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="72"
+		data-flex-basis="172px"
+	
+></p>
+<p>Don&rsquo;t forget, you can still publish and install scripts to the NuGet feed just like you can with modules, using cmdlets like <code>Publish-Script</code>, <code>Find-Script</code> and <code>Install-Script</code>.</p>
+<h2 id="installing-modules-or-scripts-from-the-feed"><a href="#installing-modules-or-scripts-from-the-feed" class="header-anchor"></a>Installing modules or scripts from the feed
+</h2><p>Now let&rsquo;s demonstrate installing a PowerShell module from our new NuGet feed. Again you can do this from your desktop or on the ProGet server itself.</p>
+<ol>
+<li>If you&rsquo;re trying this from a different system compared to the last section, registry the package source and repository again as shown in the section <a class="link" href="#registering-the-feed-on-a-system-and-publishing-a-test-module" >Registering the feed on a system and publishing a test module</a>. It is possible to omit the the <code>-ScriptPublishLocation</code> and <code>-PublishLocation</code> parameters if you do not intend to publish modules or scripts from the system(s).</li>
+<li>Install all of the <code>Az*</code> modules. We need to make sure we explicitly specify our new NuGet feed using the <code>-Repository</code> parameter and the credential too using <code>-Credential</code>:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;"><code class="language-powershell" data-lang="powershell"><span style="display:flex;"><span>$Modules = Find-Module -Name <span style="color:#e6db74">&#34;Az*&#34;</span> -Repository <span style="color:#e6db74">&#34;MyPrivateRepo&#34;</span> -Credential $Cred
+</span></span><span style="display:flex;"><span>$Modules | Install-Module -Repository <span style="color:#e6db74">&#34;MyPrivateRepo&#34;</span> -Credential $Cred
+</span></span></code></pre></div><p><em>Forgot what credential to use? It&rsquo;s the one we set from the section <a class="link" href="#create-user-for-downloading-modules-or-scripts" >Create user for downloading modules/scripts</a>.</em></p>
+<p><img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-08.jpg"
+	width="1346"
+	height="1344"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-08_hu_9c582973c367d7b8.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-08_hu_8223f94e48d9ee93.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="100"
+		data-flex-basis="240px"
+	
+></p>
+<p>That&rsquo;s more or less it. You just pulled a bunch of PowerShell modules from your self-hosted NuGet feed which is hosted using your own TLS certificate and protected with basic authentication via the <code>-Credential</code> parameter.</p>
+<h2 id="basic-authentication"><a href="#basic-authentication" class="header-anchor"></a>Basic authentication
+</h2><p>I&rsquo;ve mentioned this a few times throughout the post but not discussed it.</p>
+<p>The authentication method when using the <code>-Credential</code> parameter used here is <a class="link" href="https://en.wikipedia.org/wiki/Basic_access_authentication"  target="_blank" rel="noopener"
+    >HTTP basic authentication</a>. If you have configured your ProGet instance to be using only HTTP and have protected the feeds using a built-in security identity as discussed in section <a class="link" href="#create-user-for-downloading-modules-or-scripts" >Create user for downloading modules or scripts</a>, then your credentials will be sent across the wire merely encoded with base64.. <strong>this is not encryption</strong>.</p>
+<p>I&rsquo;ve demonstrated this below; I configured the package source and repository locally on my machine (repository name is <strong>insecure</strong>). I have registered them using the HTTP endpoint of ProGet, not HTTPS. You can see the credentials in cleartext in packet tracing tools like Wireshark because they&rsquo;re generally helpful and do the decoding for you in the GUI.</p>
+<p>Encrypting the traffic with TLS certificates is for sure the way to go. Even if the traffic is only traversing internally. Your code, and therefore the packages on your NuGet feed, should never contain sensitive information. Therefore in theory all you are protecting is the intellectual property of the code. However, let&rsquo;s be real, a lot of us at the very least sometimes store things like IP addresses and stuff in our code. With that in mind, if you had a script named &ldquo;Get-SecretFromCyberArk&rdquo; on your NuGet feed, which contained even the most trivial information like the IP addresses of your CyberArk infrastructure, that is still an easy win of information gathering for a malicious actor. Just mooching around your network. They would have picked up the username and password of the user account, logged in to ProGet and able to view all your packages.</p>
+<p>Using TLS does not provide total security, as you are still at the mercy of a simple username and password where those credentials are stored in the ProGet database. However, there is no reason why you should not be using HTTPS.</p>
+<p><img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-09a.jpg"
+	width="1366"
+	height="1040"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-09a_hu_18044abcd21085b.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-09a_hu_21ff86bef182cfb8.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="131"
+		data-flex-basis="315px"
+	
+> <img src="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-09b.jpg"
+	width="1367"
+	height="1032"
+	srcset="/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-09b_hu_57ccec1801288f73.jpg 480w, /p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-09b_hu_7dc5dbbe0d5b97bc.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="132"
+		data-flex-basis="317px"
+	
+></p>
+<h2 id="endpoint-dependency-requirements"><a href="#endpoint-dependency-requirements" class="header-anchor"></a>Endpoint dependency requirements
+</h2><p>In order for other users to start using your new NuGet feed, you need to satisfy some prerequisites. I strongly recommend you:</p>
+<ul>
+<li>For all systems you intend to use the repository from, have the latest available <a class="link" href="https://www.powershellgallery.com/packages/PackageManagement"  target="_blank" rel="noopener"
+    >PackageManagement</a> and <a class="link" href="https://www.powershellgallery.com/packages/PowerShellGet"  target="_blank" rel="noopener"
+    >PowerShellGet</a> modules installed.</li>
+<li>If not already, upgrade the systems using the NuGet feed to be using PowerShell 5.1 (<a class="link" href="https://docs.microsoft.com/en-us/powershell/scripting/windows-powershell/wmf/setup/install-configure?view=powershell-7.1"  target="_blank" rel="noopener"
+    >Windows Management Framework 5.1</a>) as it will make your life <em>a lot</em> easier.</li>
+<li>After the last two items are resolved, you then need to register the package source and repository on all of the endpoints you want to leverage the repository from. We did this in section <a class="link" href="#registering-the-feed-on-a-system-and-publishing-a-test-module" >Registering the feed on a system and publishing a test module</a>. Don&rsquo;t forget that the security context of which you register the package source and repository from, is the only context in which the repositories are available. If you want to access the registered repository from another security context on the same system, you will have to re-register them in that context.</li>
+</ul>
+<h2 id="conclusion"><a href="#conclusion" class="header-anchor"></a>Conclusion
+</h2><p>Some things which I didn&rsquo;t get to touch on are LDAP authentication integration and extensions within ProGet.</p>
+<p>Authenticating using Active Directory would for sure be a better and more manageable solution in terms of handling the credential when using the <code>-Credential</code> parameter. ProGet even provides support for gMSA accounts. You can find out more here <a class="link" href="https://docs.inedo.com/docs/various/ldap/ldap-active-directory"  target="_blank" rel="noopener"
+    >Using LDAP/AD Integration</a>. And even better, there is support for <a class="link" href="https://docs.inedo.com/docs/various/saml/overview"  target="_blank" rel="noopener"
+    >SAML authentication with AD</a> and <a class="link" href="https://docs.inedo.com/docs/various/saml/azure-ad"  target="_blank" rel="noopener"
+    >Azure AD</a>.</p>
+<p>I also wanted to highlight is that it is possible to store your packages in cloud storage using ProGet&rsquo;s <a class="link" href="https://docs.inedo.com/docs/proget/advanced/cloud-storage"  target="_blank" rel="noopener"
+    >Cloud Package Stores</a> and extension for Azure. The would certainly reduce your on-premises storage requirements and allow greater room scalability and flexibility by using an Azure Storage Account.</p>
+<p>I like to use a featured image in my blog which is relevant at the time in my life while I was writing the post. For this post I started around halloween and got both lazy and busy. Here I am, 12 days before Christmas using a picture of the pumpkins my fiancé and I carved on our front porch. It&rsquo;s purely because of COVID-19.. I do nothing with my spare time other than stay home. Nothing to take pictures of!</p>
+<p>I hope you found this information useful. If there&rsquo;s any room for improvements, let me know in the comments below. If it helped you in any way, still let me know - that helps me keep going. Check out the additional resources below for further reading.</p>
+<h2 id="additional-resources"><a href="#additional-resources" class="header-anchor"></a>Additional resources
+</h2><ul>
+<li><a class="link" href="https://docs.microsoft.com/en-us/nuget/what-is-nuget"  target="_blank" rel="noopener"
+    >What is NuGet and what does it do?</a></li>
+<li><a class="link" href="https://docs.microsoft.com/en-us/powershell/scripting/gallery/how-to/getting-support/bootstrapping-nuget?view=powershell-7.1"  target="_blank" rel="noopener"
+    >Bootstrap the NuGet provider and NuGet.exe</a></li>
+<li><a class="link" href="https://adamtheautomator.com/nuget-iis-windows-server/"  target="_blank" rel="noopener"
+    >NuGet and IIS on Windows Server: The Ultimate Guide</a></li>
+<li><a class="link" href="https://docs.microsoft.com/en-us/nuget/hosting-packages/overview"  target="_blank" rel="noopener"
+    >Hosting your own NuGet feeds</a></li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2018 - 
+        
+        2026 Adam Cook
+    </section>
+    
+    <section class="powerby">
+        
+            Something should go here. <br/>
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.34.2">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+    
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.c922af694cc257bf1ecc41c0dd7b0430f9114ec280ccf67cd2c6ad55f5316c4e.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

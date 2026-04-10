@@ -1,0 +1,1279 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>PowerShell on Adam Cook</title>
+        <link>https://adamcook.io/categories/powershell/</link>
+        <description>Recent content in PowerShell on Adam Cook</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en-us</language>
+        <lastBuildDate>Sun, 18 Sep 2022 10:22:56 +0100</lastBuildDate><atom:link href="https://adamcook.io/categories/powershell/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Patching Snowflakes with ConfigMgr and PowerShell</title>
+        <link>https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/</link>
+        <pubDate>Sun, 18 Sep 2022 10:22:56 +0100</pubDate>
+        
+        <guid>https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/</guid>
+        <description>&lt;img src="https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/cover.jpg" alt="Featured image of post Patching Snowflakes with ConfigMgr and PowerShell" /&gt;&lt;ul&gt;
+&lt;li&gt;Do you have servers in your environment that require special or manual patching?&lt;/li&gt;
+&lt;li&gt;Do you have non-redundant application servers that must have a co-ordinated patching routine? Wish you used ConfigMgr for these but haven&amp;rsquo;t figured out a way?&lt;/li&gt;
+&lt;li&gt;Do you have spaghetti or unfinished code that attempts to orchestrate complicated patching cycles?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;By &amp;ldquo;special patching,&amp;rdquo; I mean the customer or application owners are terrified of the word &amp;ldquo;patching&amp;rdquo;, and they demand it be performed manually on a handful of finicky application servers out of fear of downtime. &lt;em&gt;(yeah, because hitting &amp;lsquo;check for updates&amp;rsquo; manually reduces risk&lt;/em&gt; &amp;#x1f612; &lt;em&gt;)&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;This leaves you feeling frustrated in having to perform tedious manual labour. Login, point, click, sit, wait etc.. You&amp;rsquo;re also annoyed the business has invested in a behemoth like ConfigMgr, and aren&amp;rsquo;t using it to its full potential just for these handful of special &amp;ldquo;snowflake&amp;rdquo; servers.&lt;/p&gt;
+&lt;p&gt;This is where I tell you I wrote a PowerShell module that automates this! Which is funny because you apparently shouldn&amp;rsquo;t automate it! You must do it manually! &amp;#x1f606; but hang on let me explain..&lt;/p&gt;
+&lt;p&gt;Quick shout out to &lt;a class=&#34;link&#34; href=&#34;https://twitter.com/CodyMathis123&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Cody Mathis&lt;/a&gt; who helped me soundboard a fair bit and provide some support on this &amp;#x1f44d;&lt;/p&gt;
+&lt;h2 id=&#34;pscmsnowflakepatching&#34;&gt;&lt;a href=&#34;#pscmsnowflakepatching&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;PSCMSnowflakePatching
+&lt;/h2&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/codaamok/PSCMSnowflakePatching&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;PSCMSnowflakePatching&lt;/a&gt; is a PowerShell module which contains a few functions but the primary interest is in &lt;a class=&#34;link&#34; href=&#34;https://github.com/codaamok/PSCMSnowflakePatching/blob/main/docs/Invoke-CMSoftwareUpdateInstall.md&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;Invoke-CMSnowflakePatching&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In this post I want to show you why I think this function will help you patch these snowflake systems without needing to sacrifice the use of ConfigMgr. It can streamline your manual labour, or your existing automation process, or hopefully inspire you to automate a complex patching routine with it.&lt;/p&gt;
+&lt;p&gt;Using &lt;code&gt;Invoke-CMSnowflakePatching&lt;/code&gt;, you can either:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;a) give it one or more hostnames via the &lt;code&gt;-ComputerName&lt;/code&gt; parameter&lt;/li&gt;
+&lt;li&gt;b) give it a ConfigMgr device collection ID via the &lt;code&gt;-CollectionId&lt;/code&gt; parameter&lt;/li&gt;
+&lt;li&gt;c) use the &lt;code&gt;-ChooseCollection&lt;/code&gt; parameter and select a device collection from your environment&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;For each host, it will remotely start the software update installation for all updates deployed to it.&lt;/p&gt;
+&lt;p&gt;By default it doesn&amp;rsquo;t reboot or make any retry attempts, but there are parameters for this if you need it:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;-AllowReboot&lt;/code&gt; switch will reboot the system(s) if any updates require a restart&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;-Attempts&lt;/code&gt; parameter will let you indicate the maximum number of retries you would like the function to install updates if there was a failure in the previous attempt&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;All hosts are processed in parallel, and you will get a live progress update from each host as it has finished patching with a break down of what updates were installed, success or failure.&lt;/p&gt;
+&lt;p&gt;If you use the either the &lt;code&gt;-ComputerName&lt;/code&gt; or &lt;code&gt;-CollectionId&lt;/code&gt; parameters, an output object is returned at the end with the result of patching for each host. This is great because if you want to orchestrate a complex patching routine with tools such as System Center Orchestrator or Azure Automation, you can absolutely do this with the feedback from the function.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/1-1.png&#34;
+	width=&#34;1353&#34;
+	height=&#34;471&#34;
+	srcset=&#34;https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/1-1_hu_fef8f6b44aa08b3e.png 480w, https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/1-1_hu_a6342916aa7d597a.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;Live progress written to console&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;287&#34;
+		data-flex-basis=&#34;689px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;In the above screenshot, you can see we&amp;rsquo;re calling &lt;code&gt;Invoke-CMSnowflakePatching&lt;/code&gt; and giving it a ConfigMgr device collection ID. We&amp;rsquo;re capturing the output of the command by assigning it to the &lt;code&gt;$result&lt;/code&gt; variable.&lt;/p&gt;
+&lt;p&gt;It&amp;rsquo;s worth calling out the two time columns seen on all lines: the first column is the time when that line was written, and the second column is the elapsed time since the start of execution.&lt;/p&gt;
+&lt;p&gt;Beyond the first few lines revolving around startup, you can see essential information as the jobs finish patching each host. We can see the list of updates that successfully installed, and a yellow text warning indicating one of the updates put the system in a pending reboot state.&lt;/p&gt;
+&lt;p&gt;If you were running this ad-hoc and interactively, I suspect you might find this realtime information helpful. This output likely can&amp;rsquo;t easily be captured by most automation tools as it&amp;rsquo;s just &lt;code&gt;Write-Host&lt;/code&gt;. However, this is why an output object is returned instead (see below) - this output can be captured and used however you please.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/1-2.png&#34;
+	width=&#34;1363&#34;
+	height=&#34;487&#34;
+	srcset=&#34;https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/1-2_hu_b5e0e6f7a5b866f.png 480w, https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/1-2_hu_9a9f4279eb9c4143.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;Output object in the $result variable&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;279&#34;
+		data-flex-basis=&#34;671px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;Looking at the above screenshot, this is where more automation possibilities become available for you.&lt;/p&gt;
+&lt;p&gt;The function returned a summary of the patch jobs for each host as output objects, and we captured this in the &lt;code&gt;$result&lt;/code&gt; variable from the last screenshot. Here we can see valuable information that might help feed as input to other automation things.&lt;/p&gt;
+&lt;p&gt;Here is another example, if I ran the following command:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;PS C:\&amp;gt; $result = Invoke-CMSnowflakePatching -ComputerName &amp;#39;VEEAM&amp;#39; -AllowReboot -Attempts 3
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;This time we&amp;rsquo;re just targetting the one server, permitting the server to reboot if an update returned a hard/soft pending reboot, and allow a maximum of 3 retries if there were any installation failures.&lt;/p&gt;
+&lt;p&gt;At the end of the process, you will receive an output object similar to the below in the &lt;code&gt;$result&lt;/code&gt; variable:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;PS C:\&amp;gt; $result
+
+ComputerName     : VEEAM
+Result           : Failure
+Updates          : {@{Name=7-Zip 22.01 (MSI-x64); ArticleID=PMPC-2022-07-18; EvaluationState=Error;
+                   ErrorCode=2147944003}, @{Name=2022-08 Security Update for Microsoft server operating system version 21H2 for x64-based Systems
+                   (KB5012170); ArticleID=5012170; EvaluationState=InstallComplete; ErrorCode=0}, @{Name=2022-08 Cumulative Update for .NET Framework 3.5 and 4.8 for
+                   Microsoft server operating system version 21H2 for x64 (KB5015733); ArticleID=5015733; EvaluationState=InstallComplete; ErrorCode=0},
+                   @{Name=Microsoft Edge 105.0.1343.33 (x64); ArticleID=PMPC-2022-09-09; EvaluationState=InstallComplete; ErrorCode=0}}
+IsPendingReboot  : False
+NumberOfReboots  : 1
+NumberOfAttempts : 3
+RunspaceId       : af37488e-dad9-4d56-b72a-5aa642e589e4
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;From the output above you can see the overall result from patching my Veeam server; the list of updates that were installed, whether there is a pending reboot, how many times the server was rebooted during patching, and how many times it retried.&lt;/p&gt;
+&lt;p&gt;We can see &lt;code&gt;NumberOfRetries&lt;/code&gt; is 3, and that &lt;code&gt;7-Zip 22.01 (MSI-x64)&lt;/code&gt; finished in a state of &lt;code&gt;Error&lt;/code&gt; - it failed to install the update despite 3 attempts.&lt;/p&gt;
+&lt;p&gt;It looks like it installed all updates, and likely one of the Windows updates returned a pending reboot so the server rebooted. As the 7-Zip update failed in the previous attempt, it was retried. It retried for a maximum of 3 attempts before returning.&lt;/p&gt;
+&lt;p&gt;Here is the full content of the &lt;code&gt;Updates&lt;/code&gt; property from the output object in list view:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;PS C:\&amp;gt; $result.Updates | fl
+
+Name            : 7-Zip 22.01 (MSI-x64) - (Republished on 2022-09-15 at 17:52)
+ArticleID       : PMPC-2022-07-18
+EvaluationState : Error
+ErrorCode       : 2147944003
+
+Name            : 2022-08 Security Update for Microsoft server operating system version 21H2 for x64-based Systems (KB5012170)
+ArticleID       : KB5012170
+EvaluationState : InstallComplete
+ErrorCode       : 0
+
+Name            : 2022-08 Cumulative Update for .NET Framework 3.5 and 4.8 for Microsoft server operating system version 21H2 for x64 (KB5015733)
+ArticleID       : KB5015733
+EvaluationState : InstallComplete
+ErrorCode       : 0
+
+Name            : Microsoft Edge 105.0.1343.33 (x64)
+ArticleID       : PMPC-2022-09-09
+EvaluationState : InstallComplete
+ErrorCode       : 0
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;With this output, you have a lot of opportunities. For example, you could feed this output to other scripts to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Send an email as a report with the result (&lt;a class=&#34;link&#34; href=&#34;https://github.com/codaamok/PSCMSnowflakePatching/blob/main/examples/SendMail.ps1&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;see this example here&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Invoke some other custom remedial actions on the server or application it hosts&lt;/li&gt;
+&lt;li&gt;Send the data to a ticketing system using some web API, or raise an alert somewhere&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Another benefit here is that you are using what you&amp;rsquo;ve paid for - ConfigMgr! With this approach, there will be no need to abandon usual deployment, content delivery, and reporting capabilities. The function is installing the software updates deployed to the client by ConfigMgr.&lt;/p&gt;
+&lt;p&gt;Here are a couple more example screenshots:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/2.png&#34;
+	width=&#34;1460&#34;
+	height=&#34;824&#34;
+	srcset=&#34;https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/2_hu_c0905f0de1755322.png 480w, https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/2_hu_6d7fb83c4d09b942.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;Successful installation without any pending reboots&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;177&#34;
+		data-flex-basis=&#34;425px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/3.png&#34;
+	width=&#34;1460&#34;
+	height=&#34;929&#34;
+	srcset=&#34;https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/3_hu_d1f2eef6a9dbf470.png 480w, https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/3_hu_aa099c3ab21a7d39.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;Failed installation and pending reboots&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;157&#34;
+		data-flex-basis=&#34;377px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;interactively-use-pscmsnowflakepatching-with-the--choosecollection-parameter&#34;&gt;&lt;a href=&#34;#interactively-use-pscmsnowflakepatching-with-the--choosecollection-parameter&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Interactively use PSCMSnowflakePatching with the &lt;code&gt;-ChooseCollection&lt;/code&gt; Parameter
+&lt;/h2&gt;&lt;p&gt;The &lt;code&gt;-ChooseCollection&lt;/code&gt; is the only parameter that you can&amp;rsquo;t use in an automated fashion. This is because it produces a pop-up &lt;code&gt;Out-GridView&lt;/code&gt; window prompting you to choose a ConfigMgr device collection.&lt;/p&gt;
+&lt;p&gt;This is just demonstrating that you can still use &lt;code&gt;Invoke-CMSnowflakePatching&lt;/code&gt; to &amp;lsquo;manually&amp;rsquo; patch systems if you wish to, just without the hassle of login, point, click, etc.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/4.gif&#34;
+	width=&#34;1571&#34;
+	height=&#34;1105&#34;
+	srcset=&#34;https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/4_hu_96b0d08b204c7227.gif 480w, https://adamcook.io/p/patching-snowflakes-with-configmgr-and-powershell/images/4_hu_7b305f0fc229e803.gif 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;Animated gif to show the -ChooseCollection parameter&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;142&#34;
+		data-flex-basis=&#34;341px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;why-a-module-why-not-just-a-script&#34;&gt;&lt;a href=&#34;#why-a-module-why-not-just-a-script&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Why a module? Why not just a script?
+&lt;/h2&gt;&lt;p&gt;This could just be my subconscious self playing games in my mind, but I feel the need to justify why this ended up being a module and not a single script file. An irrational pressure builds in my mind when I publish code online - &amp;ldquo;it must be perfect and justified!&amp;rdquo;&lt;/p&gt;
+&lt;p&gt;Jobs are used to process multiple hosts at once for patching, and I found I was re-using code to account for things like loop waiting, timeouts, and retries. You can&amp;rsquo;t easily use nor pass functions to jobs, so instead, for better management and readability, I opted for a module and for each job, I leverage the module for reusing code.&lt;/p&gt;
+&lt;h2 id=&#34;why-not-use-a-task-sequence&#34;&gt;&lt;a href=&#34;#why-not-use-a-task-sequence&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Why not use a task sequence?
+&lt;/h2&gt;&lt;p&gt;I guess there could be an argument made to use a task sequence if you needed to orchestrate complex patching routines. I wouldn&amp;rsquo;t disagree with the idea, whatever floats your boat. For me personally, code offers more flexibility.&lt;/p&gt;
+&lt;p&gt;For instance, in a task sequence I don&amp;rsquo;t think it&amp;rsquo;s trivial to perform actions in a loop on a timer until it eventually succeeds. This sort of logic is littered within &lt;code&gt;Invoke-CMSnowflakePatching&lt;/code&gt;, with thanks to &lt;a class=&#34;link&#34; href=&#34;http://twitter.com/codymathis123&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Cody Mathis&lt;/a&gt; and &lt;a class=&#34;link&#34; href=&#34;https://github.com/CodyMathis123/CM-Ramblings/blob/master/New-LoopAction.ps1&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;New-LoopAction&lt;/code&gt;&lt;/a&gt; &amp;#x2764;&amp;#xfe0f;&lt;/p&gt;
+&lt;h2 id=&#34;why&#34;&gt;&lt;a href=&#34;#why&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Why?
+&lt;/h2&gt;
+&lt;iframe src=&#34;https://giphy.com/embed/3cXmze4Y8igXdnkc3U&#34; width=&#34;480&#34; height=&#34;360&#34; frameBorder=&#34;0&#34; class=&#34;giphy-embed&#34; allowFullScreen style=&#34;display: block; margin: 0 auto;&#34;&gt;&lt;/iframe&gt;
+
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://twitter.com/0AndrewPorter0&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Andrew Porter&lt;/a&gt; pinged me asking if I would help making one. He found a few scripts online here and there which collectively sort of did what he wanted but not quite.&lt;/p&gt;
+&lt;p&gt;These are the scripts which he found:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Only installs updates, doesn’t reboot or cycle through
+&lt;a class=&#34;link&#34; href=&#34;https://timmyit.com/2016/08/01/sccm-and-powershell-force-install-of-software-updates-thats-available-on-client-through-wmi/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://timmyit.com/2016/08/01/sccm-and-powershell-force-install-of-software-updates-thats-available-on-client-through-wmi/&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Triggers up0dates remotely and reboots but doesn’t cycle through again or notify results
+&lt;a class=&#34;link&#34; href=&#34;https://eskonr.com/2021/05/using-scripts-to-trigger-software-updates-remotely-from-the-sccm-console/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://eskonr.com/2021/05/using-scripts-to-trigger-software-updates-remotely-from-the-sccm-console/&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Install updates, reboot and loops to install further updates – not completely working
+&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/answers/questions/642405/powershell-loop-install-of-available-software-upda.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://docs.microsoft.com/en-us/answers/questions/642405/powershell-loop-install-of-available-software-upda.html&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Installs updates on all servers in a collection, reboots and loops to install further updates
+&lt;a class=&#34;link&#34; href=&#34;https://www.itreliable.com/wp/powershell-script-to-install-software-updates-deployed-by-sccm-and-reboot-the-computer-remotely/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://www.itreliable.com/wp/powershell-script-to-install-software-updates-deployed-by-sccm-and-reboot-the-computer-remotely/&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Method 4 seem ideal as its code was more or less complete. I personally wasn&amp;rsquo;t a fan of the style of code, so I decided to rewrite it.&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>PowerShell vs. CSharp Azure Functions Cold Starts</title>
+        <link>https://adamcook.io/p/powershell-vs.-csharp-azure-functions-cold-starts/</link>
+        <pubDate>Sat, 07 Aug 2021 18:29:18 +0100</pubDate>
+        
+        <guid>https://adamcook.io/p/powershell-vs.-csharp-azure-functions-cold-starts/</guid>
+        <description>&lt;img src="https://adamcook.io/p/powershell-vs.-csharp-azure-functions-cold-starts/images/cover.jpg" alt="Featured image of post PowerShell vs. CSharp Azure Functions Cold Starts" /&gt;&lt;p&gt;It has been a while since I&amp;rsquo;ve written a post. I&amp;rsquo;ve been pretty committed to a new job I started at the start of the year. I need to find more positive outlets and return to doing the things I enjoy in my down-time. I hope to do more tinkering on side projects and giving back to the community.&lt;/p&gt;
+&lt;p&gt;The cover image for this post if for our pup, Alfie! He&amp;rsquo;s a beagle and we will be bringing him home in a couple of weeks.&lt;/p&gt;
+&lt;h1 id=&#34;introduction&#34;&gt;&lt;a href=&#34;#introduction&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Introduction
+&lt;/h1&gt;&lt;p&gt;In this post I want to show you how PowerShell and C# stack up against each other with their cold start times in Azure Functions.&lt;/p&gt;
+&lt;p&gt;A quick recap of Azure Functions if you&amp;rsquo;re unsure:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Serverless computing (&amp;ldquo;less servers&amp;rdquo; © &lt;a class=&#34;link&#34; href=&#34;https://twitter.com/jeffhollan&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Jeff Hollan&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Scalable cloud resources where you can execute given code to perform a task on a schedule or trigger, e.g.:
+&lt;ul&gt;
+&lt;li&gt;A website backend API that interacts with internal resources or third party APIs&lt;/li&gt;
+&lt;li&gt;Trigger a script to run when a new VM is created in Azure&lt;/li&gt;
+&lt;li&gt;Send an email or Teams notification with a given message fed via HTTP POST request&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;If you want to learn with more examples, check out these resources:
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.youtube.com/watch?v=499iCgNLDDE&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Build serverless APIs with Azure Functions | Azure Friday&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/azure/azure-functions/functions-overview&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Introduction to Azure Functions&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.youtube.com/watch?v=zIfxkub7CLY&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Intro to Azure Functions - What they are and how to create and deploy them&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://millerb.co.uk/2019/11/27/Getting-Started-Pwsh-Az-Functions-Part-1.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;PowerShell &amp;amp; Azure Functions - Part 1&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;What is a cold start? A cold start is the process of a function starting up and completing the task. The painful fact here is that if your function is left idle for some period of time, e.g. 15 or 20 minutes, the process of the function is stopped until it is called again. The latency the user experiences calling your function again after it has stopped is high. If the user calls your function again within the idle period, before it is stopped, the latency is low because the function is still running.&lt;/p&gt;
+&lt;p&gt;You can mitigate cold starts in Azure with &lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/azure/azure-functions/functions-premium-plan?tabs=portal#eliminate-cold-starts&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Premium Plan&lt;/a&gt; features and a &lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/azure/azure-functions/dedicated-plan&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;App Service&lt;/a&gt; plan.&lt;/p&gt;
+&lt;h1 id=&#34;the-test&#34;&gt;&lt;a href=&#34;#the-test&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;The test
+&lt;/h1&gt;&lt;p&gt;For me to show you how PowerShell and C# perform against each other in Azure Function Apps, I have two HTTP-trigger functions: &lt;a class=&#34;link&#34; href=&#34;https://github.com/codaamok/PoSH/tree/master/Azure/AzureFunctions/GraphAPI-Mail-PS&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;GraphAPI-Mail-PS&lt;/a&gt; and &lt;a class=&#34;link&#34; href=&#34;https://github.com/codaamok/PoSH/tree/master/Azure/AzureFunctions/GraphAPI-Mail-CSharp&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;GraphAPI-Mail-CSharp&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;When I send a simple HTTP request to either one, they send an email to me, from myself, using Microsoft&amp;rsquo;s Graph API, e.g.:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Calls the C# Function App&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Invoke-RestMethod -Uri &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://graphapi-mail-csharp.azurewebsites.net/api/GraphAPI_Mail&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Calls the PowerShell Function App&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Invoke-RestMethod -Uri &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://graphapi-mail-ps.azurewebsites.net/api/GraphAPI-Mail&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;I intend to run the above, a hundred times for each while recycling the Function App in-between each time to force a cold start, and see what the numbers are. This is what I intend to use to carry out the test: &lt;a class=&#34;link&#34; href=&#34;https://github.com/codaamok/PoSH/blob/master/Azure/AzureFunctions/Compare-PSCSharpGraphAPIMail.ps1&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Compare-PSCSharpGraphAPIMail.ps1&lt;/a&gt;.&lt;/p&gt;
+&lt;h1 id=&#34;the-results&#34;&gt;&lt;a href=&#34;#the-results&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;The results
+&lt;/h1&gt;&lt;table&gt;
+  &lt;thead&gt;
+      &lt;tr&gt;
+          &lt;th&gt;Function App&lt;/th&gt;
+          &lt;th&gt;Average (s)&lt;/th&gt;
+          &lt;th&gt;Minimum (s)&lt;/th&gt;
+          &lt;th&gt;Maximum (s)&lt;/th&gt;
+      &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+      &lt;tr&gt;
+          &lt;td&gt;GraphAPI-Mail-CSharp&lt;/td&gt;
+          &lt;td&gt;1.564564157&lt;/td&gt;
+          &lt;td&gt;0.418345&lt;/td&gt;
+          &lt;td&gt;3.5649865&lt;/td&gt;
+      &lt;/tr&gt;
+      &lt;tr&gt;
+          &lt;td&gt;GraphAPI-Mail-PS&lt;/td&gt;
+          &lt;td&gt;18.533579388&lt;/td&gt;
+          &lt;td&gt;13.5226983&lt;/td&gt;
+          &lt;td&gt;47.0977745&lt;/td&gt;
+      &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h1 id=&#34;discussion&#34;&gt;&lt;a href=&#34;#discussion&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Discussion
+&lt;/h1&gt;&lt;p&gt;If you&amp;rsquo;ve been on the fence about trying C# and you consider yourself handy with PowerShell, hopefully this post has given you some motivation to at least give C# some serious thought.&lt;/p&gt;
+&lt;p&gt;I have to be honest though, writing code with C# is not as easy as PowerShell. I guess this applies to all new things but I felt a fair bit of frustration while learning C# and trying to apply it. Thankfully I work with some great people that helped me, mainly &lt;a class=&#34;link&#34; href=&#34;https://twitter.com/CodyMathis123&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Cody&lt;/a&gt; and a bit of &lt;a class=&#34;link&#34; href=&#34;https://twitter.com/powers_hell&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Ben&lt;/a&gt; too!&lt;/p&gt;
+&lt;p&gt;I immediately sense that there is a lot of &amp;lsquo;scaffolding&amp;rsquo; involved to write in C# compared to PowerShell, however doing this test has given me a good insight and understanding. For an example of an Azure Function App, C# fits in well because it can ran what you want significantly quicker so if you have anything that involve some user experience, it is for sure superior.&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Using PowerShell to Manage Shlink With PSShlink</title>
+        <link>https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/</link>
+        <pubDate>Mon, 21 Dec 2020 00:00:00 +0000</pubDate>
+        
+        <guid>https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/</guid>
+        <description>&lt;img src="https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/images/cover.jpg" alt="Featured image of post Using PowerShell to Manage Shlink With PSShlink" /&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://shlink.io/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Shlink&lt;/a&gt; is an open-source self-hosted and PHP-based URL shortener application. I wrote &lt;a class=&#34;link&#34; href=&#34;https://github.com/codaamok/psshlink&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;PSShlink&lt;/a&gt; which will help you manage all of your short codes using PowerShell!&lt;/p&gt;
+&lt;p&gt;Shlink helped me tremendously when I moved my domain and blog CMS from cookadam.co.uk to adamcook.io. Some of my posts rank modestly in search results for some keywords and I felt unhappy about letting that go. I also did not want people&amp;rsquo;s bookmarks for posts using my old domain to result in an incomplete redirect to its new URL.&lt;/p&gt;
+&lt;p&gt;Google also help you secure your position in search results if you tell them your new domain. There were a couple of prerequisites to make this happen and one of them was to ensure all posts (discovered by my sitemap.xml) provided a 301 to a valid URL, usign my new domain. This is where Shlink stepped in.&lt;/p&gt;
+&lt;p&gt;Anyway, I wholeheartedly consumed Shlink which enabled me to migrate my blog to a new domain and I loved it. I moved from WordPress to using Hugo (see &lt;a class=&#34;link&#34; href=&#34;https://adamcook.io/p/deploying-hugo-websites-in-azure-for-pennies-or-free-on-github-pages/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Deploying Hugo Websites in Azure for Pennies or Free on GitHub Pages&lt;/a&gt;). Thankfully I didn&amp;rsquo;t have too many posts to carry over. However there was enough to make me want to use a tool to convert WordPress post XML to Markdown: &lt;a class=&#34;link&#34; href=&#34;https://github.com/lonekorean/wordpress-export-to-markdown&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;lonekorean/wordpress-export-to-markdown&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;There was also enough to make my hands hurt with a lot of careful copying and pasting trying to create all the short links in Shlink for both domains &lt;code&gt;cookadam.co.uk&lt;/code&gt; and &lt;code&gt;www.cookadam.co.uk&lt;/code&gt;. I looked to see if there was a Shlink module in PowerShell gallery, and there wasn&amp;rsquo;t. Like many other PowerShell enthusiasts, I jumped on the opportunity and wrote &lt;a class=&#34;link&#34; href=&#34;https://github.com/codaamok/PSShlink&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;PSShlink&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;installing-psshlink&#34;&gt;&lt;a href=&#34;#installing-psshlink&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Installing PSShlink
+&lt;/h2&gt;&lt;p&gt;Install the module from the PowerShell Gallery:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Install-Module PSShlink -Scope CurrentUser
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Import-Module PSShlink
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Check out all of the available functions:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Get-Command -Module PSShlink
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/images/1.jpg&#34;
+	width=&#34;1113&#34;
+	height=&#34;508&#34;
+	srcset=&#34;https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/images/1_hu_dfd1c97906f771ef.jpg 480w, https://adamcook.io/p/using-powershell-to-manage-shlink-with-psshlink/images/1_hu_74cf33abc45b4d75.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;219&#34;
+		data-flex-basis=&#34;525px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;authentication&#34;&gt;&lt;a href=&#34;#authentication&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Authentication
+&lt;/h2&gt;&lt;p&gt;Each function will have two parameters for authentication to your Shlink instance:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;-ShlinkServer&lt;/code&gt;: a string value of the Shlink server address e.g. &lt;a class=&#34;link&#34; href=&#34;https://example.com&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://example.com&lt;/a&gt;
+&lt;code&gt;-ShlinkApiKey&lt;/code&gt;: a SecureString value for the Shlink server&amp;rsquo;s API key&lt;/p&gt;
+&lt;p&gt;After using any function of PSShlink for the first time after importing the module - which have both parameters &lt;code&gt;-ShlinkServer&lt;/code&gt; and &lt;code&gt;-ShlinkApiKey&lt;/code&gt; * - it is not necessary to use the parameters again in subsequent uses for other functions of PSShlink. These values are held in memory for as long as the PowerShell session exists.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Some functions do not require both &lt;code&gt;-ShlinkServer&lt;/code&gt; and &lt;code&gt;-ShlinkApiKey&lt;/code&gt;, e.g. Get&lt;code&gt;-ShlinkServer&lt;/code&gt;. Therefore if the first function you use after importing PSShlink accepts only &lt;code&gt;-ShlinkServer&lt;/code&gt;, you will not be asked again for this value by other functions of PSShlink. You will however be prompted for the API key. Again, subsequent uses of other functions will no longer require &lt;code&gt;-ShlinkServer&lt;/code&gt; and &lt;code&gt;-ShlinkApiKey&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If the first function you use after importing PSShlink requires &lt;code&gt;-ShlinkServer&lt;/code&gt; and/or &lt;code&gt;-ShlinkApiKey&lt;/code&gt; and you have not passed the parameter(s), you will be prompted for them.&lt;/p&gt;
+&lt;h2 id=&#34;using-psshlink&#34;&gt;&lt;a href=&#34;#using-psshlink&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Using PSShlink
+&lt;/h2&gt;&lt;p&gt;As previously mentioned, &lt;code&gt;-ShlinkApiKey&lt;/code&gt; only accepts a SecureString value for simplicity we&amp;rsquo;ll create a SecureString value now for our API key.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;$ApiKey = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;ba6c52ed-flk5-4e84-9fc7-9c7e34825da0&amp;#34;&lt;/span&gt; | ConvertTo-SecureString -AsPlainText -Force
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Using the newly created SecureString API key for our Shlink instance, let&amp;rsquo;s query all of our short codes:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Get-ShlinkUrl -ShlinkServer &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://myshlinkserver.com&amp;#34;&lt;/span&gt; -ShlinkApiKey $ApiKey
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;The great thing about PSShlink is that the Shlink server name and API key are held in memory for as long as the PowerShell lives. They&amp;rsquo;re not accessible as variables to use outside of the &lt;a class=&#34;link&#34; href=&#34;https://mikefrobbins.com/2017/06/08/what-is-this-module-scope-in-powershell-that-you-speak-of/#:~:text=%E2%80%9CThe%20privacy%20of%20a%20module,do%20have%20their%20own%20scope.%E2%80%9D&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&amp;ldquo;module&amp;rsquo;s scope&amp;rdquo;&lt;/a&gt; though.&lt;/p&gt;
+&lt;p&gt;This means you do not have to repeatedly supply the &lt;code&gt;-ShlinkServer&lt;/code&gt; or &lt;code&gt;-ShlinkApiKey&lt;/code&gt; parameters for subsequent function calls of PSShlink, so long as the first one was successful.&lt;/p&gt;
+&lt;p&gt;For example, let&amp;rsquo;s save QR code images for all of our short codes:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Get-ShlinkUrl | Save-ShlinkUrlQrCode
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;All files will be saved as png and 300x300 in size. All files by default are saved in your Downloads directory using the naming convention: &lt;code&gt;ShlinkQRCode_&amp;lt;shortCode&amp;gt;_&amp;lt;domain&amp;gt;_&amp;lt;size&amp;gt;.&amp;lt;format&amp;gt;&lt;/code&gt;. e.g. &lt;code&gt;ShlinkQRCode_asFk2_example-com_300.png&lt;/code&gt;. As promised, you can clearly see we did not supply the Server address or API keys and it still worked!&lt;/p&gt;
+&lt;h2 id=&#34;getting-help&#34;&gt;&lt;a href=&#34;#getting-help&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Getting help
+&lt;/h2&gt;&lt;p&gt;All functions come with complete comment based help, so it is possible to find examples for each function using &lt;code&gt;Get-Help&lt;/code&gt;. For example, use the following to see detailed help including examples for &lt;code&gt;Save-ShlinkUrlQrCode&lt;/code&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Get-Help Save-ShlinkUrlQrCode
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Failing that, feel free to raise an issue on the &lt;a class=&#34;link&#34; href=&#34;https://github.com/codaamok/PSShlink&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;GitHub repo&lt;/a&gt;!&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Hosting and Protecting Your Own NuGet Feed with ProGet</title>
+        <link>https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/</link>
+        <pubDate>Sun, 13 Dec 2020 00:00:00 +0000</pubDate>
+        
+        <guid>https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/</guid>
+        <description>&lt;img src="https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/cover.jpg" alt="Featured image of post Hosting and Protecting Your Own NuGet Feed with ProGet" /&gt;&lt;p&gt;In this post I will share with you how to install &lt;a class=&#34;link&#34; href=&#34;https://inedo.com/proget&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Inedo&amp;rsquo;s ProGet&lt;/a&gt; to host your own NuGet feed (effectively your own PowerShell Gallery). This will let you share PowerShell modules and scripts amongst other systems and colleagues from an internal resource, using cmdlets from the PowerShellGet module e.g. &lt;code&gt;Install-Module&lt;/code&gt;, &lt;code&gt;Install-Script&lt;/code&gt;, &lt;code&gt;Find-Module&lt;/code&gt;, &lt;code&gt;Find-Script&lt;/code&gt; etc.&lt;/p&gt;
+&lt;p&gt;Why might you want to do this? Remember when PowerShell Gallery went down for a while in October? That&amp;rsquo;s a pretty good reason. Another reason might be if you like or need the use of the PowerShellGet cmdlets when interacting with the PowerShell Gallery, but do not want to store your code publicly.&lt;/p&gt;
+&lt;p&gt;By hosting your own, you can be in full control of its availability (&lt;a class=&#34;link&#34; href=&#34;https://docs.inedo.com/docs/proget/administration/license&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;ProGet Enterprise&lt;/a&gt; offers high-availability and load balancing features). Perhaps instead maybe you could treat it as a secondary source in the event of PowerShell Gallery going down.&lt;/p&gt;
+&lt;p&gt;What I wanted to do differently in this post, compared to others which I&amp;rsquo;ve seen cover installing ProGet, is that I wanted to add an authentication layer when trying to pull packages. In other words, I needed my NuGet feed to be widely open in terms of network access and because of that I wanted to protect it by requiring the &lt;code&gt;-Credential&lt;/code&gt; parameter with cmdlets like &lt;code&gt;Install-Module&lt;/code&gt;, &lt;code&gt;Find-Module&lt;/code&gt; etc.&lt;/p&gt;
+&lt;p&gt;Here is what I will be covering in this post:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#what-is-nuget&#34; &gt;What is NuGet?&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#proget&#34; &gt;ProGet&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#installing-proget&#34; &gt;Installing ProGet&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#create-api-key-for-publishing&#34; &gt;Create API key for publishing&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#create-user-for-downloading-modules-or-scripts&#34; &gt;Create user for downloading modules or scripts&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#create-the-powershell-feed&#34; &gt;Create the PowerShell feed&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#configure-proget-to-use-https&#34; &gt;Configure ProGet to use HTTPS&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#registering-the-feed-on-a-system-and-publishing-a-test-module&#34; &gt;Registering the feed on a system and publishing a test module&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#installing-modules-or-scripts-from-the-feed&#34; &gt;Installing modules or scripts from the feed&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#basic-authentication&#34; &gt;Basic authentication&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#endpoint-dependency-requirements&#34; &gt;Endpoint dependency requirements&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#conclusion&#34; &gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;#additional-resources&#34; &gt;Additional resources&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;what-is-nuget&#34;&gt;&lt;a href=&#34;#what-is-nuget&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;What is NuGet?
+&lt;/h2&gt;&lt;p&gt;Here I&amp;rsquo;ll quickly breakdown why &amp;ldquo;NuGet&amp;rdquo; is a thing. It should give you an insight when trying to understand how or why it is relevant to PowerShell, especially in this context of trying to host our own PowerShell Gallery.&lt;/p&gt;
+&lt;p&gt;NuGet is a package management protocol developed by Microsoft. It was intended for .NET packages on &lt;a class=&#34;link&#34; href=&#34;https://nuget.org&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;NuGet.org&lt;/a&gt;. Developers for .NET use NuGet to pull their project&amp;rsquo;s package dependencies from NuGet.org. This is very much like how PowerShell users use &lt;code&gt;Install-Module&lt;/code&gt; from the PowerShell Gallery for their scripts, or dependencies for other PowerShell workflows.&lt;/p&gt;
+&lt;p&gt;NuGet is the binary which is behind the scenes of the PowerShellGet module to make commands like &lt;code&gt;Install-Module&lt;/code&gt;, &lt;code&gt;Install-Script&lt;/code&gt;, &lt;code&gt;Find-Module&lt;/code&gt;, &lt;code&gt;Find-Script&lt;/code&gt; etc pull content from the PowerShell Gallery, or other NuGet feeds e.g. your self-hosted one with products like ProGet.&lt;/p&gt;
+&lt;p&gt;It makes sense that Microsoft leveraged the existing NuGet protocol for PowerShell&amp;rsquo;s package management (scripts and modules). Doing so means they did not have to reinvent the wheel by producing and maintaining another package management system.&lt;/p&gt;
+&lt;p&gt;I found the below 5 video YouTube series very insightful as it explains how and why it is used for .NET developers. Don&amp;rsquo;t worry if you don&amp;rsquo;t know .NET, it&amp;rsquo;s still useful. All 5 videos will take about ~30 mins of your time. &lt;a class=&#34;link&#34; href=&#34;https://www.youtube.com/watch?v=WW3bO1lNDmo&amp;amp;list=PLdo4fOcmZ0oVLvfkFk8O9h6v2Dcdh2bh_&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Here is the playlist link&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;video-wrapper&#34;&gt;
+    &lt;iframe loading=&#34;lazy&#34; 
+            src=&#34;https://www.youtube.com/embed/WW3bO1lNDmo&#34; 
+            allowfullscreen 
+            title=&#34;YouTube Video&#34;
+    &gt;
+    &lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;h2 id=&#34;proget&#34;&gt;&lt;a href=&#34;#proget&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;ProGet
+&lt;/h2&gt;&lt;p&gt;ProGet is a proprietary product of &lt;a class=&#34;link&#34; href=&#34;https://inedo.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Inedo&lt;/a&gt;. You can &lt;a class=&#34;link&#34; href=&#34;https://inedo.com/open/source-code-request&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;request to view their source code&lt;/a&gt; if you want to.&lt;/p&gt;
+&lt;p&gt;They offer three support tiers of ProGet: &lt;a class=&#34;link&#34; href=&#34;https://docs.inedo.com/docs/proget/administration/license&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;free, basic and enterprise&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;It&amp;rsquo;s worth mentioning that it can host a lot more than just NuGet feeds.&lt;/p&gt;
+&lt;p&gt;I chose ProGet after fumbling around with &lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/nuget/hosting-packages/nuget-server&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;NuGet.Server&lt;/a&gt; and expressing a little frustration about in the &lt;a class=&#34;link&#34; href=&#34;https://winadmins.io&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;WinAdmins Discord&lt;/a&gt;. &lt;a class=&#34;link&#34; href=&#34;https://twitter.com/BrettMiller_IT&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Brett Miller&lt;/a&gt; suggested to me he uses ProGet, and well, here we are. After much playing and reading, I found the free tier met my needs nicely. It&amp;rsquo;s absolutely worth pointing out there are &lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/nuget/hosting-packages/overview&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;many other alternatives&lt;/a&gt; available.&lt;/p&gt;
+&lt;h2 id=&#34;installing-proget&#34;&gt;&lt;a href=&#34;#installing-proget&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Installing ProGet
+&lt;/h2&gt;&lt;p&gt;Let&amp;rsquo;s jump straight in and start installing ProGet. If at any point you get stuck on installing ProGet, &lt;a class=&#34;link&#34; href=&#34;https://docs.inedo.com/docs/proget/installation/installation-guide&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;they do offer some docs&lt;/a&gt; of their own.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Head over to the &lt;a class=&#34;link&#34; href=&#34;https://inedo.com/proget/download&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Downloads&lt;/a&gt; page and click &lt;strong&gt;Download Inedo Hub&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;This is its web installer and it also installs a separate &lt;strong&gt;Inedo Hub&lt;/strong&gt; application where you can launch, reinstall, reconfigure or upgrade ProGet. It&amp;rsquo;s reasonably lightweight, so it&amp;rsquo;s not offensive by any means. It&amp;rsquo;s actually really helpful. They do offer an &lt;a class=&#34;link&#34; href=&#34;https://my.inedo.com/downloads?_ga=2.17971129.1219962463.1607855304-1273722551.1607855304&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;offline installer&lt;/a&gt; but its &lt;a class=&#34;link&#34; href=&#34;https://inedo.com/support/documentation/proget/installation/installation-guide/traditional-installer&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;installation instructions&lt;/a&gt; are different, so bear that in mind.&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;Launch the installer. Once the downloading and prerequisites scanning is complete:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Choosing &lt;strong&gt;Specify instance&amp;hellip;&lt;/strong&gt; gave me the &amp;ldquo;localhost&amp;rdquo; option. On this VM I have SQL Server installed. If you don&amp;rsquo;t have SQL Server installed locally and do not want to use a remote database, choose &amp;ldquo;Install Inedo Instance&amp;rdquo; and it installs SQL Express instead for you.&lt;/p&gt;
+&lt;p&gt;Optionally change the &lt;strong&gt;Database Name&lt;/strong&gt; if you want to.&lt;/p&gt;
+&lt;p&gt;I chose &lt;strong&gt;IIS&lt;/strong&gt; as the web server, instead of the &lt;strong&gt;Integrated Web Server&lt;/strong&gt;. You can later switch from the integrated web server to IIS if you &lt;a class=&#34;link&#34; href=&#34;https://docs.inedo.com/docs/various/iis/switching-to-iis&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;following this doc&lt;/a&gt;. Although it seems they recommend IIS for load-balancing / HA config and also for configuring HTTPS. Later on in this doc we will be configuring the feed to use HTTPS with a web certificate so I recommend you do this too.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&amp;#x26a0;&amp;#xfe0f; Some API endpoints for ProGet use HTTP methods PUT and DELETE. If WebDAV is installed on IIS, it is recommended to disable it. See &lt;a class=&#34;link&#34; href=&#34;https://docs.inedo.com/docs/various/iis/disabling-webdav&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Disabling WebDAV in IIS&lt;/a&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01a.jpg&#34;
+	width=&#34;785&#34;
+	height=&#34;576&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01a_hu_98a902e43c48fabd.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01a_hu_48ea43eeaa782f36.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;136&#34;
+		data-flex-basis=&#34;327px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01b.jpg&#34;
+	width=&#34;783&#34;
+	height=&#34;574&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01b_hu_4910ffc4a6cf3823.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01b_hu_2a90087b84ef8237.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;136&#34;
+		data-flex-basis=&#34;327px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01c.jpg&#34;
+	width=&#34;785&#34;
+	height=&#34;576&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01c_hu_61df88ca9f8b8fa6.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01c_hu_bb3475d41e713d6.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;136&#34;
+		data-flex-basis=&#34;327px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;
+&lt;p&gt;Click &lt;strong&gt;Install&lt;/strong&gt; to get rolling. You&amp;rsquo;ll be prompted to provide name and email address to sign up, even for a free license. You will then be emailed a license key.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Once install completes, I recommend either rebooting or just bouncing the &lt;strong&gt;ProGet Service&lt;/strong&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Close and re-open the Inedo Hub and click &lt;strong&gt;Launch&lt;/strong&gt;. You will be taken to the Web UI:&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01d.jpg&#34;
+	width=&#34;785&#34;
+	height=&#34;576&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01d_hu_98dc5defa00c3c54.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01d_hu_fc75073f3a7338c9.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;136&#34;
+		data-flex-basis=&#34;327px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01e.jpg&#34;
+	width=&#34;1325&#34;
+	height=&#34;768&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01e_hu_29fed6ff82760c5d.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-01e_hu_3706a6e0031fa37e.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;172&#34;
+		data-flex-basis=&#34;414px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;After you&amp;rsquo;ve successfully installed ProGet and can see the web UI successfully load (default credentials are &lt;strong&gt;Admin&lt;/strong&gt;/&lt;strong&gt;Admin&lt;/strong&gt;, by the way), we need to lock it down a little bit. We will change the default credentials and remove the built-it Anonymous identity object access to all feeds.&lt;/p&gt;
+&lt;ol start=&#34;6&#34;&gt;
+&lt;li&gt;Click the settings cog at the top right to access the settings and choose &lt;strong&gt;Users &amp;amp; Tasks&lt;/strong&gt; under &lt;strong&gt;Security &amp;amp; Authentication&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Click the &lt;strong&gt;Admin&lt;/strong&gt; user and change the password to be something complex&lt;/li&gt;
+&lt;li&gt;Go to the &lt;strong&gt;Tasks&lt;/strong&gt; tab and remove &lt;strong&gt;Anonymous&lt;/strong&gt; from the task &lt;strong&gt;Administer&lt;/strong&gt; and &lt;strong&gt;View &amp;amp; Download Packages&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&amp;#x26a0;&amp;#xfe0f; After removing the &lt;strong&gt;Anonymous&lt;/strong&gt; identity from the &lt;strong&gt;Administer&lt;/strong&gt; task, you will likely be prompted to log in using your new Admin credential.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02a.jpg&#34;
+	width=&#34;1325&#34;
+	height=&#34;768&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02a_hu_5fed480fd898481b.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02a_hu_1265e8bd9d445e1e.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;172&#34;
+		data-flex-basis=&#34;414px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02b.jpg&#34;
+	width=&#34;1325&#34;
+	height=&#34;586&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02b_hu_4206bed06dbc7e5a.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02b_hu_141a8151db433d0b.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;226&#34;
+		data-flex-basis=&#34;542px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02c.jpg&#34;
+	width=&#34;1325&#34;
+	height=&#34;848&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02c_hu_9d5fd8b6af281dc8.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02c_hu_4c9f8ef9741486ad.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;156&#34;
+		data-flex-basis=&#34;375px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02d.jpg&#34;
+	width=&#34;1325&#34;
+	height=&#34;848&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02d_hu_53b8d0ccc1365f69.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02d_hu_a0c6b7c9fc75ab98.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;156&#34;
+		data-flex-basis=&#34;375px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02e.jpg&#34;
+	width=&#34;1325&#34;
+	height=&#34;848&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02e_hu_668602a15ffed618.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-02e_hu_e90b41844c1bc562.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;156&#34;
+		data-flex-basis=&#34;375px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;create-api-key-for-publishing&#34;&gt;&lt;a href=&#34;#create-api-key-for-publishing&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Create API key for publishing
+&lt;/h2&gt;&lt;p&gt;Let&amp;rsquo;s create an API key. This key will be needed for when we publish modules or scripts using either of the &lt;code&gt;Publish-Module&lt;/code&gt; or &lt;code&gt;Publish-Script&lt;/code&gt; cmdlets.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Go back to the settings via the cog at the top right, under &lt;strong&gt;Integration &amp;amp; Extensibility&lt;/strong&gt; select &lt;strong&gt;API Keys&lt;/strong&gt; and click &lt;strong&gt;Create API Key&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Check the box which reads &lt;strong&gt;Grant access to Feed API&lt;/strong&gt; and click &lt;strong&gt;Save API Key&lt;/strong&gt;. The key will display in clear text in the UI. Make note of this as we will need it later on.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03a.jpg&#34;
+	width=&#34;1325&#34;
+	height=&#34;848&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03a_hu_fc399eede97fb523.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03a_hu_81324f7386fdc72.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;156&#34;
+		data-flex-basis=&#34;375px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03b.jpg&#34;
+	width=&#34;1325&#34;
+	height=&#34;848&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03b_hu_fdb053032801affe.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03b_hu_d1b7b2e8ba05a3e7.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;156&#34;
+		data-flex-basis=&#34;375px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03c.jpg&#34;
+	width=&#34;1325&#34;
+	height=&#34;890&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03c_hu_c22afb58794bef37.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03c_hu_eb0b8bc6ed57ab64.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;148&#34;
+		data-flex-basis=&#34;357px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03d.jpg&#34;
+	width=&#34;1325&#34;
+	height=&#34;621&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03d_hu_81ae4ccf2802dd2a.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-03d_hu_8338e32453e42a69.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;213&#34;
+		data-flex-basis=&#34;512px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;create-user-for-downloading-modules-or-scripts&#34;&gt;&lt;a href=&#34;#create-user-for-downloading-modules-or-scripts&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Create user for downloading modules or scripts
+&lt;/h2&gt;&lt;p&gt;Now we will create a user which will be used for basic authentication in the &lt;code&gt;-Credential&lt;/code&gt; parameter of cmdlets like &lt;code&gt;Find-Module&lt;/code&gt;, &lt;code&gt;Find-Script&lt;/code&gt;, &lt;code&gt;Install-Module&lt;/code&gt; and &lt;code&gt;Install-Script&lt;/code&gt; etc.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Again, work your way back to settings. This time click &lt;strong&gt;Users &amp;amp; Tasks&lt;/strong&gt; and click &lt;strong&gt;Create User&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Set a username and password and click &lt;strong&gt;Save&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Change to the &lt;strong&gt;Tasks&lt;/strong&gt; tab and we will give the newly created user access to only &lt;strong&gt;View &amp;amp; Download Packages&lt;/strong&gt; by clicking on &lt;strong&gt;Add Restriction&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Enter the user name created in step 2 in the &lt;strong&gt;Principles&lt;/strong&gt; field and enter &lt;strong&gt;View &amp;amp; Download Packages&lt;/strong&gt; in the &lt;strong&gt;Tasks&lt;/strong&gt; field - don&amp;rsquo;t forget to click &lt;strong&gt;Save Privilege&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04a.jpg&#34;
+	width=&#34;1325&#34;
+	height=&#34;810&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04a_hu_cc5a5cfeecfe7378.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04a_hu_ae3da14c2bd774cf.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;163&#34;
+		data-flex-basis=&#34;392px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04b.jpg&#34;
+	width=&#34;1325&#34;
+	height=&#34;810&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04b_hu_dc84a7366c083bc0.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04b_hu_3c856d8e7c802d02.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;163&#34;
+		data-flex-basis=&#34;392px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04c.jpg&#34;
+	width=&#34;1325&#34;
+	height=&#34;810&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04c_hu_a62279ee19b68d17.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04c_hu_a4986f85e9145c65.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;163&#34;
+		data-flex-basis=&#34;392px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04d.jpg&#34;
+	width=&#34;1325&#34;
+	height=&#34;810&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04d_hu_b63bd48301cf302b.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04d_hu_c0207d5b4c9bed6c.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;163&#34;
+		data-flex-basis=&#34;392px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04e.jpg&#34;
+	width=&#34;1325&#34;
+	height=&#34;810&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04e_hu_88eba9e2d2006036.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04e_hu_81125a6f803d43ac.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;163&#34;
+		data-flex-basis=&#34;392px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04f.jpg&#34;
+	width=&#34;1325&#34;
+	height=&#34;810&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04f_hu_48824e2314adf413.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-04f_hu_2dfddfa5b0db3619.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;163&#34;
+		data-flex-basis=&#34;392px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;create-the-powershell-feed&#34;&gt;&lt;a href=&#34;#create-the-powershell-feed&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Create the PowerShell feed
+&lt;/h2&gt;&lt;p&gt;Good stuff, next we will create a new PowerShell feed which will contain our published modules and scripts.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Navigate to &lt;strong&gt;Feeds&lt;/strong&gt; from the top navigation bar and click &lt;strong&gt;Create New Feed&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Scroll down and choose &lt;strong&gt;PowerShell Modules&lt;/strong&gt; as the feed type&lt;/li&gt;
+&lt;li&gt;Give your feed a name and select the radio button which reads &lt;strong&gt;Private/Internal packages&lt;/strong&gt;, click &lt;strong&gt;Create New Feed&lt;/strong&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05a.jpg&#34;
+	width=&#34;1325&#34;
+	height=&#34;810&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05a_hu_735367dc1d64c1fb.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05a_hu_1cf489e8e5877af5.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;163&#34;
+		data-flex-basis=&#34;392px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05b.jpg&#34;
+	width=&#34;1325&#34;
+	height=&#34;730&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05b_hu_891691009c1cc878.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05b_hu_6bd90b91691ea59f.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;181&#34;
+		data-flex-basis=&#34;435px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05c.jpg&#34;
+	width=&#34;1325&#34;
+	height=&#34;810&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05c_hu_c95bbe31a9eb1b1c.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-05c_hu_692c9cc92b4685e6.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;163&#34;
+		data-flex-basis=&#34;392px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;configure-proget-to-use-https&#34;&gt;&lt;a href=&#34;#configure-proget-to-use-https&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Configure ProGet to use HTTPS
+&lt;/h2&gt;&lt;p&gt;Now we will configure ProGet to listen on an additional alternative port with a web certificate. This is optional for you; perhaps you&amp;rsquo;re running this internally and you are OK with non-encrypted traffic. However in any case I still think it&amp;rsquo;s a good idea to use TLS.&lt;/p&gt;
+&lt;p&gt;You will need a web certificate which we will configure in IIS to use. As this is in my lab, things are like the wild west around here so I&amp;rsquo;m just going to yolo it with a LetsEncrypt certificate using the &lt;a class=&#34;link&#34; href=&#34;https://github.com/rmbolger/Posh-ACME&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Posh-ACME module&lt;/a&gt;.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Generate or obtain web certificate. Here I&amp;rsquo;ll quickly demo how I do this with the Posh-ACME module.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Install-Module &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Posh-ACME&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Import-Module &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Posh-ACME&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;$Params = @{
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    Domain = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;nuget.adamcook.io&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    Contact = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;myemail@address.com&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    DnsPlugin = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Cloudflare&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    PluginArgs = @{
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        CFToken = ConvertTo-SecureString &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;MySuperSecretCloudflareAPIKey&amp;#34;&lt;/span&gt; -AsPlainText -Force
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;New-PACertificate @Params
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol&gt;
+&lt;li&gt;Create a DNS record to point to your ProGet server&amp;rsquo;s IP&lt;/li&gt;
+&lt;li&gt;Load the certificate in to the Local System&amp;rsquo;s Personal or Web Hosting certificate store.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;If you used Posh-ACME, you will find the &lt;code&gt;.pfx&lt;/code&gt; in &lt;strong&gt;%LOCALAPPDATA%\Posh-ACME&lt;/strong&gt;. Simply right click, choose &lt;strong&gt;Install PFX&lt;/strong&gt; and complete the wizard. The default password protecting the certificate is &lt;code&gt;poshacme&lt;/code&gt;.&lt;/p&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Open IIS and navigate through: &lt;strong&gt;Sites&lt;/strong&gt; &amp;gt; &lt;strong&gt;ProGet&lt;/strong&gt; &amp;gt; &lt;strong&gt;Bindings&lt;/strong&gt; &amp;gt; &lt;strong&gt;Add&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Change &lt;strong&gt;Type&lt;/strong&gt; to &lt;strong&gt;https&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;By default the port is 443. If you have another site or service bound to this port on the host you&amp;rsquo;re currently configuring, choose a different port. For this demo I chose port &lt;strong&gt;8625&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;In the drop down for &lt;strong&gt;SSL certificate&lt;/strong&gt; you should see our certificate&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06a.jpg&#34;
+	width=&#34;1551&#34;
+	height=&#34;920&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06a_hu_e14097013d7e6579.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06a_hu_fef3b286305932fc.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;168&#34;
+		data-flex-basis=&#34;404px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;ol start=&#34;7&#34;&gt;
+&lt;li&gt;Click OK!&lt;/li&gt;
+&lt;li&gt;Go to Settings of ProGet and under &lt;strong&gt;System Configuration&lt;/strong&gt; choose &lt;strong&gt;Advanced Settings&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;Scroll down to &lt;code&gt;Web.BaseUrl&lt;/code&gt; and populate the field with your full root URL. For example, for me I have set it to &lt;code&gt;https://nuget.adamcook.io:8625&lt;/code&gt;. This part is important if you are serving ProGet under a different path in the URL or port, e.g. I could have used &lt;code&gt;https://adamcook.io:8625/nuget&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Click &lt;strong&gt;Save Changes&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;At this point you will need to make sure DNS is correctly configured for whatever domain you used for your certificate. All should be well once you can browse to the domain and not receive any certificate errors. For example:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06b.jpg&#34;
+	width=&#34;1325&#34;
+	height=&#34;1081&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06b_hu_34fed83ee689f0b5.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06b_hu_479e60c4c91076e1.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;122&#34;
+		data-flex-basis=&#34;294px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06c.jpg&#34;
+	width=&#34;1325&#34;
+	height=&#34;889&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06c_hu_afcd1ef94b39fb80.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06c_hu_93eec90a16182e35.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;149&#34;
+		data-flex-basis=&#34;357px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06d.jpg&#34;
+	width=&#34;1321&#34;
+	height=&#34;759&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06d_hu_a7fc3133e3a7cf07.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-06d_hu_7e6826d997ec1013.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;174&#34;
+		data-flex-basis=&#34;417px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;registering-the-feed-on-a-system-and-publishing-a-test-module&#34;&gt;&lt;a href=&#34;#registering-the-feed-on-a-system-and-publishing-a-test-module&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Registering the feed on a system and publishing a test module
+&lt;/h2&gt;&lt;p&gt;At this point, you are good to go to start publishing scripts or modules to this feed. As an example, let&amp;rsquo;s save a module from the PowerShell Gallery and publish it to our newly created NuGet feed.&lt;/p&gt;
+&lt;p&gt;For a laugh we&amp;rsquo;ll demo with the &lt;code&gt;Az&lt;/code&gt; module, which has 62 other dependent modules. As a result we will be downloading 63 modules from the PowerShell Gallery and publishing them all to our new self-hosted NuGet feed.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Register the NuGet feed on your system using the below. This can be from your desktop or even the server running ProGet itself.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;I&amp;rsquo;ll be honest.. I have no idea why we need to configure a package source before we can register the repository, but I couldn&amp;rsquo;t get it to work otherwise. &lt;a class=&#34;link&#34; href=&#34;https://github.com/OneGet/oneget/issues/403&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;More info here on that&lt;/a&gt;!&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Set the URL to match your config from the section &amp;#39;Configure ProGet to use HTTPS&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# i.e. https/http, domain and port&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;$URL = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://nuget.adamcook.io:8625/nuget/MyPrivateRepo&amp;#34;&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Enter the username and password created from the section &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# &amp;#39;Create user for downloading modules or scripts&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;$Cred = Get-Credential
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;$Params = @{
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	Name = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;MyPrivateRepo&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	Location = $URL
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	ProviderName = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;NuGet&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	Credential = $Cred
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	Trusted = $true
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	SkipValidate = $true
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Register-PackageSource @Params
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;$Params = @{
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	Name = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;MyPrivateRepo&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	SourceLocation = $URL
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    PublishLocation = $URL
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    ScriptSourceLocation = $URL
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    ScriptPublishLocation = $URL
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    PackageManagementProvider = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;NuGet&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;	Credential = $Cred
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    InstallationPolicy = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Trusted&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Register-PSRepository @Params
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;You will notice that if you now run &lt;code&gt;Get-PackageSource&lt;/code&gt; and &lt;code&gt;Get-PSRepository&lt;/code&gt;, you will see our new NuGet repository. It is important to note that this is not a system-wide config, it is per-user. In other words, if you intend to register the package source and repository, and you want another security context on the same system the leverage this registration, you will need to register them in that context. &lt;a class=&#34;link&#34; href=&#34;https://github.com/PowerShell/PowerShellGet/issues/84&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Here&amp;rsquo;s a GitHub issue requesting this to change&lt;/a&gt;.&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;Issue the following command to grab all of the modules and save them to &lt;code&gt;C:\temp\Az&lt;/code&gt; locally&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Save-Module -Name &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Az&amp;#34;&lt;/span&gt; -Path &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;C:\temp\Az&amp;#34;&lt;/span&gt; -Repository PSGallery
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote&gt;
+&lt;p&gt;&amp;#x26a0;&amp;#xfe0f; If you receive an error along the lines of:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Failed to generate the compressed file for module &amp;#39;C:\Program Files\dotnet\dotnet.exe failed to pack
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Run the below. Close and re-open the console, then try again. &lt;a class=&#34;link&#34; href=&#34;https://github.com/PowerShell/PowerShellGetv2/issues/303&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Credit&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Invoke-WebRequest -Uri &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;https://dist.nuget.org/win-x86-commandline/latest/nuget.exe&amp;#34;&lt;/span&gt; -OutFile &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$env:LOCALAPPDATA&lt;span style=&#34;color:#e6db74&#34;&gt;\Microsoft\Windows\PowerShell\PowerShellGet\NuGet.exe&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&amp;#x26a0;&amp;#xfe0f; Also note that we are now explicitly specifying to use the &lt;strong&gt;PSGallery&lt;/strong&gt; registered repository using the &lt;code&gt;-Repository&lt;/code&gt; parameter, because we now have multiple registered repositories (or at least you should, the PowerShell Gallery is configured by default on most systems).&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07a.jpg&#34;
+	width=&#34;1113&#34;
+	height=&#34;1002&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07a_hu_9546543ba9c84b1a.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07a_hu_1d16187187513c58.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;111&#34;
+		data-flex-basis=&#34;266px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07b.jpg&#34;
+	width=&#34;1113&#34;
+	height=&#34;1002&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07b_hu_38fa614d371b328e.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07b_hu_9b64b4f6d0199d28.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;111&#34;
+		data-flex-basis=&#34;266px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Using the API key we gathered from the section &lt;a class=&#34;link&#34; href=&#34;#create-api-key-for-publishing&#34; &gt;Create API key for publishing&lt;/a&gt;, we can now publish all the modules which are in the &lt;code&gt;C:\temp\Az&lt;/code&gt; directory:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Get-ChildItem -Path &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;C:\temp\Az&amp;#34;&lt;/span&gt; | ForEach-Object {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    Publish-Module -Path $_.FullName -NuGetApiKey &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;MySuperSecretAPIKey&amp;#34;&lt;/span&gt; -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;MyPrivateRepo&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;ol start=&#34;4&#34;&gt;
+&lt;li&gt;After a couple of minutes, all of the modules will finish publishing. The web UI of ProGet will reflect this and we can also see this with &lt;code&gt;Find-Module&lt;/code&gt; too. Don&amp;rsquo;t forget, you will also need to use the &lt;code&gt;-Credential&lt;/code&gt; parameter with &lt;code&gt;Find-Module&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;em&gt;Forgot what credential to use? It&amp;rsquo;s the one we set from the section &lt;a class=&#34;link&#34; href=&#34;#create-user-for-downloading-modules-or-scripts&#34; &gt;Create user for downloading modules or scripts&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07c.jpg&#34;
+	width=&#34;1113&#34;
+	height=&#34;508&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07c_hu_77f79c40a715255.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07c_hu_f0f68ce9627bc5eb.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;219&#34;
+		data-flex-basis=&#34;525px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07d.jpg&#34;
+	width=&#34;1428&#34;
+	height=&#34;828&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07d_hu_1b38bf40614ba96a.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07d_hu_644d7387a63db3f.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;172&#34;
+		data-flex-basis=&#34;413px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07e.jpg&#34;
+	width=&#34;1428&#34;
+	height=&#34;828&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07e_hu_704d8c62c5b42392.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07e_hu_209b3b9d725390.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;172&#34;
+		data-flex-basis=&#34;413px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07f.jpg&#34;
+	width=&#34;968&#34;
+	height=&#34;1344&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07f_hu_44263bc2a86ab9ed.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-07f_hu_dc9118cfd793bc3f.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;72&#34;
+		data-flex-basis=&#34;172px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;Don&amp;rsquo;t forget, you can still publish and install scripts to the NuGet feed just like you can with modules, using cmdlets like &lt;code&gt;Publish-Script&lt;/code&gt;, &lt;code&gt;Find-Script&lt;/code&gt; and &lt;code&gt;Install-Script&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;installing-modules-or-scripts-from-the-feed&#34;&gt;&lt;a href=&#34;#installing-modules-or-scripts-from-the-feed&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Installing modules or scripts from the feed
+&lt;/h2&gt;&lt;p&gt;Now let&amp;rsquo;s demonstrate installing a PowerShell module from our new NuGet feed. Again you can do this from your desktop or on the ProGet server itself.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;If you&amp;rsquo;re trying this from a different system compared to the last section, registry the package source and repository again as shown in the section &lt;a class=&#34;link&#34; href=&#34;#registering-the-feed-on-a-system-and-publishing-a-test-module&#34; &gt;Registering the feed on a system and publishing a test module&lt;/a&gt;. It is possible to omit the the &lt;code&gt;-ScriptPublishLocation&lt;/code&gt; and &lt;code&gt;-PublishLocation&lt;/code&gt; parameters if you do not intend to publish modules or scripts from the system(s).&lt;/li&gt;
+&lt;li&gt;Install all of the &lt;code&gt;Az*&lt;/code&gt; modules. We need to make sure we explicitly specify our new NuGet feed using the &lt;code&gt;-Repository&lt;/code&gt; parameter and the credential too using &lt;code&gt;-Credential&lt;/code&gt;:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;$Modules = Find-Module -Name &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Az*&amp;#34;&lt;/span&gt; -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;MyPrivateRepo&amp;#34;&lt;/span&gt; -Credential $Cred
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;$Modules | Install-Module -Repository &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;MyPrivateRepo&amp;#34;&lt;/span&gt; -Credential $Cred
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;em&gt;Forgot what credential to use? It&amp;rsquo;s the one we set from the section &lt;a class=&#34;link&#34; href=&#34;#create-user-for-downloading-modules-or-scripts&#34; &gt;Create user for downloading modules/scripts&lt;/a&gt;.&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-08.jpg&#34;
+	width=&#34;1346&#34;
+	height=&#34;1344&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-08_hu_9c582973c367d7b8.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-08_hu_8223f94e48d9ee93.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;100&#34;
+		data-flex-basis=&#34;240px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;That&amp;rsquo;s more or less it. You just pulled a bunch of PowerShell modules from your self-hosted NuGet feed which is hosted using your own TLS certificate and protected with basic authentication via the &lt;code&gt;-Credential&lt;/code&gt; parameter.&lt;/p&gt;
+&lt;h2 id=&#34;basic-authentication&#34;&gt;&lt;a href=&#34;#basic-authentication&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Basic authentication
+&lt;/h2&gt;&lt;p&gt;I&amp;rsquo;ve mentioned this a few times throughout the post but not discussed it.&lt;/p&gt;
+&lt;p&gt;The authentication method when using the &lt;code&gt;-Credential&lt;/code&gt; parameter used here is &lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Basic_access_authentication&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;HTTP basic authentication&lt;/a&gt;. If you have configured your ProGet instance to be using only HTTP and have protected the feeds using a built-in security identity as discussed in section &lt;a class=&#34;link&#34; href=&#34;#create-user-for-downloading-modules-or-scripts&#34; &gt;Create user for downloading modules or scripts&lt;/a&gt;, then your credentials will be sent across the wire merely encoded with base64.. &lt;strong&gt;this is not encryption&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;ve demonstrated this below; I configured the package source and repository locally on my machine (repository name is &lt;strong&gt;insecure&lt;/strong&gt;). I have registered them using the HTTP endpoint of ProGet, not HTTPS. You can see the credentials in cleartext in packet tracing tools like Wireshark because they&amp;rsquo;re generally helpful and do the decoding for you in the GUI.&lt;/p&gt;
+&lt;p&gt;Encrypting the traffic with TLS certificates is for sure the way to go. Even if the traffic is only traversing internally. Your code, and therefore the packages on your NuGet feed, should never contain sensitive information. Therefore in theory all you are protecting is the intellectual property of the code. However, let&amp;rsquo;s be real, a lot of us at the very least sometimes store things like IP addresses and stuff in our code. With that in mind, if you had a script named &amp;ldquo;Get-SecretFromCyberArk&amp;rdquo; on your NuGet feed, which contained even the most trivial information like the IP addresses of your CyberArk infrastructure, that is still an easy win of information gathering for a malicious actor. Just mooching around your network. They would have picked up the username and password of the user account, logged in to ProGet and able to view all your packages.&lt;/p&gt;
+&lt;p&gt;Using TLS does not provide total security, as you are still at the mercy of a simple username and password where those credentials are stored in the ProGet database. However, there is no reason why you should not be using HTTPS.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-09a.jpg&#34;
+	width=&#34;1366&#34;
+	height=&#34;1040&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-09a_hu_18044abcd21085b.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-09a_hu_21ff86bef182cfb8.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;131&#34;
+		data-flex-basis=&#34;315px&#34;
+	
+&gt; &lt;img src=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-09b.jpg&#34;
+	width=&#34;1367&#34;
+	height=&#34;1032&#34;
+	srcset=&#34;https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-09b_hu_57ccec1801288f73.jpg 480w, https://adamcook.io/p/hosting-and-protecting-your-own-nuget-feed-with-proget/images/Hosting-and-Protecting-Your-Own-NuGet-Feed-with-ProGet-09b_hu_7dc5dbbe0d5b97bc.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;132&#34;
+		data-flex-basis=&#34;317px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;endpoint-dependency-requirements&#34;&gt;&lt;a href=&#34;#endpoint-dependency-requirements&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Endpoint dependency requirements
+&lt;/h2&gt;&lt;p&gt;In order for other users to start using your new NuGet feed, you need to satisfy some prerequisites. I strongly recommend you:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;For all systems you intend to use the repository from, have the latest available &lt;a class=&#34;link&#34; href=&#34;https://www.powershellgallery.com/packages/PackageManagement&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;PackageManagement&lt;/a&gt; and &lt;a class=&#34;link&#34; href=&#34;https://www.powershellgallery.com/packages/PowerShellGet&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;PowerShellGet&lt;/a&gt; modules installed.&lt;/li&gt;
+&lt;li&gt;If not already, upgrade the systems using the NuGet feed to be using PowerShell 5.1 (&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/powershell/scripting/windows-powershell/wmf/setup/install-configure?view=powershell-7.1&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Windows Management Framework 5.1&lt;/a&gt;) as it will make your life &lt;em&gt;a lot&lt;/em&gt; easier.&lt;/li&gt;
+&lt;li&gt;After the last two items are resolved, you then need to register the package source and repository on all of the endpoints you want to leverage the repository from. We did this in section &lt;a class=&#34;link&#34; href=&#34;#registering-the-feed-on-a-system-and-publishing-a-test-module&#34; &gt;Registering the feed on a system and publishing a test module&lt;/a&gt;. Don&amp;rsquo;t forget that the security context of which you register the package source and repository from, is the only context in which the repositories are available. If you want to access the registered repository from another security context on the same system, you will have to re-register them in that context.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;conclusion&#34;&gt;&lt;a href=&#34;#conclusion&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Conclusion
+&lt;/h2&gt;&lt;p&gt;Some things which I didn&amp;rsquo;t get to touch on are LDAP authentication integration and extensions within ProGet.&lt;/p&gt;
+&lt;p&gt;Authenticating using Active Directory would for sure be a better and more manageable solution in terms of handling the credential when using the &lt;code&gt;-Credential&lt;/code&gt; parameter. ProGet even provides support for gMSA accounts. You can find out more here &lt;a class=&#34;link&#34; href=&#34;https://docs.inedo.com/docs/various/ldap/ldap-active-directory&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Using LDAP/AD Integration&lt;/a&gt;. And even better, there is support for &lt;a class=&#34;link&#34; href=&#34;https://docs.inedo.com/docs/various/saml/overview&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;SAML authentication with AD&lt;/a&gt; and &lt;a class=&#34;link&#34; href=&#34;https://docs.inedo.com/docs/various/saml/azure-ad&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Azure AD&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I also wanted to highlight is that it is possible to store your packages in cloud storage using ProGet&amp;rsquo;s &lt;a class=&#34;link&#34; href=&#34;https://docs.inedo.com/docs/proget/advanced/cloud-storage&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Cloud Package Stores&lt;/a&gt; and extension for Azure. The would certainly reduce your on-premises storage requirements and allow greater room scalability and flexibility by using an Azure Storage Account.&lt;/p&gt;
+&lt;p&gt;I like to use a featured image in my blog which is relevant at the time in my life while I was writing the post. For this post I started around halloween and got both lazy and busy. Here I am, 12 days before Christmas using a picture of the pumpkins my fiancé and I carved on our front porch. It&amp;rsquo;s purely because of COVID-19.. I do nothing with my spare time other than stay home. Nothing to take pictures of!&lt;/p&gt;
+&lt;p&gt;I hope you found this information useful. If there&amp;rsquo;s any room for improvements, let me know in the comments below. If it helped you in any way, still let me know - that helps me keep going. Check out the additional resources below for further reading.&lt;/p&gt;
+&lt;h2 id=&#34;additional-resources&#34;&gt;&lt;a href=&#34;#additional-resources&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Additional resources
+&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/nuget/what-is-nuget&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;What is NuGet and what does it do?&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/powershell/scripting/gallery/how-to/getting-support/bootstrapping-nuget?view=powershell-7.1&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Bootstrap the NuGet provider and NuGet.exe&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://adamtheautomator.com/nuget-iis-windows-server/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;NuGet and IIS on Windows Server: The Ultimate Guide&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/nuget/hosting-packages/overview&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Hosting your own NuGet feeds&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
+        <title>Getting Your Powershell Code Into Production Using Github Actions</title>
+        <link>https://adamcook.io/p/getting-your-powershell-code-into-production-using-github-actions/</link>
+        <pubDate>Sat, 17 Oct 2020 00:00:00 +0100</pubDate>
+        
+        <guid>https://adamcook.io/p/getting-your-powershell-code-into-production-using-github-actions/</guid>
+        <description>&lt;img src="https://adamcook.io/p/getting-your-powershell-code-into-production-using-github-actions/images/Getting-Your-PowerShell-Code-Into-Production-Using-GitHub-Actions-00.jpg" alt="Featured image of post Getting Your Powershell Code Into Production Using Github Actions" /&gt;&lt;p&gt;Earlier in the week I presented at a &lt;a class=&#34;link&#34; href=&#34;https://winadmins.io&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;WinAdmins&lt;/a&gt; virtual user group session. At the bottom of this post you can watch the recording.&lt;/p&gt;
+&lt;p&gt;The session covered the below topics:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Introduction to CI/CD pipeline, i.e. what it means with practical explanations&lt;/li&gt;
+&lt;li&gt;A walk through on the YAML structure/syntax of GitHub Actions&lt;/li&gt;
+&lt;li&gt;Demonstrate on how to use Actions by uploading content to Azure Blob storage&lt;/li&gt;
+&lt;li&gt;Demonstrate a self hosted runner&lt;/li&gt;
+&lt;li&gt;Demonstrate how to deploy a PowerShell module to: the PowerShell Gallery, create a new GitHub release, a shared folder within my home lab (which failed because I messed with the runner&amp;rsquo;s service log-on credential) and to a self hosted NuGet feed (which also failed, thanks demo gods)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;video-wrapper&#34;&gt;
+    &lt;iframe loading=&#34;lazy&#34; 
+            src=&#34;https://www.youtube.com/embed/RDQkqxrJUeU&#34; 
+            allowfullscreen 
+            title=&#34;YouTube Video&#34;
+    &gt;
+    &lt;/iframe&gt;
+&lt;/div&gt;
+
+</description>
+        </item>
+        <item>
+        <title>Get CMUnusedSources</title>
+        <link>https://adamcook.io/p/get-cmunusedsources/</link>
+        <pubDate>Sun, 07 Jul 2019 00:00:00 +0100</pubDate>
+        
+        <guid>https://adamcook.io/p/get-cmunusedsources/</guid>
+        <description>&lt;p&gt;I recently wrote a PowerShell script that reports on what folders are used or unused by System Center Configuration Manager.&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/codaamok/Get-CMUnusedSources&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;You can find it here on GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;I demoed the script at the &lt;a class=&#34;link&#34; href=&#34;https://wmug.co.uk/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;London Windows Manager User Group&lt;/a&gt;, you can watch the recording below on YouTube.&lt;/p&gt;
+&lt;div class=&#34;video-wrapper&#34;&gt;
+    &lt;iframe loading=&#34;lazy&#34; 
+            src=&#34;https://www.youtube.com/embed/YGwQIUhYJsY&#34; 
+            allowfullscreen 
+            title=&#34;YouTube Video&#34;
+    &gt;
+    &lt;/iframe&gt;
+&lt;/div&gt;
+
+&lt;p&gt;Among a bunch of technical topics, I also learned a huge amount of valuable soft/personal things too.&lt;/p&gt;
+&lt;h2 id=&#34;enough-is-enough&#34;&gt;&lt;a href=&#34;#enough-is-enough&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Enough is enough
+&lt;/h2&gt;&lt;p&gt;I started writing in February and since then I have refactored the script and the idea itself many times. It&amp;rsquo;s now start of July and my girlfriend and I want to do fun summer things.&lt;/p&gt;
+&lt;p&gt;I first &amp;ldquo;finished&amp;rdquo; it in April but it was only good if you stored your content sources on a local file system to a site server. I realised that a lot of admins store their sources on a remote file server. I tried to &amp;ldquo;drop in&amp;rdquo; accommodations for that but quickly accepted that I was creating fragile flows and hard to read solutions. This is one of the few times I did a &amp;ldquo;sod it, let&amp;rsquo;s start again&amp;rdquo;.&lt;/p&gt;
+&lt;p&gt;Around end of May I had a working script that worked with local and remote storage but it was slow. Because it iterates over all gathered folders, and for each folder, iterates over all ConfigMgr content objects, this meant in an environment with 10k content objects and 70k folders it took over 10 hours. I did my best to create efficiencies, such as to skip sub folders of folders already marked as &amp;ldquo;Not used&amp;rdquo; but 10 hours really wasn&amp;rsquo;t good.&lt;/p&gt;
+&lt;p&gt;I was almost at a cross roads because I thought performance shouldn&amp;rsquo;t matter too much because this would be something that you would run once in a blue moon. Then I had that fear of posting online and being bombarded with &amp;ldquo;you should have done x instead of y&amp;rdquo;. I&amp;rsquo;m still at risk of that now (which I welcome by the way, especially for something I&amp;rsquo;m not aware of). It was that thought which pushed me to strive for better because I knew I could improve, and the improvement would be significant enough.&lt;/p&gt;
+&lt;p&gt;Then I discovered runspaces! Sure, I could have used jobs or set a dependency to use the PoshRSJobs module, but I just wanted to learn runspaces, how to use them and not have a dependency on another module. So of course doing that added more time and testing. It was worth it though.&lt;/p&gt;
+&lt;p&gt;Throughout the entire time I kept tricking myself in to thinking &amp;ldquo;I&amp;rsquo;m almost done&amp;rdquo;, &amp;ldquo;it&amp;rsquo;ll be done next week&amp;rdquo;, &amp;ldquo;it&amp;rsquo;s pretty much there&amp;rdquo;. Constant ideas and learning new techniques for readability / performance was another time killer.&lt;/p&gt;
+&lt;p&gt;I once read that managers hate dealing with sysadmins because when tasked to create something they don&amp;rsquo;t lay the foundations first and get too hung up on the features. I sometimes saw myself as that guy.&lt;/p&gt;
+&lt;p&gt;With that said, I also felt like I had a short fuse with it and had a &lt;em&gt;just want to get it done&lt;/em&gt; mindset. While working on this I started reading (and still yet to finish) &lt;a class=&#34;link&#34; href=&#34;https://www.goodreads.com/book/show/629.Zen_and_the_Art_of_Motorcycle_Maintenance&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Zen and the Art of Motorcycle Maintenance&lt;/a&gt;. In the early chapters there was emphasis on people rushing their day-to-day and the work they do. I related to this and was guilty of that at times with this script. So then I decided if I&amp;rsquo;m not taking my time to do it carefully then there&amp;rsquo;s no point doing it at all.&lt;/p&gt;
+&lt;p&gt;At this point, summer had started, and for me that means cricket season was on and while working during the week, that meant every Saturday was spent all day playing cricket. I just wanted to spend every free hour I had finishing this but conscious of not wanting to rush it.&lt;/p&gt;
+&lt;p&gt;I had to draw a line in the sand and make my primary goal to finish it with what I had. I wanted to spend time with my girlfriend, finish that book, learn something else, fix that broken window motor on my car I&amp;rsquo;ve had for over a year, play a few nights of CS:GO.&lt;/p&gt;
+&lt;p&gt;I really enjoyed the brain teasers though. I would be drawing what the flow of some loops looked like in my head while in the shower or driving. Realistically, I know I&amp;rsquo;m never finished. No doubt if someone found an issue with it I&amp;rsquo;ll be curious and want to fix it.&lt;/p&gt;
+&lt;p&gt;I think next time I have some idea that I think will consume any amount of time, I should first spend time thinking about what the end product looks like. Then I should be able to know at what point I would want to bring the idea/project to a close.&lt;/p&gt;
+&lt;h2 id=&#34;asking-for-help&#34;&gt;&lt;a href=&#34;#asking-for-help&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Asking for help
+&lt;/h2&gt;&lt;p&gt;A buddy &lt;a class=&#34;link&#34; href=&#34;http://www.christopherkibble.com&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Chris Kibble&lt;/a&gt; shared with me &lt;a class=&#34;link&#34; href=&#34;http://www.catb.org/~esr/faqs/smart-questions.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;How to ask questions the smart way&lt;/a&gt;. Looks like this is a link from the &lt;a class=&#34;link&#34; href=&#34;http://xyproblem.info/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;The XY Problem&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;These two resources are huge and you may not yet appreciate why. I&amp;rsquo;ve been on the Internet for as long as I can remember and have been posting stupid questions for most of my life.&lt;/p&gt;
+&lt;p&gt;When I became mindful of the XY problem and how to ask for help from people who are insanely good, I became much more effective. A part of asking for help is about first having a bloody good stab at it yourself. This often pushed me to not necessarily find the answers but to help me think more inquisitively. I found as a result of asking myself more questions, it enabled me to understand problems better and sometimes find the answer.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;m in the &lt;a class=&#34;link&#34; href=&#34;https://winadmins.io&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Windows Admins&lt;/a&gt; Discord and some people in there are not only clever but incredibly helpful. Just to say thanks to people who helped me:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Cody Mathis (&lt;a class=&#34;link&#34; href=&#34;https://github.com/codymathis123&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;@codymathis123&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Chris Kibble (&lt;a class=&#34;link&#34; href=&#34;https://github.com/ChrisKibble&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;@ChrisKibble&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Chris Dent (&lt;a class=&#34;link&#34; href=&#34;https://github.com/idented-automation&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;@idented-automation&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Kevin Crouch (&lt;a class=&#34;link&#34; href=&#34;httos://github.com/PsychoData&#34; &gt;@PsychoData&lt;/a&gt;)&lt;/li&gt;
+&lt;li&gt;Patrick (the guy who wrote &lt;a class=&#34;link&#34; href=&#34;https://github.com/pseymour/MakeMeAdmin/wiki&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;MakeMeAdmin&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;powershell&#34;&gt;&lt;a href=&#34;#powershell&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;PowerShell
+&lt;/h2&gt;&lt;p&gt;So I wrote a PowerShell script and I learnt some PowerShell. Of course. Well here&amp;rsquo;s what I learnt.&lt;/p&gt;
+&lt;h2 id=&#34;debugger&#34;&gt;&lt;a href=&#34;#debugger&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Debugger
+&lt;/h2&gt;&lt;p&gt;VSCode is my go-to editor. One of the many reasons why I like it, is because of the debugger with the integrated console. Once I read &lt;a class=&#34;link&#34; href=&#34;https://foxdeploy.com/2019/02/07/life-after-write-debug/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Life after Write-Debug&lt;/a&gt; by Stephen Owen I became much more efficient at troubleshooting my dodgy code.&lt;/p&gt;
+&lt;p&gt;My first manager as an IT professional told me what the &lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Rubber_duck_debugging&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;rubber duck debugging technique was&lt;/a&gt;. So when you discover something like debugging for PowerShell in ISE or VSCode, it&amp;rsquo;s a huge sense of relief. The days of intensely reading line by line or including a bunch of print / Write-Host commands are long gone.&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://community.idera.com/database-tools/powershell/powertips/b/tips/posts/debugging-other-powershell-processes&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;You can also debug other running PowerShell processes!!&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;standards-and-formatting&#34;&gt;&lt;a href=&#34;#standards-and-formatting&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Standards and formatting
+&lt;/h2&gt;&lt;p&gt;For quick scripts with limited audience, I make some effort to format and make it at least somewhat presentable for next the guy. However taking on something fairly big that might be used and read by the Internet, I appreciated the need for not necessarily pretty looking code because that&amp;rsquo;s always subjective but at least adopt a standard.&lt;/p&gt;
+&lt;p&gt;Again, kind of tapping in to that fear of posting online and being scrutinized.&lt;/p&gt;
+&lt;h2 id=&#34;net&#34;&gt;&lt;a href=&#34;#net&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;.NET
+&lt;/h2&gt;&lt;p&gt;I had always known you could do .NET stuff within PowerShell and whenever I saw it in conversation it was always in the context of scale or performance. I figured with what I was trying to achieve, this would fall under the scale category. I&amp;rsquo;ve seen environments with tens of thousands of ConfigMgr content objects and hundreds of thousands of folders.&lt;/p&gt;
+&lt;p&gt;There&amp;rsquo;s a need here as well to determine when to draw the line. You could spend a long time looking up .NET classes and methods when you could save yourself a lot of time just using PowerShell cmdlets. Sure, there&amp;rsquo;s a performance gain, but as a sysadmin I think readability and time is more valuable. So I won&amp;rsquo;t make a habit of using them at every opportunity, purely because I&amp;rsquo;m not fluent enough. Being mindful of them and how or when to use them is good enough.&lt;/p&gt;
+&lt;h2 id=&#34;enumeratedirectories&#34;&gt;&lt;a href=&#34;#enumeratedirectories&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;EnumerateDirectories()
+&lt;/h2&gt;&lt;p&gt;On the topic of .NET, I did really want to use the &lt;a class=&#34;link&#34; href=&#34;https://docs.microsoft.com/en-us/dotnet/api/system.io.directory.enumeratedirectories&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;EnumerateDirectories method from the Directory class&lt;/a&gt;. But it falls short where you can&amp;rsquo;t control its on-error preference. No matter what, on error, it&amp;rsquo;s a terminating error. Which sucked because it sounded perfect for what I wanted and crazy fast too.&lt;/p&gt;
+&lt;p&gt;In situations where it encountered a folder with access denied, it wouldn&amp;rsquo;t continue.&lt;/p&gt;
+&lt;h2 id=&#34;runspaces&#34;&gt;&lt;a href=&#34;#runspaces&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Runspaces
+&lt;/h2&gt;&lt;p&gt;As I mentioned already I wanted concurrent processing so I had several options already available like jobs or the PoSHRSJobs module that gives you runspaces but with the familiar syntax as jobs. I opted to use runspaces and spend extra time learning more about how they work for two reasons mainly:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;To use something and make a good effort at actually trying to understand it.&lt;/li&gt;
+&lt;li&gt;Not set too many dependencies on modules. I had a train of thought that not all ConfigMgr admins are full time admins, no doubt they juggle other stuff too. What if they really wanted to just clean up their storage but wasn&amp;rsquo;t 100% sure how to install a third party module just to get the basics working?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;collections-the--operator&#34;&gt;&lt;a href=&#34;#collections-the--operator&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Collections the += operator
+&lt;/h2&gt;&lt;p&gt;I saw &lt;a class=&#34;link&#34; href=&#34;https://twitter.com/AndySvints/status/1130135528815439874&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;this thread on Twitter&lt;/a&gt; and my mind was blown how much quicker it was to not use the += operator when adding new elements to an array.&lt;/p&gt;
+&lt;h2 id=&#34;join-path&#34;&gt;&lt;a href=&#34;#join-path&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Join-Path
+&lt;/h2&gt;&lt;p&gt;I guess I saw some quirks of PowerShell along the way but the biggest for me that sticks out in memory was Join-Path. Check out this madness:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;PS C:\&amp;gt; Test-Path &amp;#34;\\fakeserver\fakeshare\fakefolder&amp;#34;
+False
+PS C:\&amp;gt; Join-Path -Path &amp;#34;\\fakeserver&amp;#34; -ChildPath &amp;#34;fakeshare&amp;#34; | Join-Path -ChildPath &amp;#34;fakefolder&amp;#34;
+\\fakeserver\fakeshare\fakefolder
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Join-Path copes well with paths that don&amp;rsquo;t exist. Awesome.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;PS C:\&amp;gt; Test-Path &amp;#34;K:\I\Do\Not\Have\K\Drive\Mapped&amp;#34;
+False
+PS C:\&amp;gt; Join-Path -Path &amp;#34;K:\&amp;#34; -ChildPath &amp;#34;I\Do\Not\Have\K\Drive\Mapped&amp;#34;
+Join-Path : Cannot find drive. A drive with the name &amp;#39;K&amp;#39; does not exist.
+At line:1 char:1
++ Join-Path -Path &amp;#34;K:\&amp;#34; -ChildPath &amp;#34;I\Do\Not\Have\K\Drive\Mapped&amp;#34;
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : ObjectNotFound: (K:String) [Join-Path], DriveNotFoundException
+    + FullyQualifiedErrorId : DriveNotFound,Microsoft.PowerShell.Commands.JoinPathCommand
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;&amp;hellip;unless it&amp;rsquo;s a local path on a drive letter that doesn&amp;rsquo;t exist. Worth remembering. You can&amp;rsquo;t really say Join-Path validates path as it joins them, because it doesn&amp;rsquo;t, nor can you say its sole purpose is to verify just &amp;ldquo;syntax&amp;rdquo; or &amp;ldquo;validity&amp;rdquo; of path structure, because it isn&amp;rsquo;t.&lt;/p&gt;
+&lt;p&gt;Looks like there&amp;rsquo;s &lt;a class=&#34;link&#34; href=&#34;https://github.com/PowerShell/PowerShell/issues/4386&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;an open issue on this&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;regex&#34;&gt;&lt;a href=&#34;#regex&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Regex
+&lt;/h2&gt;&lt;p&gt;Early doors I was trying to grab the server, share and remainder share from a string: &lt;code&gt;\\server\share\folder\folder&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://twitter.com/CodyMathis123&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Cody Mathis&lt;/a&gt; threw me a little snippet of regex and from then on my eyes were opened. I&amp;rsquo;m even thinking of going back to a previous project &lt;a class=&#34;link&#34; href=&#34;https://github.com/codaamok/PoSHHyperCloud&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;PoSH Hyper Cloud&lt;/a&gt; to use more regex and maybe even jobs! &lt;a class=&#34;link&#34; href=&#34;http://regex101.com&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;regex101.com&lt;/a&gt; is my go to for testing expressions.&lt;/p&gt;
+&lt;h2 id=&#34;enumerations&#34;&gt;&lt;a href=&#34;#enumerations&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;Enumerations
+&lt;/h2&gt;&lt;p&gt;Patrick Seymour recently wrote Test-FileSystemAccess and I enhanced it a little to return exit codes and determine if elevation is required. Some feedback by Chris Dent taught me about enums! They&amp;rsquo;re awesome. An excellent way to create a relationship between numbers and strings. I used the below resources to implement an enum in to Test-FileSystemAccess:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://blog.pauby.com/post/working-with-enums-in-powershell&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Working with enums in PowerShell&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://blog.pauby.com/post/creating-enums-in-powershell/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Creating enums in PowerShell&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Tip! If you want to get the full Parameter Type of a parameter that&amp;rsquo;s an enum, so you can use GetNames:: on it, the below will help:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;(Get-Command Set-ExecutionPolicy).Parameters[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;ExecutionPolicy&amp;#39;&lt;/span&gt;] | Select -ExpandProperty ParameterType
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;datatables-and-filtering&#34;&gt;&lt;a href=&#34;#datatables-and-filtering&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;DataTables and filtering
+&lt;/h2&gt;&lt;p&gt;I recently tackled an issue with the script where collections of large scale and filtering them was an issue. Chris Kibble once showed me DataTables and I remember a remark about them being quick. He wasn&amp;rsquo;t joking! Checkout the below!&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;$winFiles = Get-ChildItem c:\windows -Recurse -ErrorAction SilentlyContinue
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;$commands = @{
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Where-Object&amp;#39;&lt;/span&gt; = {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        $exeFiles = $winFiles | Where-Object { $_.Extension &lt;span style=&#34;color:#f92672&#34;&gt;-eq&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.exe&amp;#34;&lt;/span&gt; }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Where-Object (no script block)&amp;#39;&lt;/span&gt; = {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        $exeFiles = $winFiles | Where-Object Extension &lt;span style=&#34;color:#f92672&#34;&gt;-eq&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.exe&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;.Where&amp;#39;&lt;/span&gt; = {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        $exeFiles = $winFiles.Where{ $_.Extension &lt;span style=&#34;color:#f92672&#34;&gt;-eq&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.exe&amp;#34;&lt;/span&gt; }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;DataTable&amp;#39;&lt;/span&gt; = {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        $fileTable = New-Object System.Data.DataTable
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        $fileTable.TableName = &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;AllMuhFiles&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        [&lt;span style=&#34;color:#66d9ef&#34;&gt;void&lt;/span&gt;]$fileTable.Columns.Add(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;FileName&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        [&lt;span style=&#34;color:#66d9ef&#34;&gt;void&lt;/span&gt;]$fileTable.Columns.Add(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Parent&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        [&lt;span style=&#34;color:#66d9ef&#34;&gt;void&lt;/span&gt;]$fileTable.Columns.Add(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Extension&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        [&lt;span style=&#34;color:#66d9ef&#34;&gt;void&lt;/span&gt;]$fileTable.Columns.Add(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;IsInf&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#66d9ef&#34;&gt;ForEach&lt;/span&gt;($file &lt;span style=&#34;color:#66d9ef&#34;&gt;in&lt;/span&gt; $winFiles) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            [&lt;span style=&#34;color:#66d9ef&#34;&gt;void&lt;/span&gt;]$fileTable.Rows.Add($file.Name, $file.Parent, $file.Extension)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        $exeFiles = $fileTable.Select(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Extension like &amp;#39;.exe&amp;#39;&amp;#34;&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;foreach&amp;#39;&lt;/span&gt; = {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        $exefiles = &lt;span style=&#34;color:#66d9ef&#34;&gt;foreach&lt;/span&gt; ($file &lt;span style=&#34;color:#66d9ef&#34;&gt;in&lt;/span&gt; $winFiles) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; ($file.Extension &lt;span style=&#34;color:#f92672&#34;&gt;-eq&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;.exe&amp;#39;&lt;/span&gt;) {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;                $file
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;$commands.Keys | ForEach-Object {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    $testName = $_
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;.&lt;span style=&#34;color:#ae81ff&#34;&gt;.3&lt;/span&gt; | ForEach-Object {
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        [&lt;span style=&#34;color:#66d9ef&#34;&gt;PSCustomObject&lt;/span&gt;]@{
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            TestName  = $testName
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            Attempt   = $_
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            ElapsedMS = (Measure-Command -Expression $commands[$testName]).TotalMilliseconds
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Results:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;Testing Where-Object
+2849.362
+2926.2761
+2876.9806
+
+Testing .Where
+1045.712
+1037.4888
+1031.191
+
+Testing DataTable select
+280.6466
+272.8503
+272.5341
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;I started looking in to DataTables because on large collections (hundreds of thousands sort of size) &lt;code&gt;Where-Object&lt;/code&gt; was slow. While the &lt;code&gt;Where()&lt;/code&gt; method was faster, both were nothing compared to DataTables.&lt;/p&gt;
+&lt;p&gt;With that said, if a cmdlet has a -Filter parameter available to let you work directly with a provider, then use that. &amp;ldquo;Keep left&amp;rdquo; or &amp;ldquo;filter left, format right&amp;rdquo; are phrases I learnt and try to keep in mind when filtering.&lt;/p&gt;
+&lt;p&gt;I abandoned the use of DataTables in the end as I didn&amp;rsquo;t need it. Even though they need additional set up, as you can see from the previous snippet, the results might be worth it in some cases.&lt;/p&gt;
+&lt;p&gt;Resources I used to learn about filtering and the performance impact&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://4sysops.com/archives/where-object-vs-the-where-method-array-filtering-in-powershell/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Explains where-object and where, and the -filter for provider specific stuff&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://stackoverflow.com/questions/50956909/powershell-where-object-vs-where-method&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Explains the object type returned by where-object and where&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.jonathanmedd.net/2017/05/powershell-where-where-or-where.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Talks about &amp;ldquo;keeping left&amp;rdquo; for best performance. -Filter is king if available but only if you don&amp;rsquo;t want all the objects in an array for later consumption&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+        </item>
+        <item>
+        <title>Blank InstalledOn Property for Get-HotFix and Win32_QuickFixEngineering</title>
+        <link>https://adamcook.io/p/blank-installedon-property-for-get-hotfix-and-win32_quickfixengineering/</link>
+        <pubDate>Mon, 18 Feb 2019 00:00:00 +0100</pubDate>
+        
+        <guid>https://adamcook.io/p/blank-installedon-property-for-get-hotfix-and-win32_quickfixengineering/</guid>
+        <description>&lt;img src="https://adamcook.io/p/blank-installedon-property-for-get-hotfix-and-win32_quickfixengineering/images/cover.jpg" alt="Featured image of post Blank InstalledOn Property for Get-HotFix and Win32_QuickFixEngineering" /&gt;&lt;p&gt;Want to get Windows Update status on a bunch of machines, only to discover the InstalledOn property is blank for lots of updates when you&amp;rsquo;re using Get-HotFix or querying Win32_QuickFixEngineering class with Get-WmiObject?&lt;/p&gt;
+&lt;p&gt;Turns out it&amp;rsquo;s related to PowerShell parsing the date as string to datetime object incorrectly, depending what your system locale is.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none;&#34;&gt;&lt;code class=&#34;language-powershell&#34; data-lang=&#34;powershell&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;$Updates = Get-HotFix | Select-Object description,hotfixid,installedby,@{l=&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;InstalledOn&amp;#34;&lt;/span&gt;;e={[&lt;span style=&#34;color:#66d9ef&#34;&gt;DateTime&lt;/span&gt;]::Parse($_.psbase.properties[&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;installedon&amp;#34;&lt;/span&gt;].value,$([&lt;span style=&#34;color:#66d9ef&#34;&gt;System.Globalization.CultureInfo&lt;/span&gt;]::GetCultureInfo(&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;en-US&amp;#34;&lt;/span&gt;)))}}
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;$Updates | Sort InstalledOn -Descending | Select -First &lt;span style=&#34;color:#ae81ff&#34;&gt;10&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;I like the above approach, &lt;a class=&#34;link&#34; href=&#34;https://community.idera.com/database-tools/powershell/ask_the_experts/f/learn_powershell_from_don_jones-24/12409/get-hotfix-and-get-wmiobject-win32_quickfixengineering-missing-installedon-property/21923#21923&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;as posted by user pyro3113&lt;/a&gt;, because the select expression lets you easily query remote systems using Get-HotFix or Get-WmiObject.&lt;/p&gt;
+&lt;p&gt;These two solutions use the Microsoft.Update.Session COM object. The Windows Update PowerShell Module creates the COM object on a remote host whereas the post by britv8 shows just enough to get you going executing on local host:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://gallery.technet.microsoft.com/scriptcenter/2d191bcd-3308-4edd-9de2-88dff796b0bc&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Windows Update PowerShell Module&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a class=&#34;link&#34; href=&#34;https://community.spiceworks.com/topic/1461956-get-hotfix-installedon-date-missing&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Getting Windows Updates installation history&lt;/a&gt; shared by Spiceworks member britv8&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Interestingly, using the below command in cmd doesn&amp;rsquo;t suffer from this data type parsing issue. It&amp;rsquo;s just spat out as is with no interpretation.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;wmic qfe
+&lt;/code&gt;&lt;/pre&gt;</description>
+        </item>
+        
+    </channel>
+</rss>
