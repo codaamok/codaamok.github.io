@@ -4,17 +4,17 @@
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="First post as MEMCM rather than SCCM. I think since my last post in July I&rsquo;ve accumulated a dozen unfinished drafts but you know, I&rsquo;ve been having too much fun.. working.\nI recently stood up a remote SUP with its own WSUS role and SQL database. What I didn&rsquo;t realise was, even though it was still syncing updates from the upstream SUP/WSUS server just fine, the status messages for the SMS_WSUS_CONTROL_MANAGER component on the new SUP/WSUS box was coughing up a bunch of errors ever since I installed the roles and configured them:\n">
 <title>ConfigMgr WSUS woes, WSUSCtrl.log &#34;Cannot open database &#34;SUSDB&#34; requested by the login. The login failed. Login failed for user &#39;DOMAIN\SERVER$&#39;&#34;</title>
 
-<link rel='canonical' href='https://adamcook.io/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.-login-failed-for-user-domain%5Cserver/'>
+<link rel='canonical' href='https://adamcook.io/p/configmgr-wsus-woes-cannot-open-database-susdb/'>
 
 <link rel="stylesheet" href="/scss/style.min.86591c898bd806857815fbb8c47e8d3fed97c133b78e83d9bfc27b164dd0aa2b.css"><meta property='og:title' content="ConfigMgr WSUS woes, WSUSCtrl.log \"Cannot open database \"SUSDB\" requested by the login. The login failed. Login failed for user 'DOMAIN\\SERVER$'\"">
 <meta property='og:description' content="First post as MEMCM rather than SCCM. I think since my last post in July I&rsquo;ve accumulated a dozen unfinished drafts but you know, I&rsquo;ve been having too much fun.. working.\nI recently stood up a remote SUP with its own WSUS role and SQL database. What I didn&rsquo;t realise was, even though it was still syncing updates from the upstream SUP/WSUS server just fine, the status messages for the SMS_WSUS_CONTROL_MANAGER component on the new SUP/WSUS box was coughing up a bunch of errors ever since I installed the roles and configured them:\n">
-<meta property='og:url' content='https://adamcook.io/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.-login-failed-for-user-domain%5Cserver/'>
+<meta property='og:url' content='https://adamcook.io/p/configmgr-wsus-woes-cannot-open-database-susdb/'>
 <meta property='og:site_name' content='Adam Cook'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2019-12-12T00:00:00&#43;01:00'/><meta property='article:modified_time' content='2019-12-12T00:00:00&#43;01:00'/><meta property='og:image' content='https://adamcook.io/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.-login-failed-for-user-domain%5Cserver/images/cover.jpg' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2019-12-12T00:00:00&#43;01:00'/><meta property='article:modified_time' content='2019-12-12T00:00:00&#43;01:00'/><meta property='og:image' content='https://adamcook.io/p/configmgr-wsus-woes-cannot-open-database-susdb/images/cover.jpg' />
 <meta name="twitter:site" content="@codaamok">
     <meta name="twitter:creator" content="@codaamok"><meta name="twitter:title" content="ConfigMgr WSUS woes, WSUSCtrl.log \"Cannot open database \"SUSDB\" requested by the login. The login failed. Login failed for user 'DOMAIN\\SERVER$'\"">
 <meta name="twitter:description" content="First post as MEMCM rather than SCCM. I think since my last post in July I&rsquo;ve accumulated a dozen unfinished drafts but you know, I&rsquo;ve been having too much fun.. working.\nI recently stood up a remote SUP with its own WSUS role and SQL database. What I didn&rsquo;t realise was, even though it was still syncing updates from the upstream SUP/WSUS server just fine, the status messages for the SMS_WSUS_CONTROL_MANAGER component on the new SUP/WSUS box was coughing up a bunch of errors ever since I installed the roles and configured them:\n"><meta name="twitter:card" content="summary">
-    <meta name="twitter:image" content='https://adamcook.io/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.-login-failed-for-user-domain%5Cserver/images/cover.jpg' />
+    <meta name="twitter:image" content='https://adamcook.io/p/configmgr-wsus-woes-cannot-open-database-susdb/images/cover.jpg' />
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-157232649-3"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -220,9 +220,9 @@
     <article class="has-image main-article">
     <header class="article-header">
         <div class="article-image">
-            <a href="/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.-login-failed-for-user-domain%5Cserver/">
-                <img src="/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.-login-failed-for-user-domain%5Cserver/images/cover_hu_22984901a97528a7.jpg"
-                        srcset="/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.-login-failed-for-user-domain%5Cserver/images/cover_hu_22984901a97528a7.jpg 800w, /p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.-login-failed-for-user-domain%5Cserver/images/cover_hu_f32c3eba0034a293.jpg 1600w"
+            <a href="/p/configmgr-wsus-woes-cannot-open-database-susdb/">
+                <img src="/p/configmgr-wsus-woes-cannot-open-database-susdb/images/cover_hu_22984901a97528a7.jpg"
+                        srcset="/p/configmgr-wsus-woes-cannot-open-database-susdb/images/cover_hu_22984901a97528a7.jpg 800w, /p/configmgr-wsus-woes-cannot-open-database-susdb/images/cover_hu_f32c3eba0034a293.jpg 1600w"
                         width="800" 
                         height="600" 
                         loading="lazy"
@@ -248,7 +248,7 @@
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.-login-failed-for-user-domain%5Cserver/">ConfigMgr WSUS woes, WSUSCtrl.log &#34;Cannot open database &#34;SUSDB&#34; requested by the login. The login failed. Login failed for user &#39;DOMAIN\SERVER$&#39;&#34;</a>
+            <a href="/p/configmgr-wsus-woes-cannot-open-database-susdb/">ConfigMgr WSUS woes, WSUSCtrl.log &#34;Cannot open database &#34;SUSDB&#34; requested by the login. The login failed. Login failed for user &#39;DOMAIN\SERVER$&#39;&#34;</a>
         </h2>
     
         
@@ -308,10 +308,10 @@ Possible cause: SQL Server service is not running or cannot be accessed.
 Solution: Verify that the SQL Server and SQL Server Agent services are running and can be contacted.
 </code></pre><p>WSUSCtrl.log on the new remote SUP/WSUS box was thankfully giving me more juice:</p>
 <pre tabindex="0"><code>System.Data.SqlClient.SqlException (0x80131904): Cannot open database &#34;SUSDB&#34; requested by the login. The login failed.~~Login failed for user &#39;DOMAIN\SERVER$&#39;.~~  ...
-</code></pre><p><img src="/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.-login-failed-for-user-domain%5Cserver/images/image-01.jpg"
+</code></pre><p><img src="/p/configmgr-wsus-woes-cannot-open-database-susdb/images/image-01.jpg"
 	width="1456"
 	height="756"
-	srcset="/p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.-login-failed-for-user-domain%5Cserver/images/image-01_hu_60e2fa15be316159.jpg 480w, /p/configmgr-wsus-woes-wsusctrl.log-cannot-open-database-susdb-requested-by-the-login.-the-login-failed.-login-failed-for-user-domain%5Cserver/images/image-01_hu_c174ef12d2425285.jpg 1024w"
+	srcset="/p/configmgr-wsus-woes-cannot-open-database-susdb/images/image-01_hu_60e2fa15be316159.jpg 480w, /p/configmgr-wsus-woes-cannot-open-database-susdb/images/image-01_hu_c174ef12d2425285.jpg 1024w"
 	loading="lazy"
 	
 	
