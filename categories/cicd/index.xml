@@ -6,7 +6,32 @@
         <description>Recent content in CI/CD on Adam Cook</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Sat, 17 Oct 2020 00:00:00 +0100</lastBuildDate><atom:link href="https://adamcook.io/categories/cicd/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Wed, 15 Mar 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://adamcook.io/categories/cicd/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Introduction to CI/CD Pipelines</title>
+        <link>https://adamcook.io/p/introduction-to-cicd-pipelines/</link>
+        <pubDate>Wed, 15 Mar 2023 00:00:00 +0000</pubDate>
+        
+        <guid>https://adamcook.io/p/introduction-to-cicd-pipelines/</guid>
+        <description>&lt;img src="https://adamcook.io/p/introduction-to-cicd-pipelines/images/cover.jpg" alt="Featured image of post Introduction to CI/CD Pipelines" /&gt;&lt;p&gt;I recently presented at &lt;a class=&#34;link&#34; href=&#34;https://synedgy.com/psdayuk/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;PSDayUK 2023&lt;/a&gt; in London. Below you will see the session recording.&lt;/p&gt;
+&lt;p&gt;The presentation covered:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What is a pipeline? What is CI/CD? Why should I care?&lt;/li&gt;
+&lt;li&gt;Adopting a pipeline as part of your PowerShell development process will liberate you. It will free you from the burdens of repetitively testing and manually deploying your code with each change.&lt;/li&gt;
+&lt;li&gt;You will learn to embrace an automated mindset of automating your code delivery processes so you can focus on fixing bugs and adding new functionality / features.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;video-wrapper&#34;&gt;
+    &lt;iframe loading=&#34;lazy&#34; 
+            src=&#34;https://www.youtube.com/embed/-exF0m8YM3k&#34; 
+            allowfullscreen 
+            title=&#34;YouTube Video&#34;
+    &gt;
+    &lt;/iframe&gt;
+&lt;/div&gt;
+
+</description>
+        </item>
+        <item>
         <title>Getting Your Powershell Code Into Production Using Github Actions</title>
         <link>https://adamcook.io/p/getting-your-powershell-code-into-production-using-github-actions/</link>
         <pubDate>Sat, 17 Oct 2020 00:00:00 +0100</pubDate>

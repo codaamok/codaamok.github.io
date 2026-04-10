@@ -6,21 +6,37 @@
         <description>Recent content in Categories on Adam Cook</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Sun, 18 Sep 2022 10:22:56 +0100</lastBuildDate><atom:link href="https://adamcook.io/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Wed, 15 Mar 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://adamcook.io/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>CI/CD</title>
+        <link>https://adamcook.io/categories/cicd/</link>
+        <pubDate>Wed, 15 Mar 2023 00:00:00 +0000</pubDate>
+        
+        <guid>https://adamcook.io/categories/cicd/</guid>
+        <description>&lt;img src="https://adamcook.io/categories/cicd/image.png" alt="Featured image of post CI/CD" /&gt;</description>
+        </item>
+        <item>
+        <title>PowerShell</title>
+        <link>https://adamcook.io/categories/powershell/</link>
+        <pubDate>Wed, 15 Mar 2023 00:00:00 +0000</pubDate>
+        
+        <guid>https://adamcook.io/categories/powershell/</guid>
+        <description>&lt;img src="https://adamcook.io/categories/powershell/image.png" alt="Featured image of post PowerShell" /&gt;</description>
+        </item>
+        <item>
+        <title>Presentations</title>
+        <link>https://adamcook.io/categories/presentations/</link>
+        <pubDate>Wed, 15 Mar 2023 00:00:00 +0000</pubDate>
+        
+        <guid>https://adamcook.io/categories/presentations/</guid>
+        <description>&lt;img src="https://adamcook.io/categories/presentations/image.png" alt="Featured image of post Presentations" /&gt;</description>
+        </item>
+        <item>
         <title>ConfigMgr</title>
         <link>https://adamcook.io/categories/configmgr/</link>
         <pubDate>Sun, 18 Sep 2022 10:22:56 +0100</pubDate>
         
         <guid>https://adamcook.io/categories/configmgr/</guid>
         <description>&lt;img src="https://adamcook.io/categories/configmgr/image.png" alt="Featured image of post ConfigMgr" /&gt;</description>
-        </item>
-        <item>
-        <title>PowerShell</title>
-        <link>https://adamcook.io/categories/powershell/</link>
-        <pubDate>Sun, 18 Sep 2022 10:22:56 +0100</pubDate>
-        
-        <guid>https://adamcook.io/categories/powershell/</guid>
-        <description>&lt;img src="https://adamcook.io/categories/powershell/image.png" alt="Featured image of post PowerShell" /&gt;</description>
         </item>
         <item>
         <title>Other</title>
@@ -37,22 +53,6 @@
         
         <guid>https://adamcook.io/categories/azure/</guid>
         <description>&lt;img src="https://adamcook.io/categories/azure/image.png" alt="Featured image of post Azure" /&gt;</description>
-        </item>
-        <item>
-        <title>CI/CD</title>
-        <link>https://adamcook.io/categories/cicd/</link>
-        <pubDate>Sat, 17 Oct 2020 00:00:00 +0100</pubDate>
-        
-        <guid>https://adamcook.io/categories/cicd/</guid>
-        <description>&lt;img src="https://adamcook.io/categories/cicd/image.png" alt="Featured image of post CI/CD" /&gt;</description>
-        </item>
-        <item>
-        <title>Presentations</title>
-        <link>https://adamcook.io/categories/presentations/</link>
-        <pubDate>Sat, 17 Oct 2020 00:00:00 +0100</pubDate>
-        
-        <guid>https://adamcook.io/categories/presentations/</guid>
-        <description>&lt;img src="https://adamcook.io/categories/presentations/image.png" alt="Featured image of post Presentations" /&gt;</description>
         </item>
         <item>
         <title>Linux</title>
