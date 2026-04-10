@@ -1,0 +1,31 @@
+{
+    "main": [
+      {
+        "identifier": "home",
+        "name": "Home",
+        "url": "/",
+        "weight": -100,
+        "params": {
+          "icon": "home"
+        }
+      },
+      {
+        "identifier": "github",
+        "name": "GitHub",
+        "url": "https://github.com/codaamok",
+        "weight": -92,
+        "params": {
+          "icon": "github"
+        }
+      },
+      {
+        "identifier": "linkedin",
+        "name": "LinkedIn",
+        "url": "https://linkedin.com/in/adamcharlescook",
+        "weight": -91,
+        "params": {
+          "icon": "linkedin"
+        }
+      }
+    ]
+}

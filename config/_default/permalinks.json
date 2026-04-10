@@ -1,0 +1,4 @@
+{
+  "post": "/p/:slug/",
+  "page": "/:slug/"
+}

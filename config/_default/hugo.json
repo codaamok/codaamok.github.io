@@ -1,0 +1,7 @@
+{
+    "baseURL": "https://adamcook.io/",
+    "languageCode": "en-us",
+    "title": "Adam Cook",
+    "theme": "hugo-theme-stack",
+    "enableEmoji": true
+}

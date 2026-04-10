@@ -1,0 +1,50 @@
+{
+    "mainSections": ["post"],
+    "rssFullContent": true,
+    "dateFormat": {
+      "published": "2 January 2006",
+      "lastUpdated": "2 January 2006"
+    },
+    "defaultImage": {
+      "opengraph": {
+        "enabled": false,
+        "local": false,
+        "src": ""
+      }
+    },
+    "sidebar": {
+      "compact": true,
+      "subtitle": "— Patch My PC Customer Engineer",
+      "avatar": {
+        "enabled": true,
+        "local": true,
+        "src": "img/avatar.jpg"
+      }
+    },
+    "widgets": {
+      "homepage": [
+        {
+          "type": "search"
+        },
+        {
+          "type": "archives"
+        },
+        {
+          "type": "categories"
+        }
+      ]
+    },
+    "article":{
+      "headingAnchor": true
+    },
+    "opengraph": {
+      "twitter": {
+        "site": "codaamok",
+        "card": "summary"
+      }
+    },
+    "footer": {
+      "since": 2018,
+      "customText": "Something should go here."
+    }
+}
