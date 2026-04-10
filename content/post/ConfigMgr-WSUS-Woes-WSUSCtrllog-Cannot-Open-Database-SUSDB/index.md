@@ -1,5 +1,6 @@
 ---
 title: "ConfigMgr WSUS woes, WSUSCtrl.log \"Cannot open database \"SUSDB\" requested by the login. The login failed. Login failed for user 'DOMAIN\\SERVER$'\""
+url: p/configmgr-wsus-woes-cannot-open-database-susdb
 date: 2019-12-12T00:00:00+01:00
 draft: false
 image: images/cover.jpg
