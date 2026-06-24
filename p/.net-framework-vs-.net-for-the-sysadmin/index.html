@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en-us" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=".NET Framework vs .NET: for the SysAdmin If you&rsquo;ve ever stared at a vulnerability report flagging multiple .NET versions and wondered which ones you actually need to patch, or tried to work out whether a piece of software needs .NET Framework or just .NET, you&rsquo;re not alone. Most articles on this topic are written for developers. This one isn&rsquo;t.\nWhat&rsquo;s the difference? .NET Framework is a Windows-only runtime that ships with Windows, first released in 2000, and is patched through Windows Update, ConfigMgr, or WSUS. With Windows 10, Microsoft made 4.x installed by default, whereas with Windows 7, it was separately installed because 3.x was installed by default.\n">
+<title>.NET Framework vs .NET: for the SysAdmin</title>
+
+<link rel='canonical' href='https://adamcook.io/p/.net-framework-vs-.net-for-the-sysadmin/'>
+
+<link rel="stylesheet" href="/scss/style.min.86591c898bd806857815fbb8c47e8d3fed97c133b78e83d9bfc27b164dd0aa2b.css"><meta property='og:title' content=".NET Framework vs .NET: for the SysAdmin">
+<meta property='og:description' content=".NET Framework vs .NET: for the SysAdmin If you&rsquo;ve ever stared at a vulnerability report flagging multiple .NET versions and wondered which ones you actually need to patch, or tried to work out whether a piece of software needs .NET Framework or just .NET, you&rsquo;re not alone. Most articles on this topic are written for developers. This one isn&rsquo;t.\nWhat&rsquo;s the difference? .NET Framework is a Windows-only runtime that ships with Windows, first released in 2000, and is patched through Windows Update, ConfigMgr, or WSUS. With Windows 10, Microsoft made 4.x installed by default, whereas with Windows 7, it was separately installed because 3.x was installed by default.\n">
+<meta property='og:url' content='https://adamcook.io/p/.net-framework-vs-.net-for-the-sysadmin/'>
+<meta property='og:site_name' content='Adam Cook'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2026-06-24T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2026-06-24T00:00:00&#43;00:00'/><meta property='og:image' content='https://adamcook.io/p/.net-framework-vs-.net-for-the-sysadmin/images/cover.jpg' />
+<meta name="twitter:site" content="@codaamok">
+    <meta name="twitter:creator" content="@codaamok"><meta name="twitter:title" content=".NET Framework vs .NET: for the SysAdmin">
+<meta name="twitter:description" content=".NET Framework vs .NET: for the SysAdmin If you&rsquo;ve ever stared at a vulnerability report flagging multiple .NET versions and wondered which ones you actually need to patch, or tried to work out whether a piece of software needs .NET Framework or just .NET, you&rsquo;re not alone. Most articles on this topic are written for developers. This one isn&rsquo;t.\nWhat&rsquo;s the difference? .NET Framework is a Windows-only runtime that ships with Windows, first released in 2000, and is patched through Windows Update, ConfigMgr, or WSUS. With Windows 10, Microsoft made 4.x installed by default, whereas with Windows 7, it was separately installed because 3.x was installed by default.\n"><meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content='https://adamcook.io/p/.net-framework-vs-.net-for-the-sysadmin/images/cover.jpg' />
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-157232649-3"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-157232649-3');
+</script>
+
+<style>
+  p a, li a { color: #ff4949 }
+</style>
+
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky compact">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu_b3f0feb1c7ec8741.jpg" width="300"
+                            height="300" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">Adam Cook</a></h1>
+            <h2 class="site-description">— Patch My PC Customer Engineer</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>Home</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='https://github.com/codaamok' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+                
+                <span>GitHub</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='https://linkedin.com/in/adamcharlescook' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-linkedin" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <rect x="4" y="4" width="16" height="16" rx="2" />
+  <line x1="8" y1="11" x2="8" y2="16" />
+  <line x1="8" y1="8" x2="8" y2="8.01" />
+  <line x1="12" y1="16" x2="12" y2="11" />
+  <path d="M16 16v-3a2 2 0 0 0 -4 0" />
+</svg>
+                
+                <span>LinkedIn</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>Dark Mode</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="has-image main-article">
+    <header class="article-header">
+        <div class="article-image">
+            <a href="/p/.net-framework-vs-.net-for-the-sysadmin/">
+                <img src="/p/.net-framework-vs-.net-for-the-sysadmin/images/cover_hu_1161e6ca68eee849.jpg"
+                        srcset="/p/.net-framework-vs-.net-for-the-sysadmin/images/cover_hu_1161e6ca68eee849.jpg 800w, /p/.net-framework-vs-.net-for-the-sysadmin/images/cover_hu_628d7be29a7e79a2.jpg 1600w"
+                        width="800" 
+                        height="449" 
+                        loading="lazy"
+                        alt="Featured image of post .NET Framework vs .NET: for the SysAdmin" />
+                
+            </a>
+        </div>
+    
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            
+            
+            
+            <a href="/categories/other/" style="background-color: hsl(285, 60%, 84%); color: hsl(285, 60%, 15%);">
+                Other
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/.net-framework-vs-.net-for-the-sysadmin/">.NET Framework vs .NET: for the SysAdmin</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published" datetime='2026-06-24T00:00:00Z'>24 June 2026</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    12 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="net-framework-vs-net-for-the-sysadmin"><a href="#net-framework-vs-net-for-the-sysadmin" class="header-anchor"></a>.NET Framework vs .NET: for the SysAdmin
+</h1><p>If you&rsquo;ve ever stared at a vulnerability report flagging multiple .NET versions and wondered which ones you actually need to patch, or tried to work out whether a piece of software needs .NET Framework or just .NET, you&rsquo;re not alone. Most articles on this topic are written for developers. This one isn&rsquo;t.</p>
+<h2 id="whats-the-difference"><a href="#whats-the-difference" class="header-anchor"></a>What&rsquo;s the difference?
+</h2><p><strong>.NET Framework</strong> is a Windows-only runtime that ships <em>with</em> Windows, first released in 2000, and is patched through Windows Update, ConfigMgr, or WSUS. With Windows 10, Microsoft made 4.x installed by default, whereas with Windows 7, it was separately installed because 3.x was installed by default.</p>
+<p><strong>.NET (<em>formerly .NET Core</em>)</strong> is a cross-platform runtime, first released in 2016, that is completely separate from Windows. It&rsquo;s a standalone install, versioned and patched independently. It does not come with Windows by default. If software needs .NET 8, 9, or 10, something has to put it there - whether that&rsquo;s the application installer itself, or you deploying it via Intune, ConfigMgr, or your chosen RMM as a prerequisite.</p>
+<h2 id="what-actually-is-net"><a href="#what-actually-is-net" class="header-anchor"></a>What actually is .NET?
+</h2><p>.NET is a collection of libraries organised into classes and methods that developers reference when building applications, executed at runtime by the .NET runtime.</p>
+<p>If that sentence meant nothing to you, keep reading!</p>
+<p>When a developer writes an application, they don&rsquo;t build everything from scratch. Things like &ldquo;open a file&rdquo;, &ldquo;make a network request&rdquo;, or &ldquo;display a window&rdquo; are common problems that have already been solved. .NET is a big box of pre-built solutions to those common problems which developers can leverage as reusable code. This enables developers to focus more on driving the outcomes that makes their application unique rather than reinventing the wheel on some things.</p>
+<p>The Software Development Kit (SDK) is the full toolkit the developer installs on their machine to build software using that box. It includes everything needed to write, compile, and test .NET applications.</p>
+<p>The &ldquo;runtime&rdquo; is the slimmer component that end-user machines need to actually run the finished application. Think of the runtime as the engine, without the garage full of tools.</p>
+<p>As a sysadmin, you&rsquo;re almost always deploying the <strong>runtime</strong>, not the SDK because just the developer needs the SDK. Your users just need the engine (runtime) to run what the developer produced.</p>
+<h2 id="how-do-i-patch-them-both"><a href="#how-do-i-patch-them-both" class="header-anchor"></a>How do I patch them both?
+</h2><p>Thankfully, Microsoft make it pretty easy to patch existing installations of .NET Framework and .NET (Core) - updates are made available via Windows Update and ConfigMgr / WSUS.</p>
+<p><strong>For ConfigMgr / WSUS</strong>, .NET Framework patches are included within the relevant OS categories / products. For example, &ldquo;Windows 11&rdquo; and &ldquo;Microsoft Server Operating System-24H2&rdquo; categories provide not only the cumulative OS patches but also the .NET Framework cumulative patches, too. However, .NET (Core) are separate categories / products to enable:</p>
+<p><img src="/p/.net-framework-vs-.net-for-the-sysadmin/images/dotnetcorecategories.jpg"
+	width="618"
+	height="646"
+	srcset="/p/.net-framework-vs-.net-for-the-sysadmin/images/dotnetcorecategories_hu_f11a7eb68008fcb0.jpg 480w, /p/.net-framework-vs-.net-for-the-sysadmin/images/dotnetcorecategories_hu_4b064f893da3ce3e.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="95"
+		data-flex-basis="229px"
+	
+></p>
+<p><strong>For Windows Update (<em>inc Intune</em>)</strong>, all come down directly without you needing to do anything. This has always been the case for .NET Framework patches, but wasn&rsquo;t always the case for .NET (Core):</p>
+<ul>
+<li><a class="link" href="https://devblogs.microsoft.com/dotnet/net-core-updates-coming-to-microsoft-update/"  target="_blank" rel="noopener"
+    >.NET Core 2.1, 3.1, and .NET 5.0 updates are coming to Microsoft Update</a></li>
+<li><a class="link" href="https://devblogs.microsoft.com/dotnet/server-operating-systems-auto-updates/"  target="_blank" rel="noopener"
+    >.NET Automatic Updates for Server Operating Systems - .NET Blog</a></li>
+</ul>
+<p>While patching existing installs is easy, however, Microsoft still have room to improve on enabling the sysadmin to better handle the lifecycle of these runtimes - more on that below.</p>
+<h2 id="why-net-core"><a href="#why-net-core" class="header-anchor"></a>Why .NET (Core)?
+</h2><p>.NET (Core) is cross-platform, which opens up more audiences for software products to reach - not just Windows, but macOS, many Linux distros, Android, iOS, and even as web apps, too.</p>
+<p>Since .NET (Core) has de-coupled its relationship with the Windows OS, it enables the .NET product team at Microsoft to innovate faster and deliver more meaningful value to developers without the shackles and chains of Windows.</p>
+<p>New major versions of .NET (Core) are released every year. This rapid release cadence enables developers to build software not only more efficiently, but with more functionality, too.</p>
+<h2 id="supportability"><a href="#supportability" class="header-anchor"></a>Supportability
+</h2><p>This rapid release cadence poses challenges not only for the developer but also for the sysadmin, too.</p>
+<p><strong>For the developer,</strong> when a new version of .NET (Core) is released, they must decide if they want to upgrade to leverage new features or to remain on a supported version. If they decide to upgrade, they must understand what portions of their code need refactoring, or change/upgrade their code dependencies. Also, if the developer upgrades their software from .NET (Core) 8.x to 10.x, then this means the runtimes on end-user devices must also update to 10.x.</p>
+<p><strong>For the sysadmin</strong>, they have to deploy and patch lots of different applications inc their dependencies. For example, today <strong>Dell Command Update</strong> depends on <strong>.NET Desktop Runtime 8.x 64-bit</strong> which goes end of life 10 Nov 2026.</p>
+<p>Between now and then, Dell will (hopefully) update their code to be compatible with a newer version of .NET (Core), and when they do, its the sysadmins responsibility to make sure devices have the new runtime version installed.</p>
+<p>However, what if Dell don&rsquo;t update their code to use a new version of .NET (Core) and miss the end of life date? This shifts the burden on to you and your security team to assess whether the risk of running end of life software is acceptable. In this scenario, Dell Command Update is likely still in support (by Dell) but the underlying runtime dependency (by Microsoft) will not be.</p>
+<p>Let&rsquo;s assume Dell do update their code before the deadline to, say, 10.x (the next LTS version of .NET with an EOL date of 14 Nov 2028). Great! Now the sysadmin just needs to make sure devices have version 10.x installed (of the correct architecture, too, of course) - job done, right? Sadly not.</p>
+<p>Installing a new major version of most runtimes does not remove the older version. This is because runtimes as dependencies aren&rsquo;t traditional software; they are in some way tightly coupled with at least one application installed on the system. In the scenario where two applications depend on the same <strong>.NET Desktop Runtime 8.x 64-bit</strong> - for example, <strong>Dell Command Update</strong> and <strong>Veeam Agent for Windows</strong> - then we need to understand if the Veeam Agent still needs 8.x installed.</p>
+<p>You may think, &ldquo;<em>I will just deploy the latest version (10.x) and that will work because 10.x is greater than 8.x, right?</em>&rdquo; - again, sadly not. In most cases, in particular with .NET (Core), this will likely not work. Vendors&rsquo; software will only be targeted to work within a specific major version, and the installer will likely reject the installation if it doesn&rsquo;t detect 8.x installed on the system, despite 9.x or 10.x being installed.</p>
+<p>As a result, software dependency installers shy away from automatically removing the older version for you. This shifts this as yet another burden on to you to manage; you are ultimately responsible for understanding what dependencies (and versions) are needed by what software across all the systems you manage. It is not always as simple as removing an old runtime version and replacing it with the latest version, because this may have stability consequences on the end-user application software still needing on the version you removed.</p>
+<p>You may also be thinking &ldquo;<em>I didn&rsquo;t deploy this .NET Desktop Runtime 8.x to my devices, I have no idea how it got there!</em>&rdquo; - some software installers will install their runtime dependencies for you, which is actually a bit of a double edge sword because while helpful, what they don&rsquo;t do (and rightfully so, in my opinion) is remove that version they previously installed when they later install 10.x (or anything newer).</p>
+<p>This is because the same reasons as before: they don&rsquo;t know what other software is installed on the system that still needs 8.x, so how could they possibly make that decision for you? So while they made your life easier, by making the installation of their software easier, they also burdened you with this patching, maintenance and clean-up responsibility when that runtime dependency eventually goes EOL.</p>
+<p>When you&rsquo;re confident a certain version of something like .NET Desktop Runtime is no longer required on a system, because all applications now depend on a newer version that is installed, you are responsible for deploying the removal of that old, end of life, unsupported version.</p>
+<p>Multiply the drama by the number of applications on devices in your environment depending on .NET (Core), and you&rsquo;ve found yourself in a maze of dependency hell and vulnerability management.</p>
+<p>While this article has been focused on .NET, the same conundrum is also true for other runtimes, too, such as all the flavours of Java JRE and the Microsoft Visual C++ Redistributable. However, I will say that C++ has become more sysadmin-friendly over the years since Microsoft started bundling in multiple major versions into a single version and installer from 2015 onwards.</p>
+<p>In the old world where .NET Framework was the primary and most popular SDK / runtime, it was easier for the sysadmin because it was shipped with Windows and easily patched and upgradable, compared to how things are today for the sysadmin trying to manage .NET (Core).</p>
+<p>With the way Microsoft released and implemented the lifecycle of .NET (Core), it was inevitable and only a matter of time for these struggles to bubble up; as more software vendors over time looked to adopt the new SDK into their products, and as newer versions of .NET (Core) were released and older versions deprecated, the situation has become increasingly harder for sysadmins to manage.</p>
+<h2 id="support-lifecycle"><a href="#support-lifecycle" class="header-anchor"></a>Support lifecycle
+</h2><p>Below I will share some useful Microsoft articles which details OS supportability for all the .NET Framework versions as well as the support lifecycle for both .NET Framework and .NET Core.</p>
+<p>.NET Framework, for better or worse by being embedded with Windows, has a very generous support lifecycle. For instance, in the below you can see 4.6.2 was released in 2016 and goes EOL in 2027 - and there are still many versions still in active support with no defined end date.</p>
+<p>This is an abundance of time, and gives the sysadmin a clear signal to roll out .NET Framework updates as part of their &ldquo;business as usual&rdquo; patching roll out strategy.</p>
+<ul>
+<li><a class="link" href="https://learn.microsoft.com/en-us/lifecycle/products/microsoft-net-framework"  target="_blank" rel="noopener"
+    >Microsoft .NET Framework - Microsoft Lifecycle | Microsoft Learn</a></li>
+</ul>
+<p><img src="/p/.net-framework-vs-.net-for-the-sysadmin/images/dotnetframeworksupportstate.jpg"
+	width="734"
+	height="363"
+	srcset="/p/.net-framework-vs-.net-for-the-sysadmin/images/dotnetframeworksupportstate_hu_6fef7529c754b014.jpg 480w, /p/.net-framework-vs-.net-for-the-sysadmin/images/dotnetframeworksupportstate_hu_8bde0651b8ec8d02.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="202"
+		data-flex-basis="485px"
+	
+></p>
+<p>In the following article, we can see several key facts shared about .NET Framework: <a class="link" href="https://learn.microsoft.com/en-us/dotnet/framework/install/versions-and-dependencies"  target="_blank" rel="noopener"
+    >.NET Framework &amp; Windows OS versions - .NET Framework | Microsoft Learn</a></p>
+<ol>
+<li>Microsoft assert .NET Framework will continue to be included with Windows, &ldquo;with no plans to remove it.&rdquo;</li>
+<li>They share an easy and manageable cadence with &ldquo;security updates are released quarterly.&rdquo;</li>
+<li>.NET Framework 4.8.0 has support for Windows Server going back as far as 2008 R2, but 4.8.1 is only supported on Windows Server 2022 or newer. Want to upgrade your clients or servers to .NET Framework 4.8.0? No problem, you can easily deploy the one-time upgrade and updates are seamlessly managed by Windows Update / ConfigMgr / WSUS.</li>
+</ol>
+<p>Your much less likely to encounter any compatibility issues with updating .NET Framework than you are .NET Core, but it&rsquo;s still a good idea to double check the software vendor&rsquo;s documentation.</p>
+<p>For example, the Patch My PC Publisher currently states it requires &ldquo;4.6.2 or newer&rdquo;, giving you that immediate signal 4.8.x will work fine. Whereas that &ldquo;or newer&rdquo; is tightly reserved in .NET (Core) applications because of reasons previously shared (where newer major versions aren&rsquo;t always compatible or permitted by its installer).</p>
+<p>.NET Framework is so much more sysadmin-friendly with more gracious support lifecycles and easier patching management. However, in the same article, Microsoft are pushing for any new development to be in .NET (Core) rather that .NET Framework.</p>
+<p>In the following article, Microsoft lay out the Long Term Support (LTS) and Standard Term Support (STS) lifecycles for .NET (Core). In short, LTS releases have three years of quality and security fixes, whereas STS effectively has two years of support:</p>
+<ul>
+<li><a class="link" href="https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core"  target="_blank" rel="noopener"
+    >.NET and .NET Core official support policy | .NET</a></li>
+</ul>
+<p><img src="/p/.net-framework-vs-.net-for-the-sysadmin/images/dotnetsupportstate.jpg"
+	width="1341"
+	height="504"
+	srcset="/p/.net-framework-vs-.net-for-the-sysadmin/images/dotnetsupportstate_hu_644d01469cf0ef13.jpg 480w, /p/.net-framework-vs-.net-for-the-sysadmin/images/dotnetsupportstate_hu_ddeff6faa0bf1faa.jpg 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="266"
+		data-flex-basis="638px"
+	
+></p>
+<p>This aggressive support lifecycle, compared to .NET Framework, keeps the pressure on organisations to have a strong Software Asset Management (SAM). The principle of a SAM is to help the organisation track what software they have in their environment so they can identify issues just like this, as well as to keep devices secure by maintaining supported software running in the estate and remain compliant with vendor licensing agreements - this is a full time job.</p>
+<p>Without the abundance of time in support lifecycle (compared to .NET Framework) and the difficulty in tracking software supportability for different versions of .NET (Core) with different applications, there is an enormous amount of pressure for the sysadmin to constantly research the dependencies of the software used across all devices and that in-turn demands accurate and reliable software inventory data to fuel your SAM.</p>
+<h2 id="you-cant-have-your-cake-and-eat-it"><a href="#you-cant-have-your-cake-and-eat-it" class="header-anchor"></a>You can&rsquo;t have your cake and eat it
+</h2><p>Developers want to keep up with the rate of innovation available to them in newer SDKs, so they can continue to deliver the value customers are asking for in their products. At the same time, developers also need to keep the code optimal, performant, and scalable. New shiny SDKs give them the power to do all these things.</p>
+<p>It&rsquo;s clear the software development model of &ldquo;ship fast, fix fast&rdquo; is here to stay - we see this all over the industry. It&rsquo;s just that on this occasion, for .NET desktop runtimes, so much onus is placed on the sysadmin and security teams to keep the dependent applications stable and devices secure with the constant revolving door of installable runtimes.</p>
+<p>I&rsquo;m not sure what the solution is or needs to be. I think Microsoft made a good move with the C++ v14 installer so perhaps they could provide a more manageable installer like that.</p>
+<p>In any case, if you were ever unsure on the difference between .NET Framework and .NET (Core) from a sysadmin perspective, the history, current challenges for runtime dependency management on Windows (especially with .NET), I hope you no longer feel like you&rsquo;re alone.</p>
+<p>It&rsquo;s entirely possible I&rsquo;ve missed a trick and there&rsquo;s a smart way to solve</p>
+<p>By the way, in my writings of this, I found this really useful website you might wish to bookmark: <a class="link" href="https://endoflife.date/"  target="_blank" rel="noopener"
+    >Home | endoflife.date</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2018 - 
+        
+        2026 Adam Cook
+    </section>
+    
+    <section class="powerby">
+        
+            Something should go here. <br/>
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.34.2">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+    
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.c922af694cc257bf1ecc41c0dd7b0430f9114ec280ccf67cd2c6ad55f5316c4e.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

@@ -6,7 +6,15 @@
         <description>Recent content in Categories on Adam Cook</description>
         <generator>Hugo -- gohugo.io</generator>
         <language>en-us</language>
-        <lastBuildDate>Wed, 15 Mar 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://adamcook.io/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Wed, 24 Jun 2026 00:00:00 +0000</lastBuildDate><atom:link href="https://adamcook.io/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Other</title>
+        <link>https://adamcook.io/categories/other/</link>
+        <pubDate>Wed, 24 Jun 2026 00:00:00 +0000</pubDate>
+        
+        <guid>https://adamcook.io/categories/other/</guid>
+        <description>&lt;img src="https://adamcook.io/categories/other/image.png" alt="Featured image of post Other" /&gt;</description>
+        </item>
+        <item>
         <title>CI/CD</title>
         <link>https://adamcook.io/categories/cicd/</link>
         <pubDate>Wed, 15 Mar 2023 00:00:00 +0000</pubDate>
@@ -37,14 +45,6 @@
         
         <guid>https://adamcook.io/categories/configmgr/</guid>
         <description>&lt;img src="https://adamcook.io/categories/configmgr/image.png" alt="Featured image of post ConfigMgr" /&gt;</description>
-        </item>
-        <item>
-        <title>Other</title>
-        <link>https://adamcook.io/categories/other/</link>
-        <pubDate>Thu, 13 Jan 2022 12:57:21 +0000</pubDate>
-        
-        <guid>https://adamcook.io/categories/other/</guid>
-        <description>&lt;img src="https://adamcook.io/categories/other/image.png" alt="Featured image of post Other" /&gt;</description>
         </item>
         <item>
         <title>Azure</title>
