@@ -3,6 +3,8 @@ title: ".NET Framework vs .NET: for the SysAdmin"
 date: 2026-06-24T00:00:00Z
 draft: false
 image: images/cover.jpg
+ogImage: images/opengraph.png
+description: Confused by vulnerability reports flagging multiple .NET versions? Learn the difference between .NET Framework and .NET (Core), how they're patched, and what every Windows SysAdmin needs to know to manage them effectively.
 categories:
     - Other
 ---
@@ -92,13 +94,13 @@ While this article has been focused on .NET, the same conundrum is also true for
 
 To stand a decent fighting chance against issue, you need two things:
 
-1. A Software Asset Management (SAM) system
+**1. A Software Asset Management (SAM) system**
 
 The principle of the SAM is to record and track what software is used in the organisation so you can attack these risks more proactively. Not only can it help you combat dependency hell swarmed with vulnerabilities, but it can also help you remain more compliant with third-party vendor software licensing, as well as optimise tooling used across the business.
 
 Make no mistake, this is pretty much a full time job. I'm sure there are products out there to help with creating a SAM but it does demand a timely and accurate software inventory across all the systems you manage.
 
-2. An automated third-party packaging and patching solution
+**2. An automated third-party packaging and patching solution**
 
 I purposefully split the terms "packaging" and "patching", and there's lots of debate on terminology in the industry here, but ultimately you need a solution that can package apps intended for delivery of "_new installations_" of software to a device, as well as "_update existing installations_" on a device.
 
