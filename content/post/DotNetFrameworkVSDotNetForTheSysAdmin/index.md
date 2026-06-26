@@ -44,7 +44,7 @@ While patching existing installs is easy, however, Microsoft still have room to 
 ## Why .NET (Core)?
 .NET (Core) is cross-platform, which opens up more audiences for software products to reach - not just Windows, but macOS, many Linux distros, Android, iOS, and even as web apps, too. 
 
-Since .NET (Core) has de-coupled its relationship with the Windows OS, it enables the .NET product team at Microsoft to innovate faster and deliver more meaningful value to developers without the shackles and chains of Windows.
+Since .NET (Core) has de-coupled its relationship with the Windows OS, it enables the .NET product team at Microsoft to innovate faster, freed from the constraints of the Windows release cycle.
 
 New major versions of .NET (Core) are released every year. This rapid release cadence enables developers to build software not only more efficiently, but with more functionality, too.
 ## Supportability
@@ -56,7 +56,7 @@ This rapid release cadence poses challenges not only for the developer but also 
 
 ### Old versions linger
 
-Between now and the next four months, Dell will (hopefully) update their code to be compatible with a newer version of .NET (Core), and when they do, its the SysAdmin's responsibility to make sure devices have the new runtime version installed.
+Between now and the next four months, Dell will (hopefully) update their code to be compatible with a newer version of .NET (Core), and when they do, it's the SysAdmin's responsibility to make sure devices have the new runtime version installed.
 
 However, what if Dell don't update their code to use a new version of .NET (Core) and miss the end of life date? This shifts the burden on to you and your security team to assess whether the risk of running end of life software is acceptable. In this scenario, Dell Command Update is likely still in support (by Dell) but the underlying runtime dependency (by Microsoft) will not be.
 
@@ -90,7 +90,7 @@ In the old world where .NET Framework was the primary and most popular SDK / run
 
 While this article has been focused on .NET, the same conundrum is also true for other runtimes, too, such as all the flavours of Java JRE and the Microsoft Visual C++ Redistributable. However, I will say that the C++ Redistributable has become more SysAdmin-friendly over the years since Microsoft started bundling in multiple major versions into a single version and installer from 2015 onwards.
 
-If you're stand a decent fighting chance against issue, you need two things:
+To stand a decent fighting chance against issue, you need two things:
 
 1. A Software Asset Management (SAM) system
 
@@ -122,18 +122,18 @@ In the following article, we can see several key facts shared about .NET Framewo
 2. They share an easy and manageable cadence with "security updates are released quarterly."
 3. .NET Framework 4.8.0 has support for Windows Server going back as far as 2008 R2, but 4.8.1 is only supported on Windows Server 2022 or newer. Want to upgrade your clients or servers to .NET Framework 4.8.0? No problem, you can easily deploy the one-time upgrade and updates are seamlessly managed by Windows Update / ConfigMgr / WSUS. 
 
-Your much less likely to encounter any compatibility issues with updating .NET Framework than you are .NET Core, but it's still a good idea to double check the software vendor's documentation. 
+You're much less likely to encounter any compatibility issues with updating .NET Framework than you are .NET Core, but it's still a good idea to double check the software vendor's documentation. 
 
 For example, the Patch My PC Publisher currently states it requires "4.6.2 or newer", giving you that immediate signal 4.8.x will work fine. Whereas that "or newer" is tightly reserved in .NET (Core) applications because of reasons previously shared (where newer major versions aren't always compatible or permitted by its installer).
 
-.NET Framework is so much more SysAdmin-friendly with more gracious support lifecycles and easier patching management. However, in the same article, Microsoft are pushing for any new development to be in .NET (Core) rather that .NET Framework.
+.NET Framework is so much more SysAdmin-friendly with more gracious support lifecycles and easier patching management. However, in the same article, Microsoft are pushing for any new development to be in .NET (Core) rather than .NET Framework.
 
 In the following article, Microsoft lay out the Long Term Support (LTS) and Standard Term Support (STS) lifecycles for .NET (Core). In short, LTS releases have three years of quality and security fixes, whereas STS effectively has two years of support:
 - [.NET and .NET Core official support policy | .NET](https://dotnet.microsoft.com/en-us/platform/support/policy/dotnet-core)
 
 ![](images/dotnetsupportstate.jpg)
 
-Without the abundance of time in support lifecycle (compared to .NET Framework) and the difficulty in tracking software supportability for different versions of .NET (Core), there is an enormous amount of pressure for the SysAdmin to constantly research the dependencies of the software used across all devices and that in-turn demands accurate and reliable software inventory data to fuel your SAM.
+Without the abundance of time in support lifecycle (compared to .NET Framework) and the difficulty in tracking software supportability for different versions of .NET (Core), there is an enormous amount of pressure for the SysAdmin to constantly research the dependencies of the software used across all devices and that in turn demands accurate and reliable software inventory data to fuel your SAM.
 ## You can't have your cake and eat it
 Developers want to keep up with the rate of innovation available to them in newer SDKs, so they can continue to deliver the value customers are asking for in their products. At the same time, developers also need to keep the code optimal, performant, and scalable. New shiny SDKs give them the power to do all these things.
 
@@ -141,6 +141,6 @@ It's clear the software development model of "ship fast, fix fast" is here to st
 
 I'm not sure what the solution is or needs to be. However, I think Microsoft made a really good move with the Microsoft Visual C++ Redistributable installer. Perhaps they could make a more manageable installer like that for .NET (Core).
 
-In any case, if you were ever unsure on the difference between .NET Framework and .NET (Core), and what bits you needed to know were important to you as a SysAdmin and why, the history and the current challenges, I hope you no longer feel like you're alone!
+In any case, if you were ever unsure about the difference between .NET Framework and .NET (Core), and what bits you needed to know were important to you as a SysAdmin and why, the history and the current challenges, I hope you no longer feel like you're alone.
 
 By the way, in my writings of this, I found this really useful website you might wish to bookmark: [Home | endoflife.date](https://endoflife.date/)
