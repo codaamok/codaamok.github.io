@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=".NET Framework vs .NET: for the SysAdmin If you&rsquo;ve ever stared at a vulnerability report flagging multiple .NET versions and wondered which ones you actually need to patch, or tried to work out whether a piece of software needs .NET Framework or just .NET, you&rsquo;re not alone. Most articles on this topic are written for developers. This one isn&rsquo;t.\nThis article is intended to help you understand the difference between .NET Framework and the newer .NET (Core), and highlight the responsibilities and challenges faced with managing software dependencies on Windows today - particularly with .NET (Core).\n">
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Confused by vulnerability reports flagging multiple .NET versions? Learn the difference between .NET Framework and .NET (Core), how they're patched, and what every Windows SysAdmin needs to know to manage them effectively.">
 <title>.NET Framework vs .NET: for the SysAdmin</title>
 
 <link rel='canonical' href='https://adamcook.io/p/.net-framework-vs-.net-for-the-sysadmin/'>
 
 <link rel="stylesheet" href="/scss/style.min.86591c898bd806857815fbb8c47e8d3fed97c133b78e83d9bfc27b164dd0aa2b.css"><meta property='og:title' content=".NET Framework vs .NET: for the SysAdmin">
-<meta property='og:description' content=".NET Framework vs .NET: for the SysAdmin If you&rsquo;ve ever stared at a vulnerability report flagging multiple .NET versions and wondered which ones you actually need to patch, or tried to work out whether a piece of software needs .NET Framework or just .NET, you&rsquo;re not alone. Most articles on this topic are written for developers. This one isn&rsquo;t.\nThis article is intended to help you understand the difference between .NET Framework and the newer .NET (Core), and highlight the responsibilities and challenges faced with managing software dependencies on Windows today - particularly with .NET (Core).\n">
+<meta property='og:description' content="Confused by vulnerability reports flagging multiple .NET versions? Learn the difference between .NET Framework and .NET (Core), how they're patched, and what every Windows SysAdmin needs to know to manage them effectively.">
 <meta property='og:url' content='https://adamcook.io/p/.net-framework-vs-.net-for-the-sysadmin/'>
 <meta property='og:site_name' content='Adam Cook'>
-<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2026-06-24T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2026-06-24T00:00:00&#43;00:00'/><meta property='og:image' content='https://adamcook.io/p/.net-framework-vs-.net-for-the-sysadmin/images/cover.jpg' />
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2026-06-24T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2026-06-24T00:00:00&#43;00:00'/><meta property='og:image' content='https://adamcook.io/p/.net-framework-vs-.net-for-the-sysadmin/images/opengraph.png' />
 <meta name="twitter:site" content="@codaamok">
     <meta name="twitter:creator" content="@codaamok"><meta name="twitter:title" content=".NET Framework vs .NET: for the SysAdmin">
-<meta name="twitter:description" content=".NET Framework vs .NET: for the SysAdmin If you&rsquo;ve ever stared at a vulnerability report flagging multiple .NET versions and wondered which ones you actually need to patch, or tried to work out whether a piece of software needs .NET Framework or just .NET, you&rsquo;re not alone. Most articles on this topic are written for developers. This one isn&rsquo;t.\nThis article is intended to help you understand the difference between .NET Framework and the newer .NET (Core), and highlight the responsibilities and challenges faced with managing software dependencies on Windows today - particularly with .NET (Core).\n"><meta name="twitter:card" content="summary">
+<meta name="twitter:description" content="Confused by vulnerability reports flagging multiple .NET versions? Learn the difference between .NET Framework and .NET (Core), how they're patched, and what every Windows SysAdmin needs to know to manage them effectively."><meta name="twitter:card" content="summary">
     <meta name="twitter:image" content='https://adamcook.io/p/.net-framework-vs-.net-for-the-sysadmin/images/cover.jpg' />
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-157232649-3"></script>
 <script>
@@ -252,6 +252,10 @@
         </h2>
     
         
+        <h3 class="article-subtitle">
+            Confused by vulnerability reports flagging multiple .NET versions? Learn the difference between .NET Framework and .NET (Core), how they&#39;re patched, and what every Windows SysAdmin needs to know to manage them effectively.
+        </h3>
+        
     </div>
 
     
@@ -363,14 +367,10 @@
 <p>In the old world where .NET Framework was the primary and most popular SDK / runtime, it was easier for the SysAdmin because it was shipped with Windows and easily patched and upgradable, compared to how things are today for the SysAdmin trying to manage .NET (Core).</p>
 <p>While this article has been focused on .NET, the same conundrum is also true for other runtimes, too, such as all the flavours of Java JRE and the Microsoft Visual C++ Redistributable. However, I will say that the C++ Redistributable has become more SysAdmin-friendly over the years since Microsoft started bundling in multiple major versions into a single version and installer from 2015 onwards.</p>
 <p>To stand a decent fighting chance against issue, you need two things:</p>
-<ol>
-<li>A Software Asset Management (SAM) system</li>
-</ol>
+<p><strong>1. A Software Asset Management (SAM) system</strong></p>
 <p>The principle of the SAM is to record and track what software is used in the organisation so you can attack these risks more proactively. Not only can it help you combat dependency hell swarmed with vulnerabilities, but it can also help you remain more compliant with third-party vendor software licensing, as well as optimise tooling used across the business.</p>
 <p>Make no mistake, this is pretty much a full time job. I&rsquo;m sure there are products out there to help with creating a SAM but it does demand a timely and accurate software inventory across all the systems you manage.</p>
-<ol start="2">
-<li>An automated third-party packaging and patching solution</li>
-</ol>
+<p><strong>2. An automated third-party packaging and patching solution</strong></p>
 <p>I purposefully split the terms &ldquo;packaging&rdquo; and &ldquo;patching&rdquo;, and there&rsquo;s lots of debate on terminology in the industry here, but ultimately you need a solution that can package apps intended for delivery of &ldquo;<em>new installations</em>&rdquo; of software to a device, as well as &ldquo;<em>update existing installations</em>&rdquo; on a device.</p>
 <p>You need the <em>new installation</em> functionality so you can push the new major version of something, as well as uninstall the old major version, and you need the <em>update existing</em> functionality so you can continously remain compliant within a software&rsquo;s lifecycle.</p>
 <p>Again, this is a full time job. Now, as to which product to use to help automate it? I&rsquo;m biased because I work for <a class="link" href="https://patchmypc.com"  target="_blank" rel="noopener"

@@ -75,14 +75,10 @@
 &lt;p&gt;In the old world where .NET Framework was the primary and most popular SDK / runtime, it was easier for the SysAdmin because it was shipped with Windows and easily patched and upgradable, compared to how things are today for the SysAdmin trying to manage .NET (Core).&lt;/p&gt;
 &lt;p&gt;While this article has been focused on .NET, the same conundrum is also true for other runtimes, too, such as all the flavours of Java JRE and the Microsoft Visual C++ Redistributable. However, I will say that the C++ Redistributable has become more SysAdmin-friendly over the years since Microsoft started bundling in multiple major versions into a single version and installer from 2015 onwards.&lt;/p&gt;
 &lt;p&gt;To stand a decent fighting chance against issue, you need two things:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;A Software Asset Management (SAM) system&lt;/li&gt;
-&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;1. A Software Asset Management (SAM) system&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;The principle of the SAM is to record and track what software is used in the organisation so you can attack these risks more proactively. Not only can it help you combat dependency hell swarmed with vulnerabilities, but it can also help you remain more compliant with third-party vendor software licensing, as well as optimise tooling used across the business.&lt;/p&gt;
 &lt;p&gt;Make no mistake, this is pretty much a full time job. I&amp;rsquo;m sure there are products out there to help with creating a SAM but it does demand a timely and accurate software inventory across all the systems you manage.&lt;/p&gt;
-&lt;ol start=&#34;2&#34;&gt;
-&lt;li&gt;An automated third-party packaging and patching solution&lt;/li&gt;
-&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;2. An automated third-party packaging and patching solution&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;I purposefully split the terms &amp;ldquo;packaging&amp;rdquo; and &amp;ldquo;patching&amp;rdquo;, and there&amp;rsquo;s lots of debate on terminology in the industry here, but ultimately you need a solution that can package apps intended for delivery of &amp;ldquo;&lt;em&gt;new installations&lt;/em&gt;&amp;rdquo; of software to a device, as well as &amp;ldquo;&lt;em&gt;update existing installations&lt;/em&gt;&amp;rdquo; on a device.&lt;/p&gt;
 &lt;p&gt;You need the &lt;em&gt;new installation&lt;/em&gt; functionality so you can push the new major version of something, as well as uninstall the old major version, and you need the &lt;em&gt;update existing&lt;/em&gt; functionality so you can continously remain compliant within a software&amp;rsquo;s lifecycle.&lt;/p&gt;
 &lt;p&gt;Again, this is a full time job. Now, as to which product to use to help automate it? I&amp;rsquo;m biased because I work for &lt;a class=&#34;link&#34; href=&#34;https://patchmypc.com&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
