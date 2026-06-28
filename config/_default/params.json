@@ -40,7 +40,7 @@
     "opengraph": {
       "twitter": {
         "site": "codaamok",
-        "card": "summary"
+        "card": "summary_large_image"
       }
     },
     "footer": {
