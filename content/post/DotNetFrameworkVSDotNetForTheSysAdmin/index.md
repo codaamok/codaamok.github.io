@@ -12,6 +12,9 @@ categories:
 If you've ever stared at a vulnerability report flagging multiple .NET versions and wondered which ones you actually need to patch, or tried to work out whether a piece of software needs .NET Framework or just .NET, you're not alone. Most articles on this topic are written for developers. This one isn't.
 
 This article is intended to help you understand the difference between .NET Framework and the newer .NET (Core), and highlight the responsibilities and challenges faced with managing software dependencies on Windows today - particularly with .NET (Core).
+
+![](images/opengraph.png)
+
 ## What's the difference?
 **.NET Framework** is a Windows-only runtime that ships _with_ Windows, first released in 2000, and is patched through Windows Update, ConfigMgr, or WSUS. With Windows 10, Microsoft made 4.x installed by default, whereas with Windows 7, it was separately installed because 3.x was installed by default.
 
