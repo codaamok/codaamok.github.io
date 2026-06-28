@@ -14,6 +14,18 @@
         <guid>https://adamcook.io/p/.net-framework-vs-.net-for-the-sysadmin/</guid>
         <description>&lt;img src="https://adamcook.io/p/.net-framework-vs-.net-for-the-sysadmin/images/cover.jpg" alt="Featured image of post .NET Framework vs .NET: for the SysAdmin" /&gt;&lt;p&gt;If you&amp;rsquo;ve ever stared at a vulnerability report flagging multiple .NET versions and wondered which ones you actually need to patch, or tried to work out whether a piece of software needs .NET Framework or just .NET, you&amp;rsquo;re not alone. Most articles on this topic are written for developers. This one isn&amp;rsquo;t.&lt;/p&gt;
 &lt;p&gt;This article is intended to help you understand the difference between .NET Framework and the newer .NET (Core), and highlight the responsibilities and challenges faced with managing software dependencies on Windows today - particularly with .NET (Core).&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://adamcook.io/p/.net-framework-vs-.net-for-the-sysadmin/images/opengraph.png&#34;
+	width=&#34;1731&#34;
+	height=&#34;909&#34;
+	srcset=&#34;https://adamcook.io/p/.net-framework-vs-.net-for-the-sysadmin/images/opengraph_hu_5f15f00f617a23e1.png 480w, https://adamcook.io/p/.net-framework-vs-.net-for-the-sysadmin/images/opengraph_hu_4d15eaf95618f47c.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;190&#34;
+		data-flex-basis=&#34;457px&#34;
+	
+&gt;&lt;/p&gt;
 &lt;h2 id=&#34;whats-the-difference&#34;&gt;&lt;a href=&#34;#whats-the-difference&#34; class=&#34;header-anchor&#34;&gt;&lt;/a&gt;What&amp;rsquo;s the difference?
 &lt;/h2&gt;&lt;p&gt;&lt;strong&gt;.NET Framework&lt;/strong&gt; is a Windows-only runtime that ships &lt;em&gt;with&lt;/em&gt; Windows, first released in 2000, and is patched through Windows Update, ConfigMgr, or WSUS. With Windows 10, Microsoft made 4.x installed by default, whereas with Windows 7, it was separately installed because 3.x was installed by default.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;.NET (&lt;em&gt;formerly .NET Core&lt;/em&gt;)&lt;/strong&gt; is a cross-platform runtime, first released in 2016, that is completely separate from Windows. It&amp;rsquo;s a standalone install, versioned and patched independently. It does not come with Windows by default. If software needs .NET 8, 9, or 10, something has to put it there - whether that&amp;rsquo;s the application installer itself, or you deploying it via Intune, ConfigMgr, or your chosen RMM as a prerequisite.&lt;/p&gt;
