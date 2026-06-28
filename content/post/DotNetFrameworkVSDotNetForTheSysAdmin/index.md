@@ -4,12 +4,10 @@ date: 2026-06-24T00:00:00Z
 draft: false
 image: images/cover.jpg
 ogImage: images/opengraph.png
-description: Confused by vulnerability reports flagging multiple .NET versions? Learn the difference between .NET Framework and .NET (Core), how they're patched, and what every Windows SysAdmin needs to know to manage them effectively.
+description: Understand .NET Framework vs .NET (Core) - helping SysAdmins tackle vulnerabilities, dependencies, and lifecycle management.
 categories:
     - Other
 ---
-
-# .NET Framework vs .NET: for the SysAdmin
 
 If you've ever stared at a vulnerability report flagging multiple .NET versions and wondered which ones you actually need to patch, or tried to work out whether a piece of software needs .NET Framework or just .NET, you're not alone. Most articles on this topic are written for developers. This one isn't.
 
