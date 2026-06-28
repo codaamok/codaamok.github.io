@@ -1,19 +1,19 @@
 <!DOCTYPE html>
 <html lang="en-us" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Confused by vulnerability reports flagging multiple .NET versions? Learn the difference between .NET Framework and .NET (Core), how they're patched, and what every Windows SysAdmin needs to know to manage them effectively.">
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Understand .NET Framework vs .NET (Core) - helping SysAdmins tackle vulnerabilities, dependencies, and lifecycle management.">
 <title>.NET Framework vs .NET: for the SysAdmin</title>
 
 <link rel='canonical' href='https://adamcook.io/p/.net-framework-vs-.net-for-the-sysadmin/'>
 
 <link rel="stylesheet" href="/scss/style.min.86591c898bd806857815fbb8c47e8d3fed97c133b78e83d9bfc27b164dd0aa2b.css"><meta property='og:title' content=".NET Framework vs .NET: for the SysAdmin">
-<meta property='og:description' content="Confused by vulnerability reports flagging multiple .NET versions? Learn the difference between .NET Framework and .NET (Core), how they're patched, and what every Windows SysAdmin needs to know to manage them effectively.">
+<meta property='og:description' content="Understand .NET Framework vs .NET (Core) - helping SysAdmins tackle vulnerabilities, dependencies, and lifecycle management.">
 <meta property='og:url' content='https://adamcook.io/p/.net-framework-vs-.net-for-the-sysadmin/'>
 <meta property='og:site_name' content='Adam Cook'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2026-06-24T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2026-06-24T00:00:00&#43;00:00'/><meta property='og:image' content='https://adamcook.io/p/.net-framework-vs-.net-for-the-sysadmin/images/opengraph.png' />
 <meta name="twitter:site" content="@codaamok">
     <meta name="twitter:creator" content="@codaamok"><meta name="twitter:title" content=".NET Framework vs .NET: for the SysAdmin">
-<meta name="twitter:description" content="Confused by vulnerability reports flagging multiple .NET versions? Learn the difference between .NET Framework and .NET (Core), how they're patched, and what every Windows SysAdmin needs to know to manage them effectively."><meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:description" content="Understand .NET Framework vs .NET (Core) - helping SysAdmins tackle vulnerabilities, dependencies, and lifecycle management."><meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:image" content='https://adamcook.io/p/.net-framework-vs-.net-for-the-sysadmin/images/cover.jpg' />
 <script async src="https://www.googletagmanager.com/gtag/js?id=UA-157232649-3"></script>
 <script>
@@ -253,7 +253,7 @@
     
         
         <h3 class="article-subtitle">
-            Confused by vulnerability reports flagging multiple .NET versions? Learn the difference between .NET Framework and .NET (Core), how they&#39;re patched, and what every Windows SysAdmin needs to know to manage them effectively.
+            Understand .NET Framework vs .NET (Core) - helping SysAdmins tackle vulnerabilities, dependencies, and lifecycle management.
         </h3>
         
     </div>
@@ -304,8 +304,7 @@
     <section class="article-content">
     
     
-    <h1 id="net-framework-vs-net-for-the-sysadmin"><a href="#net-framework-vs-net-for-the-sysadmin" class="header-anchor"></a>.NET Framework vs .NET: for the SysAdmin
-</h1><p>If you&rsquo;ve ever stared at a vulnerability report flagging multiple .NET versions and wondered which ones you actually need to patch, or tried to work out whether a piece of software needs .NET Framework or just .NET, you&rsquo;re not alone. Most articles on this topic are written for developers. This one isn&rsquo;t.</p>
+    <p>If you&rsquo;ve ever stared at a vulnerability report flagging multiple .NET versions and wondered which ones you actually need to patch, or tried to work out whether a piece of software needs .NET Framework or just .NET, you&rsquo;re not alone. Most articles on this topic are written for developers. This one isn&rsquo;t.</p>
 <p>This article is intended to help you understand the difference between .NET Framework and the newer .NET (Core), and highlight the responsibilities and challenges faced with managing software dependencies on Windows today - particularly with .NET (Core).</p>
 <h2 id="whats-the-difference"><a href="#whats-the-difference" class="header-anchor"></a>What&rsquo;s the difference?
 </h2><p><strong>.NET Framework</strong> is a Windows-only runtime that ships <em>with</em> Windows, first released in 2000, and is patched through Windows Update, ConfigMgr, or WSUS. With Windows 10, Microsoft made 4.x installed by default, whereas with Windows 7, it was separately installed because 3.x was installed by default.</p>
