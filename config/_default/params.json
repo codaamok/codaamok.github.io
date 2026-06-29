@@ -9,7 +9,7 @@
       "enabled": true,
       "provider": "giscus",
       "giscus": {
-        "category": "Announcements",
+        "category": "Blog comments",
         "categoryID": "DIC_kwDOEfRLLM4DAIt6",
         "darkTheme": "dark_dimmed",
         "emitMetadata": 0,
@@ -20,7 +20,7 @@
         "mapping": "og:title",
         "reactionsEnabled": 1,
         "repo": "codaamok.github.io",
-        "repoID": "301222700",
+        "repoID": "MDEwOlJlcG9zaXRvcnkzMDEyMjI3MDA=",
         "strict": 0
       }
     },
