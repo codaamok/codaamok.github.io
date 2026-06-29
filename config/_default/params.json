@@ -5,6 +5,25 @@
       "published": "2 January 2006",
       "lastUpdated": "2 January 2006"
     },
+    "comments": {
+      "enabled": true,
+      "provider": "giscus",
+      "giscus": {
+        "category": "Announcements",
+        "categoryID": "DIC_kwDOEfRLLM4DAIt6",
+        "darkTheme": "dark_dimmed",
+        "emitMetadata": 0,
+        "inputPosition": "top",
+        "lang": "en",
+        "lightTheme": "light",
+        "loading": "lazy",
+        "mapping": "og:title",
+        "reactionsEnabled": 1,
+        "repo": "codaamok.github.io",
+        "repoID": "301222700",
+        "strict": 0
+      }
+    },
     "defaultImage": {
       "opengraph": {
         "enabled": false,
